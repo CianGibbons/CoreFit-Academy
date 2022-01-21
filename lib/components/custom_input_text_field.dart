@@ -5,20 +5,25 @@ class CustomInputTextField extends StatelessWidget {
       {Key? key,
       required this.iconData,
       required this.inputLabel,
-      required this.obscureText})
+      required this.obscureText,
+      required this.onChanged,
+      required this.textInputType})
       : super(key: key);
 
   final IconData iconData;
   final String inputLabel;
   final bool obscureText;
+  final Function(String) onChanged;
+  final TextInputType textInputType;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(20.0),
       child: TextField(
+        keyboardType: textInputType,
         obscureText: obscureText,
-        onChanged: (value) {},
+        onChanged: onChanged,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.all(10),
           icon: Icon(
