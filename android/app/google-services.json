@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "265698258465",
+    "project_id": "corefit-academy",
+    "storage_bucket": "corefit-academy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265698258465:android:63d6981c69735ab88c3d60",
+        "android_client_info": {
+          "package_name": "com.corefitacademy.corefit_academy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "265698258465-4te4e18g79a3nodagidr5lme6cvaf9lv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjpYALDGitOcge2CPNsgtvfjfVbWT6d84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "265698258465-4te4e18g79a3nodagidr5lme6cvaf9lv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
