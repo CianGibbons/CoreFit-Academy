@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/themes.dart';
 import 'package:corefit_academy/components/custom_input_text_field.dart';
 import 'package:corefit_academy/components/logo_with_text.dart';
-import 'login_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -13,10 +14,13 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  String username = "";
-  String email = "";
-  String password = "";
-  String confirmedPassword = "";
+  final _auth = FirebaseAuth.instance;
+
+  String _email = "";
+  String _password = "";
+  String _confirmedPassword = "";
+
+  String errorMessage = "";
 
   @override
   Widget build(BuildContext context) {
@@ -35,17 +39,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   logoIconSize: 100,
                   logoTextFontSize: 30.0,
                 ),
-                CustomInputTextField(
-                  textInputType: TextInputType.text,
-                  iconData: Icons.person_outline,
-                  inputLabel: "Username",
-                  obscureText: false,
-                  onChanged: (value) {
-                    setState(() {
-                      username = value;
-                    });
-                  },
-                ),
                 const SizedBox(
                   height: 10.0,
                 ),
@@ -56,7 +49,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   obscureText: false,
                   onChanged: (value) {
                     setState(() {
-                      email = value;
+                      _email = value;
                     });
                   },
                 ),
@@ -70,7 +63,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   obscureText: true,
                   onChanged: (value) {
                     setState(() {
-                      password = value;
+                      _password = value;
                     });
                   },
                 ),
@@ -84,18 +77,43 @@ class _SignUpPageState extends State<SignUpPage> {
                   obscureText: true,
                   onChanged: (value) {
                     setState(() {
-                      confirmedPassword = value;
+                      _confirmedPassword = value;
                     });
                   },
                 ),
                 Container(
+                    padding: const EdgeInsets.all(8.0),
+                    margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      errorMessage,
+                      style: kErrorMessage,
+                    )),
+                Container(
                   padding: const EdgeInsets.all(8.0),
                   margin: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ElevatedButton(
-                    onPressed: () {
-                      print('Username: ' + username);
-                      print('Password: ' + password);
-                      print('Confirmed Password: ' + confirmedPassword);
+                    onPressed: () async {
+                      if (_password == _confirmedPassword) {
+                        try {
+                          final newUser =
+                              await _auth.createUserWithEmailAndPassword(
+                                  email: _email, password: _password);
+                          if (newUser != null) {
+                            //Go to home page
+                            Navigator.pushNamed(context, "/home");
+                          }
+                        } catch (e) {
+                          setState(() {
+                            errorMessage = e.toString();
+                          });
+                        }
+                      } else {
+                        setState(() {
+                          //Notify that Both Password Fields must match
+                          errorMessage =
+                              "Both the Password and Confirm Password Fields must be equal!";
+                        });
+                      }
                     },
                     child: const Text('Sign Up'),
                   ),
@@ -121,11 +139,13 @@ class _SignUpPageState extends State<SignUpPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
+              heroTag: "btn1",
               backgroundColor: Colors.grey.shade300,
               onPressed: () {
                 ThemeController.setTheme(context, Themes().lightTheme);
               }),
           FloatingActionButton(
+              heroTag: "btn2",
               backgroundColor: Colors.grey.shade800,
               onPressed: () {
                 ThemeController.setTheme(context, Themes().darkTheme);
