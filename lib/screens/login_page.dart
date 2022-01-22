@@ -1,4 +1,5 @@
 import 'package:corefit_academy/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/themes.dart';
 import 'package:corefit_academy/components/custom_input_text_field.dart';
@@ -12,8 +13,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String username = "";
-  String password = "";
+  String _email = "";
+  String _password = "";
+
+  final _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +32,13 @@ class _LoginPageState extends State<LoginPage> {
             logoTextFontSize: 30.0,
           ),
           CustomInputTextField(
-            textInputType: TextInputType.text,
+            textInputType: TextInputType.emailAddress,
             iconData: Icons.person_outline,
-            inputLabel: "Username",
+            inputLabel: "Email",
             obscureText: false,
             onChanged: (value) {
               setState(() {
-                username = value;
+                _email = value;
               });
             },
           ),
@@ -49,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
             obscureText: true,
             onChanged: (value) {
               setState(() {
-                password = value;
+                _password = value;
               });
             },
           ),
@@ -57,9 +60,17 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.all(8.0),
             margin: const EdgeInsets.symmetric(horizontal: 8.0),
             child: ElevatedButton(
-              onPressed: () {
-                print("Username: " + username);
-                print("Password: " + password);
+              onPressed: () async {
+                try {
+                  final newUser = await _auth.signInWithEmailAndPassword(
+                      email: _email, password: _password);
+                  if (newUser != null) {
+                    //Go to home page
+                    Navigator.pushNamed(context, "/home");
+                  }
+                } catch (e) {
+                  print(e);
+                }
               },
               child: const Text('Login'),
             ),
@@ -82,11 +93,13 @@ class _LoginPageState extends State<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
+              heroTag: "btn1",
               backgroundColor: Colors.grey.shade300,
               onPressed: () {
                 ThemeController.setTheme(context, Themes().lightTheme);
               }),
           FloatingActionButton(
+              heroTag: "btn2",
               backgroundColor: Colors.grey.shade800,
               onPressed: () {
                 ThemeController.setTheme(context, Themes().darkTheme);

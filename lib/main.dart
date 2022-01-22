@@ -1,12 +1,27 @@
+import 'package:corefit_academy/screens/landing_page.dart';
 import 'package:corefit_academy/screens/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_page.dart';
 import 'utilities/themes.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: "AIzaSyB9m7bqdgKflHBHjK54XzXX34wcUmnFM3U",
+            authDomain: "corefit-academy.firebaseapp.com",
+            projectId: "corefit-academy",
+            storageBucket: "corefit-academy.appspot.com",
+            messagingSenderId: "265698258465",
+            appId: "1:265698258465:web:db296d74c5a91a828c3d60",
+            measurementId: "G-MP1G6K0F2C"));
+  } else {
+    await Firebase.initializeApp();
+  }
+
   runApp(const CoreFitAcademy());
 }
 
@@ -24,10 +39,9 @@ class CoreFitAcademy extends StatelessWidget {
           theme: theme,
           initialRoute: '/',
           routes: {
-            // When navigating to the "/" route, build the FirstScreen widget.
             '/login': (context) => const LoginPage(),
-            // When navigating to the "/second" route, build the SecondScreen widget.
             '/signup': (context) => const SignUpPage(),
+            '/home': (context) => const LandingPage(),
           },
           home: const LoginPage(),
         );
