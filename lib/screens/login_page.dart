@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/themes.dart';
 import 'package:corefit_academy/components/custom_input_text_field.dart';
 import 'package:corefit_academy/components/logo_with_text.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -15,79 +16,89 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _email = "";
   String _password = "";
+  bool showSpinner = false;
 
   final _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const LogoWithText(
-            logoCircleWidth: 130.0,
-            logoCircleHeight: 130.0,
-            logoIconSize: 100,
-            logoTextFontSize: 30.0,
-          ),
-          CustomInputTextField(
-            textInputType: TextInputType.emailAddress,
-            iconData: Icons.person_outline,
-            inputLabel: "Email",
-            obscureText: false,
-            onChanged: (value) {
-              setState(() {
-                _email = value;
-              });
-            },
-          ),
-          const SizedBox(
-            height: 10.0,
-          ),
-          CustomInputTextField(
-            textInputType: TextInputType.text,
-            iconData: Icons.lock_outline,
-            inputLabel: "Password",
-            obscureText: true,
-            onChanged: (value) {
-              setState(() {
-                _password = value;
-              });
-            },
-          ),
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                try {
-                  final newUser = await _auth.signInWithEmailAndPassword(
-                      email: _email, password: _password);
-                  if (newUser != null) {
-                    //Go to home page
-                    Navigator.pushNamed(context, "/home");
-                  }
-                } catch (e) {
-                  print(e);
-                }
-              },
-              child: const Text('Login'),
+      body: ModalProgressHUD(
+        inAsyncCall: showSpinner,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const LogoWithText(
+              logoCircleWidth: 130.0,
+              logoCircleHeight: 130.0,
+              logoIconSize: 100,
+              logoTextFontSize: 30.0,
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Not registered yet?'),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/signup');
+            CustomInputTextField(
+              textInputType: TextInputType.emailAddress,
+              iconData: Icons.person_outline,
+              inputLabel: "Email",
+              obscureText: false,
+              onChanged: (value) {
+                setState(() {
+                  _email = value;
+                });
+              },
+            ),
+            const SizedBox(
+              height: 10.0,
+            ),
+            CustomInputTextField(
+              textInputType: TextInputType.text,
+              iconData: Icons.lock_outline,
+              inputLabel: "Password",
+              obscureText: true,
+              onChanged: (value) {
+                setState(() {
+                  _password = value;
+                });
+              },
+            ),
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              margin: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  setState(() {
+                    showSpinner = true;
+                  });
+                  try {
+                    final newUser = await _auth.signInWithEmailAndPassword(
+                        email: _email, password: _password);
+                    if (newUser != null) {
+                      //Go to home page
+                      Navigator.pushNamed(context, "/home");
+                      setState(() {
+                        showSpinner = false;
+                      });
+                    }
+                  } catch (e) {
+                    print(e);
+                  }
                 },
-                child: const Text('Sign Up!'),
+                child: const Text('Login'),
               ),
-            ],
-          ),
-        ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Not registered yet?'),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/signup');
+                  },
+                  child: const Text('Sign Up!'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
