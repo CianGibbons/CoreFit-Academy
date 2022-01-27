@@ -130,6 +130,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             final newUser =
                                 await _auth.createUserWithEmailAndPassword(
                                     email: _email, password: _password);
+                            // ignore: unnecessary_null_comparison
                             if (newUser != null) {
                               //Set DisplayName
                               await _auth.currentUser!
