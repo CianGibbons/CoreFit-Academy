@@ -10,6 +10,10 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
 
+  //If I want to pass in an int parameter into the signup page upon navigation
+  // final int value;
+  // const SignUpPage(this.value, {Key? key}) : super(key: key);
+
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
@@ -34,14 +38,14 @@ class _SignUpPageState extends State<SignUpPage> {
             padding: const EdgeInsets.all(10.0),
             child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const LogoWithText(
-                    logoCircleWidth: 130.0,
-                    logoCircleHeight: 130.0,
-                    logoIconSize: 100,
-                    logoTextFontSize: 30.0,
+                    tag: 'logo',
+                    logoCircleWidth: 100.0,
+                    logoCircleHeight: 100.0,
+                    logoIconSize: 70,
+                    logoTextFontSize: 20.0,
                   ),
                   const SizedBox(
                     height: 10.0,
@@ -134,7 +138,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       const Text('Already have an account?'),
                       TextButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/login');
+                          // Authenticating the user and removing this page from the stack
+                          // This removes the back button from the app bar on the home page.
+                          // Navigator.pushNamedAndRemoveUntil(
+                          //     context, '/login', (_) => false);
+                          Navigator.popAndPushNamed(context, '/login');
                         },
                         child: const Text('Log In!'),
                       ),

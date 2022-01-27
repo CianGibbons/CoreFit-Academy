@@ -5,6 +5,11 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key}) : super(key: key);
 
+  // If I wanted to pass in an int to this page upon Navigation, would need to
+  // use onGeneralRoute in MaterialApp
+  // final int value;
+  // const LandingPage(this.value, {Key? key}) : super(key: key);
+
   @override
   _LandingPageState createState() => _LandingPageState();
 }
@@ -44,7 +49,9 @@ class _LandingPageState extends State<LandingPage> {
                       showSpinner = true;
                     });
                     await _auth.signOut();
-                    Navigator.pushNamed(context, "/login");
+                    // Navigator.pushNamed(context, '/login');
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/login', (r) => false);
                     setState(() {
                       showSpinner = false;
                     });
