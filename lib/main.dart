@@ -1,4 +1,4 @@
-import 'package:corefit_academy/screens/landing_page.dart';
+import 'package:corefit_academy/screens/main_page.dart';
 import 'package:corefit_academy/screens/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_page.dart';
@@ -41,7 +41,7 @@ class CoreFitAcademy extends StatelessWidget {
           routes: {
             '/login': (context) => const LoginPage(),
             '/signup': (context) => const SignUpPage(),
-            '/home': (context) => const LandingPage(),
+            '/home': (context) => const MainPage(),
           },
           // onGenerateRoute: (RouteSettings settings) {
           //   if (settings.name == '/login') {

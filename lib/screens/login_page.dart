@@ -85,6 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                         showSpinner = true;
                       });
                       try {
+                        // ignore: unused_local_variable
                         final newUser = await _auth.signInWithEmailAndPassword(
                             email: _email, password: _password);
                         //Go to home page
