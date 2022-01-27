@@ -19,7 +19,10 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   final _auth = FirebaseAuth.instance;
+
+  String testString = "";
   bool showSpinner = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +40,7 @@ class _LandingPageState extends State<LandingPage> {
         ],
       ),
       appBar: AppBar(
-        title: const Text('CoreFit Academy'),
+        title: Text('Home'),
       ),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,

@@ -21,6 +21,7 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _auth = FirebaseAuth.instance;
 
+  String _displayName = "";
   String _email = "";
   String _password = "";
   String _confirmedPassword = "";
@@ -46,6 +47,20 @@ class _SignUpPageState extends State<SignUpPage> {
                     logoCircleHeight: 100.0,
                     logoIconSize: 70,
                     logoTextFontSize: 20.0,
+                  ),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  CustomInputTextField(
+                    textInputType: TextInputType.text,
+                    iconData: Icons.tag_faces_outlined,
+                    inputLabel: "Display Name",
+                    obscureText: false,
+                    onChanged: (value) {
+                      setState(() {
+                        _displayName = value;
+                      });
+                    },
                   ),
                   const SizedBox(
                     height: 10.0,
@@ -104,7 +119,10 @@ class _SignUpPageState extends State<SignUpPage> {
                         setState(() {
                           showSpinner = true;
                         });
-                        if (_email == "") {
+                        if (_displayName == "") {
+                          errorMessage =
+                              "Display Name Field must not be left blank.";
+                        } else if (_email == "") {
                           //Notify that Both Password Fields must match
                           errorMessage = "Email Field must not be left blank.";
                         } else if (_password == _confirmedPassword) {
@@ -113,6 +131,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                 await _auth.createUserWithEmailAndPassword(
                                     email: _email, password: _password);
                             if (newUser != null) {
+                              //Set DisplayName
+                              await _auth.currentUser!
+                                  .updateDisplayName(_displayName);
+
                               //Go to home page
                               Navigator.pushNamed(context, "/home");
                             }
