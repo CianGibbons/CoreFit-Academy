@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:corefit_academy/utilities/themes.dart';
+
+import '../main.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -18,15 +21,21 @@ class _LandingPageState extends State<LandingPage> {
   final _auth = FirebaseAuth.instance;
   bool showSpinner = false;
 
-  void getCurrentUser() {
-    final User user = _auth.currentUser!;
-
-    print(user);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          )
+        ],
+      ),
       appBar: AppBar(
         title: const Text('CoreFit Academy'),
       ),
@@ -34,11 +43,6 @@ class _LandingPageState extends State<LandingPage> {
         inAsyncCall: showSpinner,
         child: Column(
           children: [
-            const Text('Hello'),
-            ElevatedButton(
-              onPressed: getCurrentUser,
-              child: const Text('Get Current User'),
-            ),
             Container(
               padding: const EdgeInsets.all(8.0),
               margin: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -64,6 +68,23 @@ class _LandingPageState extends State<LandingPage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+              heroTag: "btn1",
+              backgroundColor: Colors.grey.shade300,
+              onPressed: () {
+                ThemeController.setTheme(context, Themes().lightTheme);
+              }),
+          FloatingActionButton(
+              heroTag: "btn2",
+              backgroundColor: Colors.grey.shade800,
+              onPressed: () {
+                ThemeController.setTheme(context, Themes().darkTheme);
+              }),
+        ],
       ),
     );
   }
