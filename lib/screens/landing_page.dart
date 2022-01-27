@@ -16,25 +16,29 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   final _auth = FirebaseAuth.instance;
+
+  String testString = "";
   bool showSpinner = false;
 
-  void getCurrentUser() {
+  User getCurrentUser() {
     final User user = _auth.currentUser!;
-
-    print(user);
+    setState(() {
+      testString = user.displayName!;
+    });
+    return user;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CoreFit Academy'),
+        title: Text('Home'),
       ),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
         child: Column(
           children: [
-            const Text('Hello'),
+            Text(testString),
             ElevatedButton(
               onPressed: getCurrentUser,
               child: const Text('Get Current User'),
