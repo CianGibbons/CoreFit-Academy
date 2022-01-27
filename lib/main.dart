@@ -43,6 +43,13 @@ class CoreFitAcademy extends StatelessWidget {
             '/signup': (context) => const SignUpPage(),
             '/home': (context) => const LandingPage(),
           },
+          // onGenerateRoute: (RouteSettings settings) {
+          //   if (settings.name == '/login') {
+          //     final value = settings.arguments as int;
+          //     return MaterialPageRoute(builder: (_) => LoginPage(value));
+          //   }
+          //   return null;
+          // },
           home: const LoginPage(),
         );
       },
