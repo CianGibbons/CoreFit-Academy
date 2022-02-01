@@ -7,3 +7,5 @@ TextStyle coreFitTextStyle = GoogleFonts.roboto(
 ));
 
 const kErrorMessage = TextStyle(fontSize: 12.0, color: Colors.red);
+
+const kTitleStyle = TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold);

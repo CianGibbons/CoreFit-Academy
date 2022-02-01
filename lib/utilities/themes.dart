@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class Themes {
   ThemeData get darkTheme => ThemeData.dark().copyWith(
         colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: Colors.green.shade800,
           secondary: Colors.lightGreen.shade500,
           onBackground: Colors.grey.shade600,
-        ),
-        appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarBrightness: Brightness.light,
-            statusBarIconBrightness: Brightness.light,
-          ),
+          onSurface: Colors.grey.shade400,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
@@ -26,18 +21,16 @@ class Themes {
             ),
           ),
         ),
+        bottomSheetTheme:
+            BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
       );
 
   ThemeData get lightTheme => ThemeData.light().copyWith(
         colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: Colors.green.shade800,
           secondary: Colors.green.shade700,
-          onBackground: Colors.grey.shade400,
-        ),
-        appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarBrightness: Brightness.dark,
-            statusBarIconBrightness: Brightness.dark,
-          ),
+          onBackground: Colors.grey.shade500,
+          onSurface: Colors.grey.shade200,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
@@ -52,5 +45,7 @@ class Themes {
             ),
           ),
         ),
+        bottomSheetTheme:
+            BottomSheetThemeData(backgroundColor: Colors.black.withOpacity(0)),
       );
 }

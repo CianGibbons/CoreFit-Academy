@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/themes.dart';
 import 'package:corefit_academy/components/custom_input_text_field.dart';
 import 'package:corefit_academy/components/logo_with_text.dart';
+import 'package:corefit_academy/components/custom_elevated_button.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
-
-  // if i wanted to be able to pass int into the login page when navigating
-  // final int value;
-  // const LoginPage(this.value, {Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -37,6 +35,9 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const SizedBox(
+                  height: 10.0,
+                ),
                 const LogoWithText(
                   tag: 'logo',
                   logoCircleWidth: 130.0,
@@ -49,6 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                   iconData: Icons.person_outline,
                   inputLabel: "Email",
                   obscureText: false,
+                  activeColor: Theme.of(context).colorScheme.secondary,
                   onChanged: (value) {
                     setState(() {
                       _email = value;
@@ -63,6 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                   iconData: Icons.lock_outline,
                   inputLabel: "Password",
                   obscureText: true,
+                  activeColor: Theme.of(context).colorScheme.secondary,
                   onChanged: (value) {
                     setState(() {
                       _password = value;
@@ -79,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ElevatedButton(
+                  child: CustomElevatedButton(
                     onPressed: () async {
                       setState(() {
                         showSpinner = true;
@@ -102,6 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                     child: const Text('Login'),
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
                 Row(
@@ -112,7 +116,11 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         Navigator.popAndPushNamed(context, '/signup');
                       },
-                      child: const Text('Sign Up!'),
+                      child: Text(
+                        'Sign Up!',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
                     ),
                   ],
                 ),

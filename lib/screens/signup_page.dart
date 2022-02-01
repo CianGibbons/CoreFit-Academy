@@ -3,16 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/themes.dart';
 import 'package:corefit_academy/components/custom_input_text_field.dart';
 import 'package:corefit_academy/components/logo_with_text.dart';
+import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
-
-  //If I want to pass in an int parameter into the signup page upon navigation
-  // final int value;
-  // const SignUpPage(this.value, {Key? key}) : super(key: key);
 
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -56,6 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     iconData: Icons.tag_faces_outlined,
                     inputLabel: "Display Name",
                     obscureText: false,
+                    activeColor: Theme.of(context).colorScheme.secondary,
                     onChanged: (value) {
                       setState(() {
                         _displayName = value;
@@ -70,6 +68,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     iconData: Icons.email_outlined,
                     inputLabel: "Email",
                     obscureText: false,
+                    activeColor: Theme.of(context).colorScheme.secondary,
                     onChanged: (value) {
                       setState(() {
                         _email = value;
@@ -84,6 +83,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     iconData: Icons.lock_outline,
                     inputLabel: "Password",
                     obscureText: true,
+                    activeColor: Theme.of(context).colorScheme.secondary,
                     onChanged: (value) {
                       setState(() {
                         _password = value;
@@ -98,6 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     iconData: Icons.lock_outline,
                     inputLabel: "Confirm Password",
                     obscureText: true,
+                    activeColor: Theme.of(context).colorScheme.secondary,
                     onChanged: (value) {
                       setState(() {
                         _confirmedPassword = value;
@@ -114,7 +115,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: ElevatedButton(
+                    child: CustomElevatedButton(
                       onPressed: () async {
                         setState(() {
                           showSpinner = true;
@@ -153,6 +154,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         });
                       },
                       child: const Text('Sign Up'),
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                   Row(
@@ -167,7 +169,11 @@ class _SignUpPageState extends State<SignUpPage> {
                           //     context, '/login', (_) => false);
                           Navigator.popAndPushNamed(context, '/login');
                         },
-                        child: const Text('Log In!'),
+                        child: Text(
+                          'Log In!',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary),
+                        ),
                       ),
                     ],
                   ),

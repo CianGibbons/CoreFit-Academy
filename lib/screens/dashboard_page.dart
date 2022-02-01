@@ -1,24 +1,22 @@
-import 'package:corefit_academy/screens/landing_page.dart';
-import 'package:corefit_academy/screens/settings_page.dart';
+import 'package:corefit_academy/widgets/create_course_widget.dart';
+import 'package:corefit_academy/screens/main_page_sub_widgets/landing_page.dart';
+import 'package:corefit_academy/screens/main_page_sub_widgets/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:corefit_academy/screens/main_page_sub_widgets/logbook_page.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
-
-  // If I wanted to pass in an int to this page upon Navigation, would need to
-  // use onGeneralRoute in MaterialApp
-  // final int value;
-  // const LandingPage(this.value, {Key? key}) : super(key: key);
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({Key? key}) : super(key: key);
 
   @override
-  _MainPageState createState() => _MainPageState();
+  _DashboardPageState createState() => _DashboardPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     LandingPage(),
+    LogBook(),
     SettingsPage(),
   ];
 
@@ -36,6 +34,10 @@ class _MainPageState extends State<MainPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu_book_outlined),
+            label: 'Logbook',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -59,6 +61,12 @@ class _MainPageState extends State<MainPage> {
           child: const Icon(Icons.add),
           onPressed: () {
             //TODO: Create new Course Pop Up;
+            showModalBottomSheet(
+                isScrollControlled: true,
+                context: context,
+                builder: (context) =>
+                    //Using a Wrap in order to dynamically fit the modal sheet to the content
+                    Wrap(children: const [CreateCoursePage()]));
           });
     } else {
       return Container();
