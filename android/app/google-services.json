@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "265698258465-i7cdhkdukh333bruiv6esqjakpomarih.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.corefitacademy.corefit_academy",
+            "certificate_hash": "54f58211b222b2fc1bf14affef3e4b89d1170d6b"
+          }
+        },
+        {
           "client_id": "265698258465-4te4e18g79a3nodagidr5lme6cvaf9lv.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "265698258465-4te4e18g79a3nodagidr5lme6cvaf9lv.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "265698258465-citah9bdshi2bbj9r9bpffsil352bvjd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.corefitacademy.corefitAcademy"
+              }
             }
           ]
         }

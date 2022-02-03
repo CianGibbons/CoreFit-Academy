@@ -1,16 +1,22 @@
 import 'package:corefit_academy/components/custom_input_text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CreateCoursePage extends StatefulWidget {
-  const CreateCoursePage({Key? key}) : super(key: key);
+  CreateCoursePage({Key? key, required this.user}) : super(key: key);
 
+  final User user;
   @override
   _CreateCoursePageState createState() => _CreateCoursePageState();
 }
 
 class _CreateCoursePageState extends State<CreateCoursePage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String courseName = "";
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,7 +42,11 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
             autoFocus: true,
             inputLabel: "Course Name",
             obscureText: false,
-            onChanged: (value) {},
+            onChanged: (value) {
+              setState(() {
+                courseName = value;
+              });
+            },
             textInputType: TextInputType.text,
             activeColor: Theme.of(context).colorScheme.primary,
           ),
@@ -45,7 +55,13 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: CustomElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                // widget.user.uid
+                // courseName
+                _firestore
+                    .collection('courses')
+                    .add({'userId': widget.user.uid, 'name': courseName});
+              },
               child: const Text('Create Course'),
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),

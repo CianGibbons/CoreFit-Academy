@@ -3,17 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/themes.dart';
 import 'package:corefit_academy/main.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
+import 'package:flutterfire_ui/auth.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
-
-  @override
-  _SettingsPageState createState() => _SettingsPageState();
-}
-
-//TODO: Style Settings Page and add more settings - Maybe Change Display Name
-class _SettingsPageState extends State<SettingsPage> {
-  final _auth = FirebaseAuth.instance;
+class SettingsPage extends StatelessWidget {
+  SettingsPage({Key? key, required this.user}) : super(key: key);
+  final User user;
   bool showSpinner = false;
   @override
   Widget build(BuildContext context) {
@@ -41,26 +35,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ],
             ),
-            CustomElevatedButton(
-              onPressed: () async {
-                try {
-                  setState(() {
-                    showSpinner = true;
-                  });
-                  await _auth.signOut();
-                  // Navigator.pushNamed(context, '/login');
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (r) => false);
-                  setState(() {
-                    showSpinner = false;
-                  });
-                } catch (e) {
-                  //TODO: Decide what to do with failed logout
-                }
-              },
-              child: const Text('Logout'),
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-            )
+            Column(
+              children: const [
+                SignOutButton(),
+              ],
+            ),
           ],
         ),
       ),

@@ -1,13 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class LogBook extends StatefulWidget {
-  const LogBook({Key? key}) : super(key: key);
-
-  @override
-  _LogBookState createState() => _LogBookState();
-}
-
-class _LogBookState extends State<LogBook> {
+class LogBook extends StatelessWidget {
+  const LogBook({Key? key, required this.user}) : super(key: key);
+  final User user;
   @override
   Widget build(BuildContext context) {
     return Padding(

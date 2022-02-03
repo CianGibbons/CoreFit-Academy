@@ -1,10 +1,9 @@
 import 'package:corefit_academy/firebase_options.dart';
-import 'package:corefit_academy/screens/dashboard_page.dart';
-import 'package:corefit_academy/screens/signup_page.dart';
-import 'firebase_options.dart';
+import 'package:corefit_academy/screens/navigator.dart';
+import 'package:corefit_academy/auth_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'screens/login_page.dart';
-import 'utilities/themes.dart';
+import 'package:corefit_academy/utilities/themes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -33,12 +32,12 @@ class CoreFitAcademy extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: theme,
           initialRoute: '/',
-          routes: {
-            '/login': (context) => const LoginPage(),
-            '/signup': (context) => const SignUpPage(),
-            '/home': (context) => const DashboardPage(),
-          },
-          home: LoginPage(),
+          // routes: {
+          //   '/login': (context) => const LoginPage(),
+          //   '/signup': (context) => const SignUpPage(),
+          //   '/home': (context) => DashboardPage(),
+          // },
+          home: AuthController(),
         );
       },
     );

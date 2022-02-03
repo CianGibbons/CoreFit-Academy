@@ -1,13 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class LandingPage extends StatefulWidget {
-  const LandingPage({Key? key}) : super(key: key);
+class LandingPage extends StatelessWidget {
+  const LandingPage({Key? key, required this.user}) : super(key: key);
 
-  @override
-  _LandingPageState createState() => _LandingPageState();
-}
+  final User user;
 
-class _LandingPageState extends State<LandingPage> {
   @override
   Widget build(BuildContext context) {
     return Column(

@@ -40,7 +40,7 @@ class Themes {
                   return Colors.lightGreen.shade700.withOpacity(0.5);
                 }
                 return Colors
-                    .lightGreen.shade700; // Use the component's default.
+                    .lightGreen.shade800; // Use the component's default.
               },
             ),
           ),
