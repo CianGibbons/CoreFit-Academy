@@ -1,16 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/themes.dart';
 import 'package:corefit_academy/main.dart';
+import 'package:corefit_academy/components/custom_elevated_button.dart';
+import 'package:flutterfire_ui/auth.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
-
-  @override
-  _SettingsPageState createState() => _SettingsPageState();
-}
-
-//TODO: Style Settings Page and add more settings - Maybe Change Display Name
-class _SettingsPageState extends State<SettingsPage> {
+class SettingsPage extends StatelessWidget {
+  SettingsPage({Key? key, required this.user}) : super(key: key);
+  final User user;
+  bool showSpinner = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -21,26 +19,25 @@ class _SettingsPageState extends State<SettingsPage> {
             Row(
               children: [
                 const Text('Themes'),
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    primary: Theme.of(context).colorScheme.primary,
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                  ),
+                CustomElevatedButton(
                   onPressed: () {
                     ThemeController.setTheme(context, Themes().darkTheme);
                   },
                   child: const Text('Dark'),
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                 ),
-                OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    primary: Theme.of(context).colorScheme.primary,
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                  ),
+                CustomElevatedButton(
                   onPressed: () {
                     ThemeController.setTheme(context, Themes().lightTheme);
                   },
                   child: const Text('Light'),
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                 ),
+              ],
+            ),
+            Column(
+              children: const [
+                SignOutButton(),
               ],
             ),
           ],

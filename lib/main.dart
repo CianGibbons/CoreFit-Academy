@@ -1,8 +1,9 @@
-import 'package:corefit_academy/screens/main_page.dart';
-import 'package:corefit_academy/screens/signup_page.dart';
+import 'package:corefit_academy/firebase_options.dart';
+import 'package:corefit_academy/screens/navigator.dart';
+import 'package:corefit_academy/auth_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'screens/login_page.dart';
-import 'utilities/themes.dart';
+import 'package:corefit_academy/utilities/themes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -10,14 +11,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     await Firebase.initializeApp(
-        options: const FirebaseOptions(
-            apiKey: "AIzaSyB9m7bqdgKflHBHjK54XzXX34wcUmnFM3U",
-            authDomain: "corefit-academy.firebaseapp.com",
-            projectId: "corefit-academy",
-            storageBucket: "corefit-academy.appspot.com",
-            messagingSenderId: "265698258465",
-            appId: "1:265698258465:web:db296d74c5a91a828c3d60",
-            measurementId: "G-MP1G6K0F2C"));
+        options: DefaultFirebaseOptions.currentPlatform);
   } else {
     await Firebase.initializeApp();
   }
@@ -38,19 +32,12 @@ class CoreFitAcademy extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: theme,
           initialRoute: '/',
-          routes: {
-            '/login': (context) => const LoginPage(),
-            '/signup': (context) => const SignUpPage(),
-            '/home': (context) => const MainPage(),
-          },
-          // onGenerateRoute: (RouteSettings settings) {
-          //   if (settings.name == '/login') {
-          //     final value = settings.arguments as int;
-          //     return MaterialPageRoute(builder: (_) => LoginPage(value));
-          //   }
-          //   return null;
+          // routes: {
+          //   '/login': (context) => const LoginPage(),
+          //   '/signup': (context) => const SignUpPage(),
+          //   '/home': (context) => DashboardPage(),
           // },
-          home: const LoginPage(),
+          home: AuthController(),
         );
       },
     );
