@@ -6,13 +6,20 @@ import 'package:corefit_academy/models/exercise.dart';
 import 'package:corefit_academy/widgets/create_exercise_widget.dart';
 import 'package:corefit_academy/components/exercise_display.dart';
 
-class WorkoutPage extends StatelessWidget {
-  WorkoutPage({Key? key, required this.workoutObject, this.viewer = false})
+class WorkoutPage extends StatefulWidget {
+  const WorkoutPage(
+      {Key? key, required this.workoutObject, this.viewer = false})
       : super(key: key);
-  bool viewer;
+  final bool viewer;
   final Workout workoutObject;
 
+  @override
+  State<WorkoutPage> createState() => _WorkoutPageState();
+}
+
+class _WorkoutPageState extends State<WorkoutPage> {
   final FirebaseAuth _firebase = FirebaseAuth.instance;
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<ExerciseDisplay> workoutsLoaded = [];
@@ -21,7 +28,7 @@ class WorkoutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(workoutObject.name),
+        title: Text(widget.workoutObject.name),
       ),
       body: ListView(
         children: [
@@ -36,7 +43,7 @@ class WorkoutPage extends StatelessWidget {
                       stream: _firestore
                           .collection('exercises')
                           .where('parentWorkout',
-                              isEqualTo: workoutObject.workoutReference)
+                              isEqualTo: widget.workoutObject.workoutReference)
                           .where('userId',
                               isEqualTo: _firebase.currentUser!.uid)
                           .snapshots(),
@@ -143,7 +150,7 @@ class WorkoutPage extends StatelessWidget {
                       stream: _firestore
                           .collection('exercises')
                           .where('parentWorkout',
-                              isEqualTo: workoutObject.workoutReference)
+                              isEqualTo: widget.workoutObject.workoutReference)
                           .where('viewers',
                               arrayContains: _firebase.currentUser!.uid)
                           .snapshots(),
@@ -258,7 +265,7 @@ class WorkoutPage extends StatelessWidget {
   }
 
   Widget _getFAB(BuildContext context) {
-    if (!viewer) {
+    if (!widget.viewer) {
       return FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
@@ -269,7 +276,7 @@ class WorkoutPage extends StatelessWidget {
                   //Using a Wrap in order to dynamically fit the modal sheet to the content
                   Wrap(children: [
                     CreateExercisePage(
-                      workoutObject: workoutObject,
+                      workoutObject: widget.workoutObject,
                     )
                   ]));
         },

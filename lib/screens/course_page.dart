@@ -6,63 +6,33 @@ import 'package:corefit_academy/widgets/create_workout_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class CoursePage extends StatelessWidget {
-  bool viewer;
-  CoursePage({Key? key, required this.courseObject, this.viewer = false})
+class CoursePage extends StatefulWidget {
+  const CoursePage({Key? key, required this.courseObject, this.viewer = false})
       : super(key: key);
 
   final Course courseObject;
+  final bool viewer;
+  @override
+  State<CoursePage> createState() => _CoursePageState();
+}
+
+class _CoursePageState extends State<CoursePage> {
   final FirebaseAuth _firebase = FirebaseAuth.instance;
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<WorkoutDisplay> workoutsLoaded = [];
-
-  // Future<List<WorkoutDisplay>> loadWorkouts() async {
-  //   List<Workout> workoutObjects = [];
-  //   for (DocumentReference workout in courseObject.workouts!) {
-  //     var item = await workout.get();
-  //
-  //     if (item.exists) {
-  //       var name = item.get('name');
-  //
-  //       List exerciseDynamic = List.empty();
-  //       exerciseDynamic = item.get('exercises');
-  //
-  //       List<DocumentReference> exerciseList = [];
-  //       for (DocumentReference exercise in exerciseDynamic) {
-  //         exerciseList.add(exercise);
-  //       }
-  //       var muscles = item.get('targetedMuscles');
-  //       List<String> targetedMuscles = List<String>.from(muscles);
-  //
-  //       Workout workoutObject = Workout(
-  //         name: name,
-  //         exercises: exerciseList,
-  //         targetedMuscles: targetedMuscles,
-  //         numExercises: exerciseList.length,
-  //       );
-  //       workoutObjects.add(workoutObject);
-  //     }
-  //   }
-  //   List<WorkoutDisplay> workoutWidgets = [];
-  //   for (var workoutObject in workoutObjects) {
-  //     workoutWidgets
-  //         .add(WorkoutDisplay(workoutObject: workoutObject, viewer: viewer));
-  //   }
-  //   workoutsLoaded = workoutWidgets;
-  //   return workoutWidgets;
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(courseObject.name),
+        title: Text(widget.courseObject.name),
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: handleClick,
             itemBuilder: (BuildContext context) {
-              return {'Add Friends To Course', 'Delete Course'}
+              return {'Add Friends To Course', 'Delete Course', 'Clone Course'}
                   .map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
@@ -86,7 +56,7 @@ class CoursePage extends StatelessWidget {
                       stream: _firestore
                           .collection('workouts')
                           .where('parentCourse',
-                              isEqualTo: courseObject.courseReference)
+                              isEqualTo: widget.courseObject.courseReference)
                           .where('userId',
                               isEqualTo: _firebase.currentUser!.uid)
                           .snapshots(),
@@ -147,7 +117,7 @@ class CoursePage extends StatelessWidget {
                       stream: _firestore
                           .collection('workouts')
                           .where('parentCourse',
-                              isEqualTo: courseObject.courseReference)
+                              isEqualTo: widget.courseObject.courseReference)
                           .where('viewers',
                               arrayContains: _firebase.currentUser!.uid)
                           .snapshots(),
@@ -217,7 +187,7 @@ class CoursePage extends StatelessWidget {
   }
 
   Widget _getFAB(BuildContext context) {
-    if (!viewer) {
+    if (!widget.viewer) {
       return FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
@@ -228,7 +198,7 @@ class CoursePage extends StatelessWidget {
                   //Using a Wrap in order to dynamically fit the modal sheet to the content
                   Wrap(children: [
                     CreateWorkoutPage(
-                      courseObject: courseObject,
+                      courseObject: widget.courseObject,
                     )
                   ]));
         },

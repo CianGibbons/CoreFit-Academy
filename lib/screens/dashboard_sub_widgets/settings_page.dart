@@ -5,10 +5,17 @@ import 'package:corefit_academy/main.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:flutterfire_ui/auth.dart';
 
-class SettingsPage extends StatelessWidget {
-  SettingsPage({Key? key, required this.user}) : super(key: key);
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({Key? key, required this.user}) : super(key: key);
   final User user;
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
   bool showSpinner = false;
+
   @override
   Widget build(BuildContext context) {
     return Padding(

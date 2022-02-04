@@ -23,7 +23,7 @@ class AuthController extends StatelessWidget {
                 EmailProviderConfiguration(),
                 GoogleProviderConfiguration(
                   clientId:
-                      '265698258465-citah9bdshi2bbj9r9bpffsil352bvjd.apps.googleusercontent.com',
+                      "265698258465-citah9bdshi2bbj9r9bpffsil352bvjd.apps.googleusercontent.com",
                 )
               ],
               headerBuilder: (context, constraints, _) {

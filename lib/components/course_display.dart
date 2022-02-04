@@ -3,12 +3,18 @@ import 'package:corefit_academy/screens/course_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class CourseDisplay extends StatelessWidget {
-  CourseDisplay({Key? key, required this.courseObject, this.viewer = false})
+class CourseDisplay extends StatefulWidget {
+  const CourseDisplay(
+      {Key? key, required this.courseObject, this.viewer = false})
       : super(key: key);
-  bool viewer;
+  final bool viewer;
   final Course courseObject;
 
+  @override
+  State<CourseDisplay> createState() => _CourseDisplayState();
+}
+
+class _CourseDisplayState extends State<CourseDisplay> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -17,8 +23,8 @@ class CourseDisplay extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => CoursePage(
-              viewer: viewer,
-              courseObject: courseObject,
+              viewer: widget.viewer,
+              courseObject: widget.courseObject,
             ),
           ),
         );
@@ -40,19 +46,19 @@ class CourseDisplay extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      courseObject.name,
+                      widget.courseObject.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 24.0,
                       ),
                     ),
                     Text("Number of Workouts in Course: " +
-                        courseObject.numWorkouts.toString()),
+                        widget.courseObject.numWorkouts.toString()),
                   ],
                 ),
               ),
               Container(
-                child: viewer
+                child: widget.viewer
                     ? const Icon(Icons.remove_red_eye_outlined)
                     : const Icon(FontAwesomeIcons.pencilAlt),
               )

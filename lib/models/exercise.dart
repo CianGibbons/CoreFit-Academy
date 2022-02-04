@@ -35,6 +35,7 @@ class Exercise {
       var unit = km.miles;
       return unit;
     }
+    return null;
   }
 
   Unit? getWeightInPounds() {
@@ -43,6 +44,7 @@ class Exercise {
       var unit = kg.pounds;
       return unit;
     }
+    return null;
   }
 
   void addTargetedMuscle(String newTargetedMuscle) {
