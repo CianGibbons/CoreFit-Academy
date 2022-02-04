@@ -1,16 +1,14 @@
-import 'package:corefit_academy/models/workout.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Course {
+  DocumentReference courseReference;
   String name;
-  List<Workout>? workouts;
+  int numWorkouts;
+  List<DocumentReference>? workouts = [];
 
-  Course({required this.name, this.workouts});
-
-  void addWorkout(Workout newWorkout) {
-    workouts!.add(newWorkout);
-  }
-
-  void removeWorkout(Workout workoutToBeRemoved) {
-    workouts!.remove(workoutToBeRemoved);
-  }
+  Course(
+      {required this.name,
+      required this.courseReference,
+      this.workouts,
+      this.numWorkouts = 0});
 }

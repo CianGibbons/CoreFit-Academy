@@ -1,24 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:corefit_academy/components/custom_input_text_field.dart';
+import 'package:corefit_academy/models/course.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:corefit_academy/utilities/constants.dart';
-import 'package:corefit_academy/components/custom_elevated_button.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-class CreateCoursePage extends StatefulWidget {
-  CreateCoursePage({Key? key}) : super(key: key);
-
+class CreateWorkoutPage extends StatefulWidget {
+  CreateWorkoutPage({
+    Key? key,
+    required this.courseObject,
+  }) : super(key: key);
   final FirebaseAuth _firebase = FirebaseAuth.instance;
+
+  final Course courseObject;
   @override
-  _CreateCoursePageState createState() => _CreateCoursePageState();
+  _CreateWorkoutPageState createState() => _CreateWorkoutPageState();
 }
 
-class _CreateCoursePageState extends State<CreateCoursePage> {
+class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // final FirebaseAuth _firebase = FirebaseAuth.instance;
-  // _firebase.currentUser
-  String courseName = "";
-
+  String workoutName = "";
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,18 +37,18 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Text(
-              'Create New Course',
+              'Create New Workout',
               style: kTitleStyle.copyWith(
                   color: Theme.of(context).colorScheme.primary),
             ),
           )),
           CustomInputTextField(
             autoFocus: true,
-            inputLabel: "Course Name",
+            inputLabel: "Workout Name",
             obscureText: false,
             onChanged: (value) {
               setState(() {
-                courseName = value;
+                workoutName = value;
               });
             },
             textInputType: TextInputType.text,
@@ -60,15 +62,24 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               onPressed: () {
                 // widget.user.uid
                 // courseName
-                _firestore.collection('courses').add({
+                _firestore.collection('workouts').add({
                   'createdAt': DateTime.now(),
                   'userId': widget._firebase.currentUser!.uid,
-                  'name': courseName,
-                  'workouts': [],
+                  'name': workoutName,
+                  'exercises': [],
                   'viewers': [],
+                  'targetedMuscles': [],
+                  'parentCourse': widget.courseObject.courseReference,
+                }).then((value) {
+                  List idList = [];
+                  idList.add('workouts/' + value.id);
+                  _firestore
+                      .collection('courses')
+                      .doc(widget.courseObject.courseReference.id)
+                      .update({'workouts': FieldValue.arrayUnion(idList)});
                 });
               },
-              child: const Text('Create Course'),
+              child: const Text('Create Workout'),
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
           ),

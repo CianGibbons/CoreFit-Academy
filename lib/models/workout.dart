@@ -1,27 +1,17 @@
-import 'package:corefit_academy/models/exercise.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Workout {
-  // Name, List of Exercises, Expected Time for Completion,
-  // List of Targeted Muscles
+  DocumentReference workoutReference;
   String name;
-  List<Exercise>? exercises;
+  int numExercises;
+  List<DocumentReference>? exercises;
   List<String>? targetedMuscles;
 
-  Workout({required this.name, this.exercises, this.targetedMuscles});
-
-  void addExercise(Exercise newExercise) {
-    exercises!.add(newExercise);
-  }
-
-  void removeExercise(Exercise exerciseToBeRemoved) {
-    exercises!.remove(exerciseToBeRemoved);
-  }
-
-  void addTargetedMuscle(String newTargetedMuscle) {
-    targetedMuscles!.add(newTargetedMuscle);
-  }
-
-  void removeTargetedMuscle(String targetedMuscleToBeRemoved) {
-    targetedMuscles!.remove(targetedMuscleToBeRemoved);
-  }
+  Workout({
+    required this.name,
+    required this.workoutReference,
+    this.exercises,
+    this.targetedMuscles,
+    this.numExercises = 0,
+  });
 }

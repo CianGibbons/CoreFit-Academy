@@ -22,8 +22,9 @@ class AuthController extends StatelessWidget {
               providerConfigs: const [
                 EmailProviderConfiguration(),
                 GoogleProviderConfiguration(
-                    clientId:
-                        '265698258465-citah9bdshi2bbj9r9bpffsil352bvjd.apps.googleusercontent.com')
+                  clientId:
+                      '265698258465-citah9bdshi2bbj9r9bpffsil352bvjd.apps.googleusercontent.com',
+                )
               ],
               headerBuilder: (context, constraints, _) {
                 return const LogoWithText(

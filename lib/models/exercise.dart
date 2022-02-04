@@ -1,10 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:units_converter/units_converter.dart';
 
 class Exercise {
-  // Name, Sets, Reps, Time, Distance(km)/(miles), Weight(kg)/(pound),
-  // RPE (Rating of Perceived Exertion), Percentage of Exertion,
-  // List of Targeted Muscles
-
+  DocumentReference exerciseReference;
   String name;
   int? sets;
   int? reps;
@@ -19,6 +17,7 @@ class Exercise {
 
   Exercise(
       {required this.name,
+      required this.exerciseReference,
       this.sets,
       this.reps,
       this.timeHours,
