@@ -69,7 +69,7 @@ class _NavigationControllerState extends State<NavigationController> {
                 context: context,
                 builder: (context) =>
                     //Using a Wrap in order to dynamically fit the modal sheet to the content
-                    Wrap(children: [CreateCoursePage(user: widget.user)]));
+                    Wrap(children: [CreateCoursePage()]));
           });
     } else {
       return Container();

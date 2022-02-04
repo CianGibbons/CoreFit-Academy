@@ -1,7 +1,5 @@
 import 'package:corefit_academy/firebase_options.dart';
-import 'package:corefit_academy/screens/navigator.dart';
 import 'package:corefit_academy/auth_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/themes.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,12 +30,7 @@ class CoreFitAcademy extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: theme,
           initialRoute: '/',
-          // routes: {
-          //   '/login': (context) => const LoginPage(),
-          //   '/signup': (context) => const SignUpPage(),
-          //   '/home': (context) => DashboardPage(),
-          // },
-          home: AuthController(),
+          home: const AuthController(),
         );
       },
     );
