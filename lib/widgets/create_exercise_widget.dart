@@ -17,6 +17,7 @@ class CreateExercisePage extends StatefulWidget {
 class _CreateExercisePageState extends State<CreateExercisePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String exerciseName = "";
+  TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,66 +28,71 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
           topRight: Radius.circular(20.0),
         ),
       ),
-      child: Column(
-        children: [
-          Center(
-              child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              'Create New Exercise',
-              style: kTitleStyle.copyWith(
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-          )),
-          CustomInputTextField(
-            autoFocus: true,
-            inputLabel: "Exercise Name",
-            obscureText: false,
-            onChanged: (value) {
-              setState(() {
-                exerciseName = value;
-              });
-            },
-            textInputType: TextInputType.text,
-            activeColor: Theme.of(context).colorScheme.primary,
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: CustomElevatedButton(
-              onPressed: () {
-                _firestore.collection('exercises').add({
-                  'createdAt': DateTime.now(),
-                  'userId': widget._firebase.currentUser!.uid,
-                  'name': exerciseName,
-                  'viewers': [],
-                  'targetedMuscles': [],
-                  'parentWorkout': widget.workoutObject.workoutReference,
-                  'RPE': 0,
-                  'distanceKm': 0,
-                  'percentageOfExertion': 0,
-                  'reps': 0,
-                  'sets': 0,
-                  'timeHours': 0,
-                  'timeMinutes': 0,
-                  'timeSeconds': 0,
-                  'weightKg': 0
-                }).then((value) {
-                  List idList = [];
-                  idList.add('exercises/' + value.id);
-                  _firestore
-                      .collection('workouts')
-                      .doc(widget.workoutObject.workoutReference.id)
-                      .update({'exercises': FieldValue.arrayUnion(idList)});
+      child: Form(
+        child: Column(
+          children: [
+            Center(
+                child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                kCreateExerciseAction,
+                style: kTitleStyle.copyWith(
+                    color: Theme.of(context).colorScheme.primary),
+              ),
+            )),
+            CustomInputTextField(
+              controller: textEditingController,
+              autoFocus: true,
+              inputLabel: kExerciseNameFieldLabel,
+              obscureText: false,
+              onChanged: (value) {
+                setState(() {
+                  exerciseName = value;
                 });
               },
-              child: const Text('Create Workout'),
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              textInputType: TextInputType.text,
+              activeColor: Theme.of(context).colorScheme.primary,
             ),
-          ),
-          const SizedBox(height: 20.0)
-        ],
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: CustomElevatedButton(
+                onPressed: () {
+                  _firestore.collection(kExercisesCollection).add({
+                    kCreatedAtField: DateTime.now(),
+                    kUserIdField: widget._firebase.currentUser!.uid,
+                    kNameField: exerciseName,
+                    kViewersField: [],
+                    kTargetedMusclesField: [],
+                    kParentWorkoutField: widget.workoutObject.workoutReference,
+                    kRpeField: 0,
+                    kDistanceKmField: 0,
+                    kPercentageOfExertionField: 0,
+                    kRepsField: 0,
+                    kSetsField: 0,
+                    kTimeHoursField: 0,
+                    kTimeMinutesField: 0,
+                    kTimeSecondsField: 0,
+                    kWeightKgField: 0
+                  }).then((value) {
+                    List idList = [];
+                    idList.add(kExercisesCollection + '/' + value.id);
+                    _firestore
+                        .collection(kWorkoutsCollection)
+                        .doc(widget.workoutObject.workoutReference.id)
+                        .update(
+                            {kExercisesField: FieldValue.arrayUnion(idList)});
+                  });
+                  textEditingController.clear();
+                },
+                child: const Text(kCreateExerciseActionButton),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 20.0)
+          ],
+        ),
       ),
     );
   }

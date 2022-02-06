@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/models/workout.dart';
@@ -41,10 +42,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   children: [
                     StreamBuilder(
                       stream: _firestore
-                          .collection('exercises')
-                          .where('parentWorkout',
+                          .collection(kExercisesCollection)
+                          .where(kParentWorkoutField,
                               isEqualTo: widget.workoutObject.workoutReference)
-                          .where('userId',
+                          .where(kUserIdField,
                               isEqualTo: _firebase.currentUser!.uid)
                           .snapshots(),
                       builder: (context, AsyncSnapshot<dynamic> snapshot) {
@@ -57,12 +58,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             // reps,sets,targetedMuscles,timeHours,timeMinutes,
                             // timeSeconds,userId,weightKg,viewers
 
-                            var exerciseName = exercise.get('name');
+                            var exerciseName = exercise.get(kNameField);
 
-                            var rawRPE = exercise.get('RPE');
+                            var rawRPE = exercise.get(kRpeField);
                             int rpe = rawRPE;
 
-                            var rawDistanceKm = exercise.get('distanceKm');
+                            var rawDistanceKm = exercise.get(kDistanceKmField);
                             double distanceKm = 0;
                             if (rawDistanceKm.runtimeType == double) {
                               distanceKm = rawDistanceKm;
@@ -74,7 +75,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             // var parentWorkoutReference = workoutObject.workoutReference;
 
                             var rawPercentageOfExertion =
-                                exercise.get('percentageOfExertion');
+                                exercise.get(kPercentageOfExertionField);
                             double percentageOfExertion = 0;
                             if (rawPercentageOfExertion.runtimeType == double) {
                               percentageOfExertion = rawPercentageOfExertion;
@@ -84,28 +85,30 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                   rawPercentageOfExertion.toString());
                             }
 
-                            var rawReps = exercise.get('reps');
+                            var rawReps = exercise.get(kRepsField);
                             int reps = rawReps;
 
-                            var rawSets = exercise.get('sets');
+                            var rawSets = exercise.get(kSetsField);
                             int sets = rawSets;
 
-                            var muscles = exercise.get('targetedMuscles');
+                            var muscles = exercise.get(kTargetedMusclesField);
                             List<String> targetedMuscles =
                                 List<String>.from(muscles);
 
-                            var rawTimeHours = exercise.get('timeHours');
+                            var rawTimeHours = exercise.get(kTimeHoursField);
                             int timeHours = int.parse(rawTimeHours.toString());
 
-                            var rawTimeMinutes = exercise.get('timeMinutes');
+                            var rawTimeMinutes =
+                                exercise.get(kTimeMinutesField);
                             int timeMinutes =
                                 int.parse(rawTimeMinutes.toString());
 
-                            var rawTimeSeconds = exercise.get('timeSeconds');
+                            var rawTimeSeconds =
+                                exercise.get(kTimeSecondsField);
                             int timeSeconds =
                                 int.parse(rawTimeSeconds.toString());
 
-                            var rawWeightKg = exercise.get('weightKg');
+                            var rawWeightKg = exercise.get(kWeightKgField);
                             double weightKg = 0;
                             if (rawWeightKg.runtimeType == double) {
                               weightKg = rawWeightKg;
@@ -148,10 +151,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
                     ),
                     StreamBuilder(
                       stream: _firestore
-                          .collection('exercises')
-                          .where('parentWorkout',
+                          .collection(kExercisesCollection)
+                          .where(kParentWorkoutField,
                               isEqualTo: widget.workoutObject.workoutReference)
-                          .where('viewers',
+                          .where(kViewersField,
                               arrayContains: _firebase.currentUser!.uid)
                           .snapshots(),
                       builder: (context, AsyncSnapshot<dynamic> snapshot) {
@@ -164,12 +167,12 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             // reps,sets,targetedMuscles,timeHours,timeMinutes,
                             // timeSeconds,userId,weightKg,viewers
 
-                            var exerciseName = exercise.get('name');
+                            var exerciseName = exercise.get(kNameField);
 
-                            var rawRPE = exercise.get('RPE');
+                            var rawRPE = exercise.get(kRpeField);
                             int rpe = rawRPE;
 
-                            var rawDistanceKm = exercise.get('distanceKm');
+                            var rawDistanceKm = exercise.get(kDistanceKmField);
                             double distanceKm = 0;
                             if (rawDistanceKm.runtimeType == double) {
                               distanceKm = rawDistanceKm;
@@ -181,7 +184,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             // var parentWorkoutReference = workoutObject.workoutReference;
 
                             var rawPercentageOfExertion =
-                                exercise.get('percentageOfExertion');
+                                exercise.get(kPercentageOfExertionField);
                             double percentageOfExertion = 0;
                             if (rawPercentageOfExertion.runtimeType == double) {
                               percentageOfExertion = rawPercentageOfExertion;
@@ -191,28 +194,30 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                   rawPercentageOfExertion.toString());
                             }
 
-                            var rawReps = exercise.get('reps');
+                            var rawReps = exercise.get(kRepsField);
                             int reps = rawReps;
 
-                            var rawSets = exercise.get('sets');
+                            var rawSets = exercise.get(kSetsField);
                             int sets = rawSets;
 
-                            var muscles = exercise.get('targetedMuscles');
+                            var muscles = exercise.get(kTargetedMusclesField);
                             List<String> targetedMuscles =
                                 List<String>.from(muscles);
 
-                            var rawTimeHours = exercise.get('timeHours');
+                            var rawTimeHours = exercise.get(kTimeHoursField);
                             int timeHours = int.parse(rawTimeHours.toString());
 
-                            var rawTimeMinutes = exercise.get('timeMinutes');
+                            var rawTimeMinutes =
+                                exercise.get(kTimeMinutesField);
                             int timeMinutes =
                                 int.parse(rawTimeMinutes.toString());
 
-                            var rawTimeSeconds = exercise.get('timeSeconds');
+                            var rawTimeSeconds =
+                                exercise.get(kTimeSecondsField);
                             int timeSeconds =
                                 int.parse(rawTimeSeconds.toString());
 
-                            var rawWeightKg = exercise.get('weightKg');
+                            var rawWeightKg = exercise.get(kWeightKgField);
                             double weightKg = 0;
                             if (rawWeightKg.runtimeType == double) {
                               weightKg = rawWeightKg;

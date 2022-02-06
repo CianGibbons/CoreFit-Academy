@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/screens/navigator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ class AuthController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    AuthAction pageAction = AuthAction.signIn;
     return StreamBuilder<User?>(
         // getting logged in user and if its null we know that the user is not logged in
         // listening for the state change of the logged in user and passing it in through
@@ -27,22 +30,35 @@ class AuthController extends StatelessWidget {
                 )
               ],
               headerBuilder: (context, constraints, _) {
-                return const LogoWithText(
-                  tag: 'logo',
-                  logoCircleWidth: 100.0,
-                  logoCircleHeight: 100.0,
-                  logoIconSize: 70,
-                  logoTextFontSize: 20.0,
+                return const FittedBox(
+                  child: LogoWithText(
+                    tag: 'logo',
+                    logoCircleWidth: 100.0,
+                    logoCircleHeight: 100.0,
+                    logoIconSize: 70,
+                    logoTextFontSize: 20.0,
+                  ),
                 );
               },
               subtitleBuilder: (context, action) {
+                pageAction = action;
                 return Text(action == AuthAction.signIn
                     ? "Sign into your account below!"
                     : "Sign Up to CoreFit Academy below!");
               },
             );
           }
-          return NavigationController(user: snapshot.data!);
+
+          // Saving user email and uId to the data base to allow the viewers
+          // functionality to work
+          User _current = snapshot.data!;
+          if (pageAction == AuthAction.signUp) {
+            _firestore.collection('users').add({
+              'userId': _current.uid,
+              'email': _current.email,
+            });
+          }
+          return NavigationController(user: _current);
         });
   }
 }

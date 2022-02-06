@@ -2,6 +2,7 @@ import 'package:corefit_academy/models/workout.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:corefit_academy/screens/workout_page.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 
 class WorkoutDisplay extends StatefulWidget {
   const WorkoutDisplay(
@@ -52,7 +53,7 @@ class _WorkoutDisplayState extends State<WorkoutDisplay> {
                         fontSize: 24.0,
                       ),
                     ),
-                    Text("Number of Exercises in Workout: " +
+                    Text(kShowNumberExercises +
                         widget.workoutObject.numExercises.toString()),
                   ],
                 ),

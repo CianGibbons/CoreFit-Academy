@@ -7,6 +7,8 @@ class Themes {
           secondary: Colors.lightGreen.shade500,
           onBackground: Colors.grey.shade600,
           onSurface: Colors.grey.shade400,
+          surfaceVariant: Colors.grey.shade500,
+          onSurfaceVariant: Colors.green.shade900,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
@@ -31,6 +33,8 @@ class Themes {
           secondary: Colors.green.shade700,
           onBackground: Colors.grey.shade500,
           onSurface: Colors.grey.shade200,
+          surfaceVariant: Colors.grey.shade500,
+          onSurfaceVariant: Colors.green.shade900,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(

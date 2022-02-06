@@ -1,10 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:corefit_academy/components/workout_display.dart';
 import 'package:corefit_academy/models/course.dart';
 import 'package:corefit_academy/models/workout.dart';
 import 'package:corefit_academy/widgets/create_workout_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:corefit_academy/components/custom_text_form_field.dart';
+import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:corefit_academy/utilities/validate_email.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 
 class CoursePage extends StatefulWidget {
   const CoursePage({Key? key, required this.courseObject, this.viewer = false})
@@ -22,6 +29,7 @@ class _CoursePageState extends State<CoursePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<WorkoutDisplay> workoutsLoaded = [];
+  final _addViewerFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +38,26 @@ class _CoursePageState extends State<CoursePage> {
         title: Text(widget.courseObject.name),
         actions: <Widget>[
           PopupMenuButton<String>(
-            onSelected: handleClick,
+            onSelected: handleMenuBarClick,
             itemBuilder: (BuildContext context) {
-              return {'Add Friends To Course', 'Delete Course', 'Clone Course'}
-                  .map((String choice) {
+              Set<String> activeMenuItems = {};
+              Set<String> menuItemsOwner = {
+                kAddFriendsToCourseAction,
+                kDeleteCourseAction,
+                kCloneCourseAction,
+              };
+              Set<String> menuItemsViewer = {
+                kAddFriendsToCourseAction,
+                kRemoveCourseAction,
+                kCloneCourseAction
+              };
+              if (widget.viewer) {
+                activeMenuItems = menuItemsViewer;
+              } else {
+                activeMenuItems = menuItemsOwner;
+              }
+
+              return activeMenuItems.map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -54,10 +78,10 @@ class _CoursePageState extends State<CoursePage> {
                   children: [
                     StreamBuilder(
                       stream: _firestore
-                          .collection('workouts')
-                          .where('parentCourse',
+                          .collection(kWorkoutsCollection)
+                          .where(kParentCourseField,
                               isEqualTo: widget.courseObject.courseReference)
-                          .where('userId',
+                          .where(kUserIdField,
                               isEqualTo: _firebase.currentUser!.uid)
                           .snapshots(),
                       builder: (BuildContext context,
@@ -68,17 +92,12 @@ class _CoursePageState extends State<CoursePage> {
                           final workouts = snapshot.data!.docs;
 
                           for (var workout in workouts) {
-                            var workoutName = workout.get('name');
+                            var workoutName = workout.get(kNameField);
 
                             List exerciseDynamic = List.empty();
-                            exerciseDynamic = workout.get('exercises');
-                            // List<DocumentReference> exerciseList = [];
-                            // for (DocumentReference exercise
-                            //     in exerciseDynamic) {
-                            //   exerciseList.add(exercise);
-                            // }
+                            exerciseDynamic = workout.get(kExercisesField);
 
-                            var muscles = workout.get('targetedMuscles');
+                            var muscles = workout.get(kTargetedMusclesField);
                             List<String> targetedMuscles =
                                 List<String>.from(muscles);
 
@@ -115,10 +134,10 @@ class _CoursePageState extends State<CoursePage> {
                     ),
                     StreamBuilder(
                       stream: _firestore
-                          .collection('workouts')
-                          .where('parentCourse',
+                          .collection(kWorkoutsCollection)
+                          .where(kParentCourseField,
                               isEqualTo: widget.courseObject.courseReference)
-                          .where('viewers',
+                          .where(kViewersField,
                               arrayContains: _firebase.currentUser!.uid)
                           .snapshots(),
                       builder: (BuildContext context,
@@ -129,17 +148,17 @@ class _CoursePageState extends State<CoursePage> {
                           final workouts = snapshot.data!.docs;
 
                           for (var workout in workouts) {
-                            var workoutName = workout.get('name');
+                            var workoutName = workout.get(kNameField);
 
                             List exerciseDynamic = List.empty();
-                            exerciseDynamic = workout.get('exercises');
+                            exerciseDynamic = workout.get(kExercisesField);
                             List<DocumentReference> exerciseList = [];
                             for (DocumentReference exercise
                                 in exerciseDynamic) {
                               exerciseList.add(exercise);
                             }
 
-                            var muscles = workout.get('targetedMuscles');
+                            var muscles = workout.get(kTargetedMusclesField);
                             List<String> targetedMuscles =
                                 List<String>.from(muscles);
 
@@ -192,28 +211,134 @@ class _CoursePageState extends State<CoursePage> {
         child: const Icon(Icons.add),
         onPressed: () {
           showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) =>
-                  //Using a Wrap in order to dynamically fit the modal sheet to the content
-                  Wrap(children: [
-                    CreateWorkoutPage(
-                      courseObject: widget.courseObject,
-                    )
-                  ]));
+            isScrollControlled: true,
+            context: context,
+            builder: (context) =>
+                //Using a Wrap in order to dynamically fit the modal sheet to the content
+                Wrap(
+              children: [
+                CreateWorkoutPage(
+                  courseObject: widget.courseObject,
+                )
+              ],
+            ),
+          );
         },
       );
     } else {
       return Container();
     }
   }
-}
 
-void handleClick(String value) {
-  switch (value) {
-    case 'Logout':
-      break;
-    case 'Settings':
-      break;
+  TextEditingController textEditingController = TextEditingController();
+  String _valueText = "";
+  Future<void> _displayAddViewerToCourseDialog(BuildContext context) async {
+    // Ensuring that should an Alert get dismissed by tapping outside it previously,
+    // the Alert will not show the old error message.
+    context.read<ErrorMessageStringProvider>().setValue(null);
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Form(
+            key: _addViewerFormKey,
+            child: AlertDialog(
+              title: const Text(kAddFriendsToCourseAction),
+              content: CustomTextFormField(
+                validator: validateEmail,
+                controller: textEditingController,
+                paddingAll: 0.0,
+                iconData: FontAwesomeIcons.userPlus,
+                inputLabel: kEmailOfFriendString,
+                obscureText: false,
+                onSaved: (input) => _valueText = input!,
+                textInputType: TextInputType.emailAddress,
+                activeColor: Theme.of(context).colorScheme.primary,
+                errorText: context.watch<ErrorMessageStringProvider>().value,
+              ),
+              actions: <Widget>[
+                CustomElevatedButton(
+                  onPressed: () async {
+                    if (_addViewerFormKey.currentState!.validate() &&
+                        textEditingController.text.isNotEmpty) {
+                      Stream<QuerySnapshot<Map<String, dynamic>>> snapshots =
+                          _firestore
+                              .collection(kUsersCollection)
+                              .where(kEmailField,
+                                  isEqualTo: textEditingController.text)
+                              .snapshots();
+                      //gets the _JsonQuerySnapshot containing the "first" and only user with this email
+                      var userStream = await snapshots.first;
+                      //Gets a List<_JsonQueryDocumentSnapshot> so we can access the documents
+                      var userDynDoc = userStream.docs;
+                      if (userDynDoc.isNotEmpty) {
+                        // if there is a user found then we have access to the
+                        // email and userId of the user
+                        for (var item in userDynDoc) {
+                          // var email = item.get(kEmailField);
+                          var userId = item.get(kUserIdField);
+                          // The Array in firestore will not store duplicates so
+                          // this will not be an issue
+                          _firestore
+                              .collection(kCoursesCollection)
+                              .doc(widget.courseObject.courseReference.id)
+                              .update({
+                            kViewersField: FieldValue.arrayUnion([userId])
+                          });
+
+                          //TODO: Add Viewer to Workouts within and Exercises within that
+                          print(widget.courseObject);
+                          //TODO: Ensure that the List of Document References is Saved
+                          print(widget.courseObject.workouts); // NULL
+                        }
+                        Navigator.pop(context);
+                      } else {
+                        // Set the Error Message to User not found
+                        // This also notifies any widget that a change has been made
+                        // these widgets will then rebuild due to the update in this value
+                        // ie. the text field will show that the User was not found in this case.
+                        context
+                            .read<ErrorMessageStringProvider>()
+                            .setValue(kErrorUserNotFound);
+
+                        // print(context.read<ErrorMessageStringProvider>().value);
+                      }
+                    }
+                    setState(() {
+                      textEditingController.clear();
+                    });
+                  },
+                  child: const Text(kAddFriend),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
+                CustomElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      textEditingController.clear();
+                      context.read<ErrorMessageStringProvider>().setValue(null);
+                      Navigator.pop(context);
+                    });
+                  },
+                  child: const Text(kCancel),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  void handleMenuBarClick(String value) {
+    //TODO: Implement Viewers, Delete Course, Clone Course, Remove Course
+    switch (value) {
+      case kAddFriendsToCourseAction:
+        _displayAddViewerToCourseDialog(context);
+        break;
+      case kCloneCourseAction:
+        break;
+      case kDeleteCourseAction:
+        break;
+      case kRemoveCourseAction:
+        break;
+    }
   }
 }

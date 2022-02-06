@@ -2,6 +2,7 @@ import 'package:corefit_academy/models/course.dart';
 import 'package:corefit_academy/screens/course_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 
 class CourseDisplay extends StatefulWidget {
   const CourseDisplay(
@@ -52,8 +53,10 @@ class _CourseDisplayState extends State<CourseDisplay> {
                         fontSize: 24.0,
                       ),
                     ),
-                    Text("Number of Workouts in Course: " +
+                    Text(kShowNumberWorkouts +
                         widget.courseObject.numWorkouts.toString()),
+                    Text(kShowNumberViewers +
+                        widget.courseObject.numViewers.toString()),
                   ],
                 ),
               ),
