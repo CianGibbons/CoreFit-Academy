@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/models/workout.dart';
@@ -6,13 +7,20 @@ import 'package:corefit_academy/models/exercise.dart';
 import 'package:corefit_academy/widgets/create_exercise_widget.dart';
 import 'package:corefit_academy/components/exercise_display.dart';
 
-class WorkoutPage extends StatelessWidget {
-  WorkoutPage({Key? key, required this.workoutObject, this.viewer = false})
+class WorkoutPage extends StatefulWidget {
+  const WorkoutPage(
+      {Key? key, required this.workoutObject, this.viewer = false})
       : super(key: key);
-  bool viewer;
+  final bool viewer;
   final Workout workoutObject;
 
+  @override
+  State<WorkoutPage> createState() => _WorkoutPageState();
+}
+
+class _WorkoutPageState extends State<WorkoutPage> {
   final FirebaseAuth _firebase = FirebaseAuth.instance;
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<ExerciseDisplay> workoutsLoaded = [];
@@ -21,7 +29,7 @@ class WorkoutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(workoutObject.name),
+        title: Text(widget.workoutObject.name),
       ),
       body: ListView(
         children: [
@@ -34,10 +42,10 @@ class WorkoutPage extends StatelessWidget {
                   children: [
                     StreamBuilder(
                       stream: _firestore
-                          .collection('exercises')
-                          .where('parentWorkout',
-                              isEqualTo: workoutObject.workoutReference)
-                          .where('userId',
+                          .collection(kExercisesCollection)
+                          .where(kParentWorkoutField,
+                              isEqualTo: widget.workoutObject.workoutReference)
+                          .where(kUserIdField,
                               isEqualTo: _firebase.currentUser!.uid)
                           .snapshots(),
                       builder: (context, AsyncSnapshot<dynamic> snapshot) {
@@ -50,12 +58,12 @@ class WorkoutPage extends StatelessWidget {
                             // reps,sets,targetedMuscles,timeHours,timeMinutes,
                             // timeSeconds,userId,weightKg,viewers
 
-                            var exerciseName = exercise.get('name');
+                            var exerciseName = exercise.get(kNameField);
 
-                            var rawRPE = exercise.get('RPE');
+                            var rawRPE = exercise.get(kRpeField);
                             int rpe = rawRPE;
 
-                            var rawDistanceKm = exercise.get('distanceKm');
+                            var rawDistanceKm = exercise.get(kDistanceKmField);
                             double distanceKm = 0;
                             if (rawDistanceKm.runtimeType == double) {
                               distanceKm = rawDistanceKm;
@@ -67,7 +75,7 @@ class WorkoutPage extends StatelessWidget {
                             // var parentWorkoutReference = workoutObject.workoutReference;
 
                             var rawPercentageOfExertion =
-                                exercise.get('percentageOfExertion');
+                                exercise.get(kPercentageOfExertionField);
                             double percentageOfExertion = 0;
                             if (rawPercentageOfExertion.runtimeType == double) {
                               percentageOfExertion = rawPercentageOfExertion;
@@ -77,28 +85,30 @@ class WorkoutPage extends StatelessWidget {
                                   rawPercentageOfExertion.toString());
                             }
 
-                            var rawReps = exercise.get('reps');
+                            var rawReps = exercise.get(kRepsField);
                             int reps = rawReps;
 
-                            var rawSets = exercise.get('sets');
+                            var rawSets = exercise.get(kSetsField);
                             int sets = rawSets;
 
-                            var muscles = exercise.get('targetedMuscles');
+                            var muscles = exercise.get(kTargetedMusclesField);
                             List<String> targetedMuscles =
                                 List<String>.from(muscles);
 
-                            var rawTimeHours = exercise.get('timeHours');
+                            var rawTimeHours = exercise.get(kTimeHoursField);
                             int timeHours = int.parse(rawTimeHours.toString());
 
-                            var rawTimeMinutes = exercise.get('timeMinutes');
+                            var rawTimeMinutes =
+                                exercise.get(kTimeMinutesField);
                             int timeMinutes =
                                 int.parse(rawTimeMinutes.toString());
 
-                            var rawTimeSeconds = exercise.get('timeSeconds');
+                            var rawTimeSeconds =
+                                exercise.get(kTimeSecondsField);
                             int timeSeconds =
                                 int.parse(rawTimeSeconds.toString());
 
-                            var rawWeightKg = exercise.get('weightKg');
+                            var rawWeightKg = exercise.get(kWeightKgField);
                             double weightKg = 0;
                             if (rawWeightKg.runtimeType == double) {
                               weightKg = rawWeightKg;
@@ -141,10 +151,10 @@ class WorkoutPage extends StatelessWidget {
                     ),
                     StreamBuilder(
                       stream: _firestore
-                          .collection('exercises')
-                          .where('parentWorkout',
-                              isEqualTo: workoutObject.workoutReference)
-                          .where('viewers',
+                          .collection(kExercisesCollection)
+                          .where(kParentWorkoutField,
+                              isEqualTo: widget.workoutObject.workoutReference)
+                          .where(kViewersField,
                               arrayContains: _firebase.currentUser!.uid)
                           .snapshots(),
                       builder: (context, AsyncSnapshot<dynamic> snapshot) {
@@ -157,12 +167,12 @@ class WorkoutPage extends StatelessWidget {
                             // reps,sets,targetedMuscles,timeHours,timeMinutes,
                             // timeSeconds,userId,weightKg,viewers
 
-                            var exerciseName = exercise.get('name');
+                            var exerciseName = exercise.get(kNameField);
 
-                            var rawRPE = exercise.get('RPE');
+                            var rawRPE = exercise.get(kRpeField);
                             int rpe = rawRPE;
 
-                            var rawDistanceKm = exercise.get('distanceKm');
+                            var rawDistanceKm = exercise.get(kDistanceKmField);
                             double distanceKm = 0;
                             if (rawDistanceKm.runtimeType == double) {
                               distanceKm = rawDistanceKm;
@@ -174,7 +184,7 @@ class WorkoutPage extends StatelessWidget {
                             // var parentWorkoutReference = workoutObject.workoutReference;
 
                             var rawPercentageOfExertion =
-                                exercise.get('percentageOfExertion');
+                                exercise.get(kPercentageOfExertionField);
                             double percentageOfExertion = 0;
                             if (rawPercentageOfExertion.runtimeType == double) {
                               percentageOfExertion = rawPercentageOfExertion;
@@ -184,28 +194,30 @@ class WorkoutPage extends StatelessWidget {
                                   rawPercentageOfExertion.toString());
                             }
 
-                            var rawReps = exercise.get('reps');
+                            var rawReps = exercise.get(kRepsField);
                             int reps = rawReps;
 
-                            var rawSets = exercise.get('sets');
+                            var rawSets = exercise.get(kSetsField);
                             int sets = rawSets;
 
-                            var muscles = exercise.get('targetedMuscles');
+                            var muscles = exercise.get(kTargetedMusclesField);
                             List<String> targetedMuscles =
                                 List<String>.from(muscles);
 
-                            var rawTimeHours = exercise.get('timeHours');
+                            var rawTimeHours = exercise.get(kTimeHoursField);
                             int timeHours = int.parse(rawTimeHours.toString());
 
-                            var rawTimeMinutes = exercise.get('timeMinutes');
+                            var rawTimeMinutes =
+                                exercise.get(kTimeMinutesField);
                             int timeMinutes =
                                 int.parse(rawTimeMinutes.toString());
 
-                            var rawTimeSeconds = exercise.get('timeSeconds');
+                            var rawTimeSeconds =
+                                exercise.get(kTimeSecondsField);
                             int timeSeconds =
                                 int.parse(rawTimeSeconds.toString());
 
-                            var rawWeightKg = exercise.get('weightKg');
+                            var rawWeightKg = exercise.get(kWeightKgField);
                             double weightKg = 0;
                             if (rawWeightKg.runtimeType == double) {
                               weightKg = rawWeightKg;
@@ -258,7 +270,7 @@ class WorkoutPage extends StatelessWidget {
   }
 
   Widget _getFAB(BuildContext context) {
-    if (!viewer) {
+    if (!widget.viewer) {
       return FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
@@ -269,7 +281,7 @@ class WorkoutPage extends StatelessWidget {
                   //Using a Wrap in order to dynamically fit the modal sheet to the content
                   Wrap(children: [
                     CreateExercisePage(
-                      workoutObject: workoutObject,
+                      workoutObject: widget.workoutObject,
                     )
                   ]));
         },

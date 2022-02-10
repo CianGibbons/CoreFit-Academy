@@ -21,6 +21,7 @@ class CreateWorkoutPage extends StatefulWidget {
 class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String workoutName = "";
+  TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,60 +32,65 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
           topRight: Radius.circular(20.0),
         ),
       ),
-      child: Column(
-        children: [
-          Center(
-              child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              'Create New Workout',
-              style: kTitleStyle.copyWith(
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-          )),
-          CustomInputTextField(
-            autoFocus: true,
-            inputLabel: "Workout Name",
-            obscureText: false,
-            onChanged: (value) {
-              setState(() {
-                workoutName = value;
-              });
-            },
-            textInputType: TextInputType.text,
-            activeColor: Theme.of(context).colorScheme.primary,
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: CustomElevatedButton(
-              onPressed: () {
-                // widget.user.uid
-                // courseName
-                _firestore.collection('workouts').add({
-                  'createdAt': DateTime.now(),
-                  'userId': widget._firebase.currentUser!.uid,
-                  'name': workoutName,
-                  'exercises': [],
-                  'viewers': [],
-                  'targetedMuscles': [],
-                  'parentCourse': widget.courseObject.courseReference,
-                }).then((value) {
-                  List idList = [];
-                  idList.add('workouts/' + value.id);
-                  _firestore
-                      .collection('courses')
-                      .doc(widget.courseObject.courseReference.id)
-                      .update({'workouts': FieldValue.arrayUnion(idList)});
+      child: Form(
+        child: Column(
+          children: [
+            Center(
+                child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                kCreateWorkoutAction,
+                style: kTitleStyle.copyWith(
+                    color: Theme.of(context).colorScheme.primary),
+              ),
+            )),
+            CustomInputTextField(
+              controller: textEditingController,
+              autoFocus: true,
+              inputLabel: kWorkoutNameFieldLabel,
+              obscureText: false,
+              onChanged: (value) {
+                setState(() {
+                  workoutName = value;
                 });
               },
-              child: const Text('Create Workout'),
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              textInputType: TextInputType.text,
+              activeColor: Theme.of(context).colorScheme.primary,
             ),
-          ),
-          const SizedBox(height: 20.0)
-        ],
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: CustomElevatedButton(
+                onPressed: () {
+                  // widget.user.uid
+                  // courseName
+                  _firestore.collection(kWorkoutsCollection).add({
+                    kCreatedAtField: DateTime.now(),
+                    kUserIdField: widget._firebase.currentUser!.uid,
+                    kNameField: workoutName,
+                    kExercisesField: [],
+                    kViewersField: [],
+                    kTargetedMusclesField: [],
+                    kParentCourseField: widget.courseObject.courseReference,
+                  }).then((value) {
+                    List idList = [];
+                    idList.add(kWorkoutsCollection + '/' + value.id);
+                    _firestore
+                        .collection(kCoursesCollection)
+                        .doc(widget.courseObject.courseReference.id)
+                        .update(
+                            {kWorkoutsField: FieldValue.arrayUnion(idList)});
+                  });
+                  textEditingController.clear();
+                },
+                child: const Text(kCreateWorkoutActionButton),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 20.0)
+          ],
+        ),
       ),
     );
   }

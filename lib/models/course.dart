@@ -4,11 +4,13 @@ class Course {
   DocumentReference courseReference;
   String name;
   int numWorkouts;
-  List<DocumentReference>? workouts = [];
+  int numViewers;
+  List<String>? workouts = [];
 
   Course(
       {required this.name,
       required this.courseReference,
       this.workouts,
+      this.numViewers = 0,
       this.numWorkouts = 0});
 }

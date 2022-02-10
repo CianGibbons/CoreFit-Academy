@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
-class CustomInputTextField extends StatefulWidget {
-  const CustomInputTextField({
+class CustomTextFormField extends StatefulWidget {
+  const CustomTextFormField({
     Key? key,
     this.iconData,
     required this.controller,
     required this.inputLabel,
     required this.obscureText,
-    required this.onChanged,
     required this.textInputType,
     required this.activeColor,
+    required this.validator,
+    required this.onSaved,
+    this.onFieldSubmitted,
+    this.errorText,
     this.paddingAll = 20.0,
     this.autoFocus = false,
   }) : super(key: key);
@@ -18,28 +21,34 @@ class CustomInputTextField extends StatefulWidget {
   final IconData? iconData;
   final String inputLabel;
   final bool obscureText;
-  final Function(String) onChanged;
   final TextInputType textInputType;
   final Color activeColor;
   final double paddingAll;
   final bool autoFocus;
+  final String? Function(String?)? validator;
+  final Future<void> Function(String?)? onFieldSubmitted;
+  final void Function(String?)? onSaved;
+  final String? errorText;
 
   @override
-  State<CustomInputTextField> createState() => _CustomInputTextFieldState();
+  _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
 }
 
-class _CustomInputTextFieldState extends State<CustomInputTextField> {
+class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(widget.paddingAll),
-      child: TextField(
+      child: TextFormField(
+        validator: widget.validator,
         controller: widget.controller,
         autofocus: widget.autoFocus,
         keyboardType: widget.textInputType,
         obscureText: widget.obscureText,
-        onChanged: widget.onChanged,
+        onFieldSubmitted: widget.onFieldSubmitted,
+        onSaved: widget.onSaved,
         decoration: InputDecoration(
+          errorText: widget.errorText,
           contentPadding: const EdgeInsets.all(10),
           icon: Icon(
             widget.iconData,

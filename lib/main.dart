@@ -1,9 +1,11 @@
 import 'package:corefit_academy/firebase_options.dart';
 import 'package:corefit_academy/auth_controller.dart';
+import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/themes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +16,9 @@ Future<void> main() async {
     await Firebase.initializeApp();
   }
 
-  runApp(const CoreFitAcademy());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => ErrorMessageStringProvider())
+  ], child: const CoreFitAcademy()));
 }
 
 class CoreFitAcademy extends StatelessWidget {

@@ -3,16 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:corefit_academy/models/exercise.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ExerciseDisplay extends StatelessWidget {
-  ExerciseDisplay({Key? key, this.viewer = false, required this.exerciseObject})
+class ExerciseDisplay extends StatefulWidget {
+  const ExerciseDisplay(
+      {Key? key, this.viewer = false, required this.exerciseObject})
       : super(key: key);
-  bool viewer;
+  final bool viewer;
   final Exercise exerciseObject;
 
   @override
+  State<ExerciseDisplay> createState() => _ExerciseDisplayState();
+}
+
+class _ExerciseDisplayState extends State<ExerciseDisplay> {
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        print(widget.exerciseObject);
+      },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
@@ -30,7 +38,7 @@ class ExerciseDisplay extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      exerciseObject.name,
+                      widget.exerciseObject.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 24.0,
@@ -40,7 +48,7 @@ class ExerciseDisplay extends StatelessWidget {
                 ),
               ),
               Container(
-                child: viewer
+                child: widget.viewer
                     ? const Icon(Icons.remove_red_eye_outlined)
                     : const Icon(FontAwesomeIcons.pencilAlt),
               )

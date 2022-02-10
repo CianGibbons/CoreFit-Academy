@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomElevatedButton extends StatelessWidget {
+class CustomElevatedButton extends StatefulWidget {
   const CustomElevatedButton(
       {Key? key,
       required this.onPressed,
@@ -13,12 +13,17 @@ class CustomElevatedButton extends StatelessWidget {
   final Color backgroundColor;
 
   @override
+  State<CustomElevatedButton> createState() => _CustomElevatedButtonState();
+}
+
+class _CustomElevatedButtonState extends State<CustomElevatedButton> {
+  @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: onPressed,
-      child: child,
+      onPressed: widget.onPressed,
+      child: widget.child,
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(backgroundColor),
+        backgroundColor: MaterialStateProperty.all(widget.backgroundColor),
       ),
     );
   }

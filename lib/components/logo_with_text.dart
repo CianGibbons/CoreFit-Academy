@@ -40,7 +40,7 @@ class LogoWithText extends StatelessWidget {
           ),
           const SizedBox(height: 10.0),
           Text(
-            'CoreFit Academy',
+            kAppName,
             style: coreFitTextStyle.copyWith(
                 fontSize: logoTextFontSize,
                 color: Theme.of(context).colorScheme.secondary),

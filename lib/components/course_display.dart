@@ -2,13 +2,20 @@ import 'package:corefit_academy/models/course.dart';
 import 'package:corefit_academy/screens/course_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 
-class CourseDisplay extends StatelessWidget {
-  CourseDisplay({Key? key, required this.courseObject, this.viewer = false})
+class CourseDisplay extends StatefulWidget {
+  const CourseDisplay(
+      {Key? key, required this.courseObject, this.viewer = false})
       : super(key: key);
-  bool viewer;
+  final bool viewer;
   final Course courseObject;
 
+  @override
+  State<CourseDisplay> createState() => _CourseDisplayState();
+}
+
+class _CourseDisplayState extends State<CourseDisplay> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -17,8 +24,8 @@ class CourseDisplay extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => CoursePage(
-              viewer: viewer,
-              courseObject: courseObject,
+              viewer: widget.viewer,
+              courseObject: widget.courseObject,
             ),
           ),
         );
@@ -40,19 +47,21 @@ class CourseDisplay extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      courseObject.name,
+                      widget.courseObject.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 24.0,
                       ),
                     ),
-                    Text("Number of Workouts in Course: " +
-                        courseObject.numWorkouts.toString()),
+                    Text(kShowNumberWorkouts +
+                        widget.courseObject.numWorkouts.toString()),
+                    Text(kShowNumberViewers +
+                        widget.courseObject.numViewers.toString()),
                   ],
                 ),
               ),
               Container(
-                child: viewer
+                child: widget.viewer
                     ? const Icon(Icons.remove_red_eye_outlined)
                     : const Icon(FontAwesomeIcons.pencilAlt),
               )

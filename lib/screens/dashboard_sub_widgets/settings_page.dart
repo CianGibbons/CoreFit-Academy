@@ -4,11 +4,19 @@ import 'package:corefit_academy/utilities/themes.dart';
 import 'package:corefit_academy/main.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:flutterfire_ui/auth.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 
-class SettingsPage extends StatelessWidget {
-  SettingsPage({Key? key, required this.user}) : super(key: key);
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({Key? key, required this.user}) : super(key: key);
   final User user;
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
   bool showSpinner = false;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,19 +26,19 @@ class SettingsPage extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Text('Themes'),
+                const Text(kThemeSettingsName),
                 CustomElevatedButton(
                   onPressed: () {
                     ThemeController.setTheme(context, Themes().darkTheme);
                   },
-                  child: const Text('Dark'),
+                  child: const Text(kThemeDarkName),
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                 ),
                 CustomElevatedButton(
                   onPressed: () {
                     ThemeController.setTheme(context, Themes().lightTheme);
                   },
-                  child: const Text('Light'),
+                  child: const Text(kThemeLightName),
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                 ),
               ],

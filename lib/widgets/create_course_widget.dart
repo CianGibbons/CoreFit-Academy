@@ -15,10 +15,9 @@ class CreateCoursePage extends StatefulWidget {
 
 class _CreateCoursePageState extends State<CreateCoursePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // final FirebaseAuth _firebase = FirebaseAuth.instance;
-  // _firebase.currentUser
-  String courseName = "";
 
+  String courseName = "";
+  TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,51 +28,55 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
           topRight: Radius.circular(20.0),
         ),
       ),
-      child: Column(
-        children: [
-          Center(
-              child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              'Create New Course',
-              style: kTitleStyle.copyWith(
-                  color: Theme.of(context).colorScheme.primary),
-            ),
-          )),
-          CustomInputTextField(
-            autoFocus: true,
-            inputLabel: "Course Name",
-            obscureText: false,
-            onChanged: (value) {
-              setState(() {
-                courseName = value;
-              });
-            },
-            textInputType: TextInputType.text,
-            activeColor: Theme.of(context).colorScheme.primary,
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: CustomElevatedButton(
-              onPressed: () {
-                // widget.user.uid
-                // courseName
-                _firestore.collection('courses').add({
-                  'createdAt': DateTime.now(),
-                  'userId': widget._firebase.currentUser!.uid,
-                  'name': courseName,
-                  'workouts': [],
-                  'viewers': [],
+      child: Form(
+        child: Column(
+          children: [
+            Center(
+                child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                kCreateCourseAction,
+                style: kTitleStyle.copyWith(
+                    color: Theme.of(context).colorScheme.primary),
+              ),
+            )),
+            CustomInputTextField(
+              controller: textEditingController,
+              autoFocus: true,
+              inputLabel: kCourseNameFieldLabel,
+              obscureText: false,
+              onChanged: (value) {
+                setState(() {
+                  courseName = value;
                 });
               },
-              child: const Text('Create Course'),
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              textInputType: TextInputType.text,
+              activeColor: Theme.of(context).colorScheme.primary,
             ),
-          ),
-          const SizedBox(height: 20.0)
-        ],
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: CustomElevatedButton(
+                onPressed: () {
+                  // widget.user.uid
+                  // courseName
+                  _firestore.collection(kCoursesCollection).add({
+                    kCreatedAtField: DateTime.now(),
+                    kUserIdField: widget._firebase.currentUser!.uid,
+                    kNameField: courseName,
+                    kWorkoutsField: [],
+                    kViewersField: [],
+                  });
+                  textEditingController.clear();
+                },
+                child: const Text(kCreateCourseActionButton),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 20.0)
+          ],
+        ),
       ),
     );
   }

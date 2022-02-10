@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:corefit_academy/widgets/create_course_widget.dart';
-import 'package:corefit_academy/screens/dashboard_sub_widgets/landing_page.dart';
+import 'package:corefit_academy/screens/dashboard_sub_widgets/dashboard_page.dart';
+import 'package:corefit_academy/screens/dashboard_sub_widgets/course_list_page.dart';
 import 'package:corefit_academy/screens/dashboard_sub_widgets/settings_page.dart';
 import 'package:corefit_academy/screens/dashboard_sub_widgets/logbook_page.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 
 class NavigationController extends StatefulWidget {
   const NavigationController({Key? key, required this.user}) : super(key: key);
@@ -22,7 +25,10 @@ class _NavigationControllerState extends State<NavigationController> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> _widgetOptions = <Widget>[
-      LandingPage(
+      DashboardPage(
+        user: widget.user,
+      ),
+      CourseListPage(
         user: widget.user,
       ),
       LogBook(
@@ -34,25 +40,40 @@ class _NavigationControllerState extends State<NavigationController> {
     ];
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.shifting,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(
+              Icons.home,
+            ),
+            label: kHomePageName,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book_outlined),
-            label: 'Logbook',
+            icon: Icon(
+              FontAwesomeIcons.running,
+            ),
+            label: kCoursePageName,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: Icon(
+              Icons.menu_book_outlined,
+            ),
+            label: kLogbookPageName,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.settings,
+            ),
+            label: kSettingsPageName,
           )
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
       appBar: AppBar(
-        title: const Text('Home'),
+        title: const Text(kAppName),
       ),
       floatingActionButton: _getFAB(),
       body: _widgetOptions.elementAt(_selectedIndex),
@@ -60,7 +81,7 @@ class _NavigationControllerState extends State<NavigationController> {
   }
 
   Widget _getFAB() {
-    if (_selectedIndex == 0) {
+    if (_selectedIndex == 1) {
       return FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {

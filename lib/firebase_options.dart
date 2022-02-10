@@ -43,14 +43,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'corefit-academy.appspot.com',
     measurementId: 'G-QTYWSNZEWT',
   );
-  // options: const FirebaseOptions(
-  //     apiKey: "AIzaSyB9m7bqdgKflHBHjK54XzXX34wcUmnFM3U",
-  //     authDomain: "corefit-academy.firebaseapp.com",
-  //     projectId: "corefit-academy",
-  //     storageBucket: "corefit-academy.appspot.com",
-  //     messagingSenderId: "265698258465",
-  //     appId: "1:265698258465:web:db296d74c5a91a828c3d60",
-  //     measurementId: "G-MP1G6K0F2C"),
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDjpYALDGitOcge2CPNsgtvfjfVbWT6d84',

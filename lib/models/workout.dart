@@ -4,7 +4,7 @@ class Workout {
   DocumentReference workoutReference;
   String name;
   int numExercises;
-  List<DocumentReference>? exercises;
+  List<String>? exercises;
   List<String>? targetedMuscles;
 
   Workout({

@@ -35,6 +35,7 @@ class Exercise {
       var unit = km.miles;
       return unit;
     }
+    return null;
   }
 
   Unit? getWeightInPounds() {
@@ -43,6 +44,7 @@ class Exercise {
       var unit = kg.pounds;
       return unit;
     }
+    return null;
   }
 
   void addTargetedMuscle(String newTargetedMuscle) {
@@ -51,5 +53,16 @@ class Exercise {
 
   void removeTargetedMuscle(String targetedMuscleToBeRemoved) {
     targetedMuscles!.remove(targetedMuscleToBeRemoved);
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return super.toString() +
+        " --> { name: $name, exerciseReference: $exerciseReference, sets: $sets," +
+        " reps: $reps, timeHours: $timeHours, timeMinutes: $timeMinutes, " +
+        "timeSeconds: $timeSeconds, distanceKM: $distanceKM, weightKG: $weightKG," +
+        " rpe: $rpe, percentageOfExertion: $percentageOfExertion, " +
+        "targetedMuscles: $targetedMuscles }";
   }
 }
