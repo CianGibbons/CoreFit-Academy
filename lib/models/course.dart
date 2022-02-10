@@ -5,7 +5,7 @@ class Course {
   String name;
   int numWorkouts;
   int numViewers;
-  List<DocumentReference>? workouts = [];
+  List<String>? workouts = [];
 
   Course(
       {required this.name,

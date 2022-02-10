@@ -28,7 +28,10 @@ class _CoursePageState extends State<CoursePage> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  List<WorkoutDisplay> workoutsLoaded = [];
+  // List<WorkoutDisplay> workoutsLoaded = [];
+  List<WorkoutDisplay> ownedWorkoutsMaster = [];
+  List<WorkoutDisplay> viewerWorkoutsMaster = [];
+
   final _addViewerFormKey = GlobalKey<FormState>();
 
   @override
@@ -97,6 +100,20 @@ class _CoursePageState extends State<CoursePage> {
                             List exerciseDynamic = List.empty();
                             exerciseDynamic = workout.get(kExercisesField);
 
+                            List<String>? exerciseStrings = [];
+                            var exercisesIterator = exerciseDynamic.iterator;
+                            while (exercisesIterator.moveNext()) {
+                              var current = exercisesIterator.current;
+                              if (current.runtimeType == String) {
+                                String value = current;
+                                value = current.replaceAll("exercises/", "");
+                                exerciseStrings.add(value);
+                              } else {
+                                DocumentReference currentRef = current;
+                                exerciseStrings.add(currentRef.id);
+                              }
+                            }
+
                             var muscles = workout.get(kTargetedMusclesField);
                             List<String> targetedMuscles =
                                 List<String>.from(muscles);
@@ -108,7 +125,8 @@ class _CoursePageState extends State<CoursePage> {
                             var workoutObject = Workout(
                               workoutReference: referenceToWorkout,
                               name: workoutName,
-                              numExercises: exerciseDynamic.length,
+                              exercises: exerciseStrings,
+                              numExercises: exerciseStrings.length,
                               targetedMuscles: targetedMuscles,
                             );
 
@@ -122,11 +140,7 @@ class _CoursePageState extends State<CoursePage> {
                             ));
                           }
                         }
-                        for (var workoutWidget in ownedWorkoutWidgets) {
-                          if (workoutsLoaded.contains(workoutWidget)) {
-                            ownedWorkoutWidgets.remove(workoutWidget);
-                          }
-                        }
+                        ownedWorkoutsMaster = ownedWorkoutWidgets;
                         return Column(
                           children: ownedWorkoutWidgets,
                         );
@@ -152,10 +166,19 @@ class _CoursePageState extends State<CoursePage> {
 
                             List exerciseDynamic = List.empty();
                             exerciseDynamic = workout.get(kExercisesField);
-                            List<DocumentReference> exerciseList = [];
-                            for (DocumentReference exercise
-                                in exerciseDynamic) {
-                              exerciseList.add(exercise);
+
+                            List<String>? exerciseStrings = [];
+                            var exercisesIterator = exerciseDynamic.iterator;
+                            while (exercisesIterator.moveNext()) {
+                              var current = exercisesIterator.current;
+                              if (current.runtimeType == String) {
+                                String value = current;
+                                value = current.replaceAll("exercises/", "");
+                                exerciseStrings.add(value);
+                              } else {
+                                DocumentReference currentRef = current;
+                                exerciseStrings.add(currentRef.id);
+                              }
                             }
 
                             var muscles = workout.get(kTargetedMusclesField);
@@ -169,8 +192,8 @@ class _CoursePageState extends State<CoursePage> {
                             var workoutObject = Workout(
                               workoutReference: referenceToWorkout,
                               name: workoutName,
-                              exercises: exerciseList,
-                              numExercises: exerciseList.length,
+                              exercises: exerciseStrings,
+                              numExercises: exerciseStrings.length,
                               targetedMuscles: targetedMuscles,
                             );
 
@@ -184,11 +207,7 @@ class _CoursePageState extends State<CoursePage> {
                             ));
                           }
                         }
-                        for (var workoutWidget in viewerWorkoutWidgets) {
-                          if (workoutsLoaded.contains(workoutWidget)) {
-                            viewerWorkoutWidgets.remove(workoutWidget);
-                          }
-                        }
+                        viewerWorkoutsMaster = viewerWorkoutWidgets;
                         return Column(
                           children: viewerWorkoutWidgets,
                         );
@@ -260,36 +279,63 @@ class _CoursePageState extends State<CoursePage> {
                   onPressed: () async {
                     if (_addViewerFormKey.currentState!.validate() &&
                         textEditingController.text.isNotEmpty) {
-                      Stream<QuerySnapshot<Map<String, dynamic>>> snapshots =
+                      DocumentReference<Map<String, dynamic>> reference =
                           _firestore
                               .collection(kUsersCollection)
-                              .where(kEmailField,
-                                  isEqualTo: textEditingController.text)
-                              .snapshots();
-                      //gets the _JsonQuerySnapshot containing the "first" and only user with this email
-                      var userStream = await snapshots.first;
-                      //Gets a List<_JsonQueryDocumentSnapshot> so we can access the documents
-                      var userDynDoc = userStream.docs;
-                      if (userDynDoc.isNotEmpty) {
-                        // if there is a user found then we have access to the
-                        // email and userId of the user
-                        for (var item in userDynDoc) {
-                          // var email = item.get(kEmailField);
-                          var userId = item.get(kUserIdField);
-                          // The Array in firestore will not store duplicates so
-                          // this will not be an issue
-                          _firestore
-                              .collection(kCoursesCollection)
-                              .doc(widget.courseObject.courseReference.id)
-                              .update({
-                            kViewersField: FieldValue.arrayUnion([userId])
-                          });
+                              .doc(textEditingController.text.toLowerCase());
 
-                          //TODO: Add Viewer to Workouts within and Exercises within that
-                          print(widget.courseObject);
-                          //TODO: Ensure that the List of Document References is Saved
-                          print(widget.courseObject.workouts); // NULL
-                        }
+                      var userSnaps = await reference.snapshots();
+                      var user = await userSnaps.first;
+
+                      if (user.exists) {
+                        // if there is a user found then we continue
+
+                        var userId = user.get(kUserIdField);
+                        // The Array in firestore will not store duplicates so
+                        // this will not be an issue
+                        //Add the user to the course
+                        _firestore
+                            .collection(kCoursesCollection)
+                            .doc(widget.courseObject.courseReference.id)
+                            .update({
+                          kViewersField: FieldValue.arrayUnion([userId])
+                        }).then((value) async {
+                          //Add the user to the workouts within the course
+                          for (var workout in widget.courseObject.workouts!) {
+                            _firestore
+                                .collection(kWorkoutsCollection)
+                                .doc(workout)
+                                .update({
+                              kViewersField: FieldValue.arrayUnion([userId])
+                            }).then((value) {
+                              //Add the User to the Exercises within each of the workouts
+                              List<String> allExercises = [];
+                              for (var workoutDisplay in ownedWorkoutsMaster) {
+                                var iterator = workoutDisplay
+                                    .workoutObject.exercises!.iterator;
+                                while (iterator.moveNext()) {
+                                  allExercises.add(iterator.current);
+                                }
+                              }
+                              for (var workoutDisplay in viewerWorkoutsMaster) {
+                                var iterator = workoutDisplay
+                                    .workoutObject.exercises!.iterator;
+                                while (iterator.moveNext()) {
+                                  allExercises.add(iterator.current);
+                                }
+                              }
+                              for (String exerciseID in allExercises) {
+                                _firestore
+                                    .collection(kExercisesCollection)
+                                    .doc(exerciseID)
+                                    .update({
+                                  kViewersField: FieldValue.arrayUnion([userId])
+                                });
+                              }
+                            });
+                          }
+                        });
+
                         Navigator.pop(context);
                       } else {
                         // Set the Error Message to User not found

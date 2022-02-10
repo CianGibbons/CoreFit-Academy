@@ -34,6 +34,22 @@ class CourseListPage extends StatelessWidget {
                         var courseName1 = course1.get(kNameField);
 
                         List workoutsDynamic1 = course1.get(kWorkoutsField);
+                        List<String>? workoutStrings = [];
+
+                        var workoutsIterator = workoutsDynamic1.iterator;
+                        while (workoutsIterator.moveNext()) {
+                          var current = workoutsIterator.current;
+                          if (current.runtimeType == String) {
+                            String value = current;
+                            current =
+                                current.replaceAll(kWorkoutsField + "/", "");
+                            workoutStrings.add(current);
+                          } else {
+                            DocumentReference currentRef = current;
+                            workoutStrings.add(currentRef.id);
+                          }
+                        }
+
                         List viewersDynamic1 = course1.get(kViewersField);
 
                         var courseRef1 = course1;
@@ -44,6 +60,7 @@ class CourseListPage extends StatelessWidget {
                           name: courseName1,
                           numViewers: viewersDynamic1.length,
                           numWorkouts: workoutsDynamic1.length,
+                          workouts: workoutStrings,
                           courseReference: referenceToCourse1,
                         );
                         courseObjects1.add(courseObject1);
@@ -78,6 +95,22 @@ class CourseListPage extends StatelessWidget {
                         var courseName = course.get(kNameField);
 
                         List workoutsDynamic = course.get(kWorkoutsField);
+                        List<String>? workoutStrings = [];
+
+                        var workoutsIterator = workoutsDynamic.iterator;
+                        while (workoutsIterator.moveNext()) {
+                          var current = workoutsIterator.current;
+                          if (current.runtimeType == String) {
+                            String value = current;
+                            current =
+                                current.replaceAll(kWorkoutsField + "/", "");
+                            workoutStrings.add(current);
+                          } else {
+                            DocumentReference currentRef = current;
+                            workoutStrings.add(currentRef.id);
+                          }
+                        }
+
                         List viewersDynamic = course.get(kViewersField);
 
                         var courseRef = course;
@@ -88,6 +121,7 @@ class CourseListPage extends StatelessWidget {
                           name: courseName,
                           numViewers: viewersDynamic.length,
                           numWorkouts: workoutsDynamic.length,
+                          workouts: workoutStrings,
                           courseReference: referenceToCourse,
                         );
                         courseObjects.add(courseObject);

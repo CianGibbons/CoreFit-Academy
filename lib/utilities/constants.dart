@@ -10,6 +10,8 @@ const kTitleStyle = TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold);
 
 const String kAppName = 'CoreFit Academy';
 
+const kGoogleProvider = 'google.com';
+
 const String kCoursePageName = 'Courses';
 const String kHomePageName = 'Home';
 const String kLogbookPageName = 'Home';

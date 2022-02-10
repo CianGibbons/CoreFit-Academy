@@ -17,7 +17,9 @@ class CreateExercisePage extends StatefulWidget {
 class _CreateExercisePageState extends State<CreateExercisePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String exerciseName = "";
-  TextEditingController textEditingController = TextEditingController();
+  int sets = 0;
+  TextEditingController nameFieldTextEditingController =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -41,7 +43,7 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
               ),
             )),
             CustomInputTextField(
-              controller: textEditingController,
+              controller: nameFieldTextEditingController,
               autoFocus: true,
               inputLabel: kExerciseNameFieldLabel,
               obscureText: false,
@@ -84,7 +86,7 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
                         .update(
                             {kExercisesField: FieldValue.arrayUnion(idList)});
                   });
-                  textEditingController.clear();
+                  nameFieldTextEditingController.clear();
                 },
                 child: const Text(kCreateExerciseActionButton),
                 backgroundColor: Theme.of(context).colorScheme.primary,

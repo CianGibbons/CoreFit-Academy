@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/screens/navigator.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
@@ -52,12 +53,17 @@ class AuthController extends StatelessWidget {
           // Saving user email and uId to the data base to allow the viewers
           // functionality to work
           User _current = snapshot.data!;
-          if (pageAction == AuthAction.signUp) {
-            _firestore.collection('users').add({
-              'userId': _current.uid,
-              'email': _current.email,
+          if (pageAction == AuthAction.signUp ||
+              _current.providerData.first.providerId == kGoogleProvider) {
+            _firestore
+                .collection('users')
+                .doc(_current.email!.toLowerCase())
+                .set({
+              kUserIdField: _current.uid,
+              kEmailField: _current.email!.toLowerCase(),
             });
           }
+
           return NavigationController(user: _current);
         });
   }
