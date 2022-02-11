@@ -41,9 +41,8 @@ class CourseListPage extends StatelessWidget {
                           var current = workoutsIterator.current;
                           if (current.runtimeType == String) {
                             String value = current;
-                            current =
-                                current.replaceAll(kWorkoutsField + "/", "");
-                            workoutStrings.add(current);
+                            value = value.replaceAll(kWorkoutsField + "/", "");
+                            workoutStrings.add(value);
                           } else {
                             DocumentReference currentRef = current;
                             workoutStrings.add(currentRef.id);
@@ -102,9 +101,8 @@ class CourseListPage extends StatelessWidget {
                           var current = workoutsIterator.current;
                           if (current.runtimeType == String) {
                             String value = current;
-                            current =
-                                current.replaceAll(kWorkoutsField + "/", "");
-                            workoutStrings.add(current);
+                            value = value.replaceAll(kWorkoutsField + "/", "");
+                            workoutStrings.add(value);
                           } else {
                             DocumentReference currentRef = current;
                             workoutStrings.add(currentRef.id);

@@ -250,7 +250,6 @@ class _CoursePageState extends State<CoursePage> {
   }
 
   TextEditingController textEditingController = TextEditingController();
-  String _valueText = "";
   Future<void> _displayAddViewerToCourseDialog(BuildContext context) async {
     // Ensuring that should an Alert get dismissed by tapping outside it previously,
     // the Alert will not show the old error message.
@@ -269,7 +268,6 @@ class _CoursePageState extends State<CoursePage> {
                 iconData: FontAwesomeIcons.userPlus,
                 inputLabel: kEmailOfFriendString,
                 obscureText: false,
-                onSaved: (input) => _valueText = input!,
                 textInputType: TextInputType.emailAddress,
                 activeColor: Theme.of(context).colorScheme.primary,
                 errorText: context.watch<ErrorMessageStringProvider>().value,
@@ -284,7 +282,7 @@ class _CoursePageState extends State<CoursePage> {
                               .collection(kUsersCollection)
                               .doc(textEditingController.text.toLowerCase());
 
-                      var userSnaps = await reference.snapshots();
+                      var userSnaps = reference.snapshots();
                       var user = await userSnaps.first;
 
                       if (user.exists) {

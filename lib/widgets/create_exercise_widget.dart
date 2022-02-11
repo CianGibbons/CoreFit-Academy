@@ -34,14 +34,15 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
         child: Column(
           children: [
             Center(
-                child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                kCreateExerciseAction,
-                style: kTitleStyle.copyWith(
-                    color: Theme.of(context).colorScheme.primary),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  kCreateExerciseAction,
+                  style: kTitleStyle.copyWith(
+                      color: Theme.of(context).colorScheme.primary),
+                ),
               ),
-            )),
+            ),
             CustomInputTextField(
               controller: nameFieldTextEditingController,
               autoFocus: true,

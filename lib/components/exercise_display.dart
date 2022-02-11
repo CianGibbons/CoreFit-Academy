@@ -19,6 +19,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        //TODO: Expand on Exercise Display
         print(widget.exerciseObject);
       },
       child: Padding(

@@ -10,7 +10,7 @@ class CustomTextFormField extends StatefulWidget {
     required this.textInputType,
     required this.activeColor,
     required this.validator,
-    required this.onSaved,
+    this.onSaved,
     this.onFieldSubmitted,
     this.errorText,
     this.paddingAll = 20.0,
