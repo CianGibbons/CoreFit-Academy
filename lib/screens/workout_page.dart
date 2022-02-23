@@ -139,7 +139,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           }
                           for (var exerciseObject in exerciseObjects) {
                             ownedExerciseWidgets.add(ExerciseDisplay(
-                              viewer: true,
+                              viewer: false,
                               exerciseObject: exerciseObject,
                             ));
                           }

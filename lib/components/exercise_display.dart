@@ -45,6 +45,12 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
                         fontSize: 24.0,
                       ),
                     ),
+                    Text(
+                      "Reps: " + widget.exerciseObject.reps.toString(),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
                   ],
                 ),
               ),

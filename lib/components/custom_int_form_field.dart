@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class CustomTextFormField extends StatefulWidget {
-  const CustomTextFormField({
+class CustomIntFormField extends StatefulWidget {
+  const CustomIntFormField({
     Key? key,
     this.iconData,
     required this.controller,
     required this.inputLabel,
-    required this.obscureText,
-    required this.textInputType,
     required this.activeColor,
     this.validator,
+    this.obscureText = false,
     this.onSaved,
     this.onFieldSubmitted,
     this.errorText,
@@ -21,7 +21,6 @@ class CustomTextFormField extends StatefulWidget {
   final IconData? iconData;
   final String inputLabel;
   final bool obscureText;
-  final TextInputType textInputType;
   final Color activeColor;
   final double paddingAll;
   final bool autoFocus;
@@ -29,21 +28,21 @@ class CustomTextFormField extends StatefulWidget {
   final Future<void> Function(String?)? onFieldSubmitted;
   final void Function(String?)? onSaved;
   final String? errorText;
-
   @override
-  _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
+  _CustomIntFormFieldState createState() => _CustomIntFormFieldState();
 }
 
-class _CustomTextFormFieldState extends State<CustomTextFormField> {
+class _CustomIntFormFieldState extends State<CustomIntFormField> {
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(widget.paddingAll),
       child: TextFormField(
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         validator: widget.validator,
         controller: widget.controller,
         autofocus: widget.autoFocus,
-        keyboardType: widget.textInputType,
         obscureText: widget.obscureText,
         onFieldSubmitted: widget.onFieldSubmitted,
         onSaved: widget.onSaved,

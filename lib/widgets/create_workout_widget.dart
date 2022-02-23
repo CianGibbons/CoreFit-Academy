@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
-import 'package:corefit_academy/components/custom_input_text_field.dart';
 import 'package:corefit_academy/models/course.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:corefit_academy/components/custom_text_form_field.dart';
 
 class CreateWorkoutPage extends StatefulWidget {
   CreateWorkoutPage({
@@ -20,7 +20,6 @@ class CreateWorkoutPage extends StatefulWidget {
 
 class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  String workoutName = "";
   TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -44,16 +43,11 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                     color: Theme.of(context).colorScheme.primary),
               ),
             )),
-            CustomInputTextField(
+            CustomTextFormField(
               controller: textEditingController,
               autoFocus: true,
               inputLabel: kWorkoutNameFieldLabel,
               obscureText: false,
-              onChanged: (value) {
-                setState(() {
-                  workoutName = value;
-                });
-              },
               textInputType: TextInputType.text,
               activeColor: Theme.of(context).colorScheme.primary,
             ),
@@ -68,7 +62,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                   _firestore.collection(kWorkoutsCollection).add({
                     kCreatedAtField: DateTime.now(),
                     kUserIdField: widget._firebase.currentUser!.uid,
-                    kNameField: workoutName,
+                    kNameField: textEditingController.text,
                     kExercisesField: [],
                     kViewersField: [],
                     kTargetedMusclesField: [],

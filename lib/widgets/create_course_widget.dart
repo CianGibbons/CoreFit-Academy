@@ -1,9 +1,9 @@
-import 'package:corefit_academy/components/custom_input_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:corefit_academy/components/custom_text_form_field.dart';
 
 class CreateCoursePage extends StatefulWidget {
   CreateCoursePage({Key? key}) : super(key: key);
@@ -16,7 +16,6 @@ class CreateCoursePage extends StatefulWidget {
 class _CreateCoursePageState extends State<CreateCoursePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  String courseName = "";
   TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -40,16 +39,11 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                     color: Theme.of(context).colorScheme.primary),
               ),
             )),
-            CustomInputTextField(
+            CustomTextFormField(
               controller: textEditingController,
               autoFocus: true,
               inputLabel: kCourseNameFieldLabel,
               obscureText: false,
-              onChanged: (value) {
-                setState(() {
-                  courseName = value;
-                });
-              },
               textInputType: TextInputType.text,
               activeColor: Theme.of(context).colorScheme.primary,
             ),
@@ -64,7 +58,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                   _firestore.collection(kCoursesCollection).add({
                     kCreatedAtField: DateTime.now(),
                     kUserIdField: widget._firebase.currentUser!.uid,
-                    kNameField: courseName,
+                    kNameField: textEditingController.text,
                     kWorkoutsField: [],
                     kViewersField: [],
                   });
