@@ -14,8 +14,8 @@ const kGoogleProvider = 'google.com';
 
 const String kCoursePageName = 'Courses';
 const String kHomePageName = 'Home';
-const String kLogbookPageName = 'Home';
-const String kSettingsPageName = 'Home';
+const String kLogbookPageName = 'Logbook';
+const String kSettingsPageName = 'Settings';
 
 const String kThemeSettingsName = 'Themes';
 const String kThemeLightName = 'Light';

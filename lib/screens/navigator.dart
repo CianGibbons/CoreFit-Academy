@@ -39,6 +39,11 @@ class _NavigationControllerState extends State<NavigationController> {
       ),
     ];
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(kAppName),
+      ),
+      body: _widgetOptions.elementAt(_selectedIndex),
+      floatingActionButton: _getFAB(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
         selectedItemColor: Theme.of(context).colorScheme.primary,
@@ -72,11 +77,6 @@ class _NavigationControllerState extends State<NavigationController> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
-      appBar: AppBar(
-        title: const Text(kAppName),
-      ),
-      floatingActionButton: _getFAB(),
-      body: _widgetOptions.elementAt(_selectedIndex),
     );
   }
 

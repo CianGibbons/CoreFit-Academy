@@ -277,13 +277,17 @@ class _WorkoutPageState extends State<WorkoutPage> {
           showModalBottomSheet(
               isScrollControlled: true,
               context: context,
-              builder: (context) =>
-                  //Using a Wrap in order to dynamically fit the modal sheet to the content
-                  Wrap(children: [
+              builder: (context) {
+                // Using a Wrap in order to dynamically fit the modal sheet
+                // to the content
+                return Wrap(
+                  children: [
                     CreateExercisePage(
                       workoutObject: widget.workoutObject,
                     )
-                  ]));
+                  ],
+                );
+              });
         },
       );
     } else {
