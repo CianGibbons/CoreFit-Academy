@@ -38,10 +38,14 @@ const String kWorkoutNameFieldLabel = 'Workout Name';
 const String kExerciseNameFieldLabel = 'Exercise Name';
 
 const String kRepsNameFieldLabel = "Reps";
+const String kREPNameFieldLabel = "RPE";
+const String kSetsNameFieldLabel = "Sets";
+const String kDistanceKMNameFieldLabel = "Distance (KM)";
 
-const String kErrorEnterValidEmailString = 'Enter a valid email address';
+const String kErrorEnterValidEmailString = 'Enter a valid email address!';
 const String kErrorEnterValidIntString = 'Enter a valid number!';
 const String kErrorUserNotFound = 'User not found!';
+const String kErrorEnterValidNameString = 'Enter a valid name!';
 const String kEmailOfFriendString = 'Email of Friend';
 
 const String kUsersCollection = 'users';

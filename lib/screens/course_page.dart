@@ -241,7 +241,9 @@ class _CoursePageState extends State<CoursePage> {
                 )
               ],
             ),
-          );
+          ).whenComplete(() {
+            context.read<ErrorMessageStringProvider>().setValue(null);
+          });
         },
       );
     } else {

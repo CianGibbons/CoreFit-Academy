@@ -12,7 +12,10 @@ class CustomTextFormField extends StatefulWidget {
     this.validator,
     this.onSaved,
     this.onFieldSubmitted,
+    this.onEditingComplete,
     this.errorText,
+    this.focusNode,
+    this.textInputAction = TextInputAction.done,
     this.paddingAll = 20.0,
     this.autoFocus = false,
   }) : super(key: key);
@@ -29,6 +32,9 @@ class CustomTextFormField extends StatefulWidget {
   final Future<void> Function(String?)? onFieldSubmitted;
   final void Function(String?)? onSaved;
   final String? errorText;
+  final TextInputAction? textInputAction;
+  final FocusNode? focusNode;
+  final VoidCallback? onEditingComplete;
 
   @override
   _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
@@ -40,6 +46,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return Container(
       margin: EdgeInsets.all(widget.paddingAll),
       child: TextFormField(
+        onEditingComplete: widget.onEditingComplete,
+        focusNode: widget.focusNode,
+        textInputAction: widget.textInputAction,
         validator: widget.validator,
         controller: widget.controller,
         autofocus: widget.autoFocus,

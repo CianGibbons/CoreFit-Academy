@@ -24,6 +24,7 @@ dependencies:
   google_sign_in: ^5.2.3
   font_awesome_flutter: ^9.2.0
   numberpicker: ^2.1.1
+  duration_picker: ^1.1.0+1
 
 dev_dependencies:
   flutter_test:
@@ -33,3 +34,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - images/

@@ -1,23 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 
-class CustomNumberPicker extends StatefulWidget {
-  const CustomNumberPicker({
+class CustomNumberPickerHorizontal extends StatefulWidget {
+  const CustomNumberPickerHorizontal({
     Key? key,
     required this.fieldName,
     required this.sendCurrentValue,
     required this.initialValue,
+    this.maxValue = 100,
+    this.minValue = 0,
+    this.step = 1,
+    this.itemHeight = 40,
+    this.itemWidth = 40,
   }) : super(key: key);
 
   final String fieldName;
   final Function(int) sendCurrentValue;
   final int initialValue;
+  final int maxValue;
+  final int minValue;
+  final double itemHeight;
+  final double itemWidth;
+  final int step;
 
   @override
-  _CustomNumberPickerState createState() => _CustomNumberPickerState();
+  _CustomNumberPickerHorizontalState createState() =>
+      _CustomNumberPickerHorizontalState();
 }
 
-class _CustomNumberPickerState extends State<CustomNumberPicker> {
+class _CustomNumberPickerHorizontalState
+    extends State<CustomNumberPickerHorizontal> {
   late int value;
 
   @override
@@ -55,18 +67,18 @@ class _CustomNumberPickerState extends State<CustomNumberPicker> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () => setState(() {
-                  int newValue = value - 1;
-                  value = newValue.clamp(0, 100);
+                  int newValue = value - widget.step;
+                  value = newValue.clamp(widget.minValue, widget.maxValue);
                   widget.sendCurrentValue(value);
                 }),
               ),
               NumberPicker(
-                minValue: 0,
-                maxValue: 100,
+                minValue: widget.minValue,
+                maxValue: widget.maxValue,
                 value: value,
-                step: 1,
-                itemHeight: 40,
-                itemWidth: 40,
+                step: widget.step,
+                itemHeight: widget.itemHeight,
+                itemWidth: widget.itemWidth,
                 selectedTextStyle: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -89,8 +101,8 @@ class _CustomNumberPickerState extends State<CustomNumberPicker> {
                 icon: const Icon(Icons.add_circle_outline),
                 color: Theme.of(context).colorScheme.primary,
                 onPressed: () => setState(() {
-                  int newValue = value + 1;
-                  value = newValue.clamp(0, 100);
+                  int newValue = value + widget.step;
+                  value = newValue.clamp(widget.minValue, widget.maxValue);
                   widget.sendCurrentValue(value);
                 }),
               ),

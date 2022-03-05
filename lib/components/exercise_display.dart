@@ -26,7 +26,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
         padding: const EdgeInsets.all(8.0),
         child: Container(
           padding: const EdgeInsets.all(10.0),
-          height: 100,
+          // height: 100,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.onBackground,
             shape: BoxShape.rectangle,
@@ -46,7 +46,33 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
                       ),
                     ),
                     Text(
+                      "Sets: " + widget.exerciseObject.sets.toString(),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
                       "Reps: " + widget.exerciseObject.reps.toString(),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "RPE: " + widget.exerciseObject.rpe.toString(),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "Distance (KM): " +
+                          widget.exerciseObject.distanceKM.toString(),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "Time: " +
+                          widget.exerciseObject.getTotalTime().toString(),
                       style: const TextStyle(
                         fontSize: 12.0,
                       ),

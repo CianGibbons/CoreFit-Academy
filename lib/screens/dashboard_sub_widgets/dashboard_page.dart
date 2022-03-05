@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'package:corefit_academy/components/logo_with_text.dart';
+
 class DashboardPage extends StatelessWidget {
   const DashboardPage({Key? key, required this.user}) : super(key: key);
   final User user;
