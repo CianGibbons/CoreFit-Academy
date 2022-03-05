@@ -20,7 +20,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
     return GestureDetector(
       onTap: () {
         //TODO: Expand on Exercise Display
-        print(widget.exerciseObject);
+        print("Exercise: " + widget.exerciseObject.toString());
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
