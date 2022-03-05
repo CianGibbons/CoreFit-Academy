@@ -32,12 +32,15 @@ class AuthController extends StatelessWidget {
               ],
               headerBuilder: (context, constraints, _) {
                 return const FittedBox(
-                  child: LogoWithText(
-                    tag: 'logo',
-                    logoCircleWidth: 100.0,
-                    logoCircleHeight: 100.0,
-                    logoIconSize: 70,
-                    logoTextFontSize: 20.0,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 16.0),
+                    child: LogoWithText(
+                      tag: 'logo',
+                      logoCircleWidth: 100.0,
+                      logoCircleHeight: 100.0,
+                      logoIconSize: 70,
+                      logoTextFontSize: 20.0,
+                    ),
                   ),
                 );
               },

@@ -10,7 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:corefit_academy/components/custom_text_form_field.dart';
 import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:corefit_academy/utilities/validate_email.dart';
+import 'package:corefit_academy/utilities/validators/validate_email.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 
 class CoursePage extends StatefulWidget {
@@ -241,7 +241,9 @@ class _CoursePageState extends State<CoursePage> {
                 )
               ],
             ),
-          );
+          ).whenComplete(() {
+            context.read<ErrorMessageStringProvider>().setValue(null);
+          });
         },
       );
     } else {

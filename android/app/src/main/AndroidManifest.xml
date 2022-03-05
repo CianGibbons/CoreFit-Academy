@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.corefitacademy.corefit_academy">
    <application
-        android:label="corefit_academy"
+        android:label="CoreFit Academy"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

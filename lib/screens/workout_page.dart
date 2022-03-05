@@ -6,6 +6,9 @@ import 'package:corefit_academy/models/workout.dart';
 import 'package:corefit_academy/models/exercise.dart';
 import 'package:corefit_academy/widgets/create_exercise_widget.dart';
 import 'package:corefit_academy/components/exercise_display.dart';
+import 'package:provider/provider.dart';
+import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
+import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
 
 class WorkoutPage extends StatefulWidget {
   const WorkoutPage(
@@ -22,9 +25,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   final FirebaseAuth _firebase = FirebaseAuth.instance;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   List<ExerciseDisplay> workoutsLoaded = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,7 +140,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           }
                           for (var exerciseObject in exerciseObjects) {
                             ownedExerciseWidgets.add(ExerciseDisplay(
-                              viewer: true,
+                              viewer: false,
                               exerciseObject: exerciseObject,
                             ));
                           }
@@ -277,13 +278,22 @@ class _WorkoutPageState extends State<WorkoutPage> {
           showModalBottomSheet(
               isScrollControlled: true,
               context: context,
-              builder: (context) =>
-                  //Using a Wrap in order to dynamically fit the modal sheet to the content
-                  Wrap(children: [
+              builder: (context) {
+                // Using a Wrap in order to dynamically fit the modal sheet
+                // to the content
+                return Wrap(
+                  children: [
                     CreateExercisePage(
                       workoutObject: widget.workoutObject,
                     )
-                  ]));
+                  ],
+                );
+              }).whenComplete(() {
+            context.read<ErrorMessageStringProvider>().setValue(null);
+            context
+                .read<DurationSelectedProvider>()
+                .setValue(const Duration(hours: 0, minutes: 0, seconds: 0));
+          });
         },
       );
     } else {

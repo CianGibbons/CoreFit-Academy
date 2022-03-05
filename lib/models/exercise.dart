@@ -6,28 +6,29 @@ class Exercise {
   String name;
   int? sets;
   int? reps;
-  int? timeHours;
-  int? timeMinutes;
-  int? timeSeconds;
+  int timeHours;
+  int timeMinutes;
+  int timeSeconds;
   double? distanceKM;
   double? weightKG;
   int? rpe;
   double? percentageOfExertion;
   List<String>? targetedMuscles;
 
-  Exercise(
-      {required this.name,
-      required this.exerciseReference,
-      this.sets,
-      this.reps,
-      this.timeHours,
-      this.timeMinutes,
-      this.timeSeconds,
-      this.distanceKM,
-      this.weightKG,
-      this.rpe,
-      this.percentageOfExertion,
-      this.targetedMuscles});
+  Exercise({
+    required this.name,
+    required this.exerciseReference,
+    this.sets,
+    this.reps,
+    this.distanceKM,
+    this.weightKG,
+    this.rpe,
+    this.percentageOfExertion,
+    this.targetedMuscles,
+    this.timeHours = 0,
+    this.timeMinutes = 0,
+    this.timeSeconds = 0,
+  });
 
   Unit? getDistanceInMiles() {
     if (distanceKM != null) {
@@ -53,6 +54,11 @@ class Exercise {
 
   void removeTargetedMuscle(String targetedMuscleToBeRemoved) {
     targetedMuscles!.remove(targetedMuscleToBeRemoved);
+  }
+
+  Duration getTotalTime() {
+    return Duration(
+        hours: timeHours, minutes: timeMinutes, seconds: timeSeconds);
   }
 
   @override

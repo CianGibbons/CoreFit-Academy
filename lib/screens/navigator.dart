@@ -7,6 +7,8 @@ import 'package:corefit_academy/screens/dashboard_sub_widgets/settings_page.dart
 import 'package:corefit_academy/screens/dashboard_sub_widgets/logbook_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:corefit_academy/utilities/constants.dart';
+import 'package:provider/provider.dart';
+import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
 
 class NavigationController extends StatefulWidget {
   const NavigationController({Key? key, required this.user}) : super(key: key);
@@ -39,6 +41,11 @@ class _NavigationControllerState extends State<NavigationController> {
       ),
     ];
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(kAppName),
+      ),
+      body: _widgetOptions.elementAt(_selectedIndex),
+      floatingActionButton: _getFAB(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
         selectedItemColor: Theme.of(context).colorScheme.primary,
@@ -72,11 +79,6 @@ class _NavigationControllerState extends State<NavigationController> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
-      appBar: AppBar(
-        title: const Text(kAppName),
-      ),
-      floatingActionButton: _getFAB(),
-      body: _widgetOptions.elementAt(_selectedIndex),
     );
   }
 
@@ -90,7 +92,9 @@ class _NavigationControllerState extends State<NavigationController> {
                 context: context,
                 builder: (context) =>
                     //Using a Wrap in order to dynamically fit the modal sheet to the content
-                    Wrap(children: [CreateCoursePage()]));
+                    Wrap(children: [CreateCoursePage()])).whenComplete(() {
+              context.read<ErrorMessageStringProvider>().setValue(null);
+            });
           });
     } else {
       return Container();

@@ -53,9 +53,9 @@ class _CourseDisplayState extends State<CourseDisplay> {
                         fontSize: 24.0,
                       ),
                     ),
-                    Text(kShowNumberWorkouts +
+                    Text(kShowNumberWorkoutsForCourse +
                         widget.courseObject.numWorkouts.toString()),
-                    Text(kShowNumberViewers +
+                    Text(kShowNumberViewersForCourse +
                         widget.courseObject.numViewers.toString()),
                   ],
                 ),

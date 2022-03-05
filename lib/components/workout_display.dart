@@ -53,7 +53,7 @@ class _WorkoutDisplayState extends State<WorkoutDisplay> {
                         fontSize: 24.0,
                       ),
                     ),
-                    Text(kShowNumberExercises +
+                    Text(kShowNumberExercisesForWorkout +
                         widget.workoutObject.numExercises.toString()),
                   ],
                 ),

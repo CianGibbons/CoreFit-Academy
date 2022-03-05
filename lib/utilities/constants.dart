@@ -14,8 +14,8 @@ const kGoogleProvider = 'google.com';
 
 const String kCoursePageName = 'Courses';
 const String kHomePageName = 'Home';
-const String kLogbookPageName = 'Home';
-const String kSettingsPageName = 'Home';
+const String kLogbookPageName = 'Logbook';
+const String kSettingsPageName = 'Settings';
 
 const String kThemeSettingsName = 'Themes';
 const String kThemeLightName = 'Light';
@@ -37,8 +37,15 @@ const String kCourseNameFieldLabel = 'Course Name';
 const String kWorkoutNameFieldLabel = 'Workout Name';
 const String kExerciseNameFieldLabel = 'Exercise Name';
 
-const String kErrorEnterValidEmailString = 'Enter a valid email address';
+const String kRepsNameFieldLabel = "Reps";
+const String kREPNameFieldLabel = "RPE";
+const String kSetsNameFieldLabel = "Sets";
+const String kDistanceKMNameFieldLabel = "Distance (KM)";
+
+const String kErrorEnterValidEmailString = 'Enter a valid email address!';
+const String kErrorEnterValidIntString = 'Enter a valid number!';
 const String kErrorUserNotFound = 'User not found!';
+const String kErrorEnterValidNameString = 'Enter a valid name!';
 const String kEmailOfFriendString = 'Email of Friend';
 
 const String kUsersCollection = 'users';
@@ -69,6 +76,9 @@ const String kPercentageOfExertionField = 'percentageOfExertion';
 const String kAddFriend = 'Add Friend';
 const String kCancel = 'Cancel';
 
-const String kShowNumberExercises = "Number of Exercises in Workout: ";
-const String kShowNumberWorkouts = "Number of Workouts in Workout: ";
-const String kShowNumberViewers = "Number of Viewers in Workout: ";
+const String kShowNumberExercisesForWorkout =
+    "Number of Exercises in Workout: ";
+const String kShowNumberViewersForWorkout = "Number of Viewers in Workout: ";
+
+const String kShowNumberWorkoutsForCourse = "Number of Workouts in Course: ";
+const String kShowNumberViewersForCourse = "Number of Viewers in Course: ";
