@@ -83,6 +83,7 @@ class _NavigationControllerState extends State<NavigationController> {
   }
 
   Widget _getFAB() {
+    // Courses
     if (_selectedIndex == 1) {
       return FloatingActionButton(
           child: const Icon(Icons.add),
@@ -96,6 +97,13 @@ class _NavigationControllerState extends State<NavigationController> {
               context.read<ErrorMessageStringProvider>().setValue(null);
             });
           });
+    }
+    //Logbook
+    else if (_selectedIndex == 2) {
+      return FloatingActionButton(
+        child: const Icon(FontAwesomeIcons.pencilAlt),
+        onPressed: () {},
+      );
     } else {
       return Container();
     }

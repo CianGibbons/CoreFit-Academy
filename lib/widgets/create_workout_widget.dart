@@ -81,7 +81,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                       idList.add(kWorkoutsCollection + '/' + value.id);
                       _firestore
                           .collection(kCoursesCollection)
-                          .doc(widget.courseObject.courseReference.id)
+                          .doc(widget.courseObject.courseReference!.id)
                           .update(
                               {kWorkoutsField: FieldValue.arrayUnion(idList)});
                     });

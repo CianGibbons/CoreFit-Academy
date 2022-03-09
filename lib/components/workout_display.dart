@@ -20,7 +20,7 @@ class _WorkoutDisplayState extends State<WorkoutDisplay> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print("Workout: " + widget.workoutObject.toString());
+        // print("Workout: " + widget.workoutObject.toString());
         Navigator.push(
           context,
           MaterialPageRoute(

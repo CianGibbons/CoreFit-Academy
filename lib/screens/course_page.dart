@@ -95,8 +95,9 @@ class _CoursePageState extends State<CoursePage> {
                       builder: (context,
                           Tuple2<AsyncSnapshot<dynamic>, AsyncSnapshot<dynamic>>
                               snapshots) {
-                        List<WorkoutDisplay> viewerWorkoutWidgets = [];
                         List<WorkoutDisplay> ownedWorkoutWidgets = [];
+                        List<WorkoutDisplay> viewerWorkoutWidgets = [];
+
                         List<Workout> workoutObjects = [];
                         if (snapshots.item1.hasData) {
                           final workouts = snapshots.item1.data!.docs;
@@ -290,7 +291,7 @@ class _CoursePageState extends State<CoursePage> {
                         //Add the user to the course
                         _firestore
                             .collection(kCoursesCollection)
-                            .doc(widget.courseObject.courseReference.id)
+                            .doc(widget.courseObject.courseReference!.id)
                             .update({
                           kViewersField: FieldValue.arrayUnion([userId])
                         }).then((value) async {

@@ -82,6 +82,7 @@ const String kPercentageOfExertionField = 'percentageOfExertion';
 
 const String kAddFriend = 'Add Friend';
 const String kCancel = 'Cancel';
+const String kPleaseSelectString = 'Please Select!';
 
 const String kShowNumberExercisesForWorkout =
     "Number of Exercises in Workout: ";

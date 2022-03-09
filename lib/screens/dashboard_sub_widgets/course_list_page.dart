@@ -6,21 +6,28 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 
-class CourseListPage extends StatelessWidget {
-  CourseListPage({Key? key, required this.user}) : super(key: key);
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+class CourseListPage extends StatefulWidget {
+  const CourseListPage({Key? key, required this.user}) : super(key: key);
   final User user;
+
+  @override
+  State<CourseListPage> createState() => _CourseListPageState();
+}
+
+class _CourseListPageState extends State<CourseListPage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   List<CourseDisplay> coursesLoaded = [];
 
   @override
   Widget build(BuildContext context) {
     var stream1Owned = _firestore
         .collection(kCoursesCollection)
-        .where(kUserIdField, isEqualTo: user.uid)
+        .where(kUserIdField, isEqualTo: widget.user.uid)
         .snapshots();
     var stream2Viewing = _firestore
         .collection(kCoursesCollection)
-        .where(kViewersField, arrayContains: user.uid)
+        .where(kViewersField, arrayContains: widget.user.uid)
         .snapshots();
 
     return ListView(children: [

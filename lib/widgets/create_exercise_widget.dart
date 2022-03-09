@@ -23,23 +23,23 @@ class CreateExercisePage extends StatefulWidget {
   _CreateExercisePageState createState() => _CreateExercisePageState();
 }
 
-int currentSetsValue = 0;
-int currentRepsValue = 0;
-int currentRPEValue = 1;
-int currentDistanceValue = 0;
-double currentWeightValue = 0.0;
-int currentPercentageOfExertionValue = 0;
-List<Muscle> selectedTargetedMusclesNames = [];
-String selectedTargetedMuscleGroup =
-    kTargetMuscleGroupsNames[MuscleGroup.chest.index];
-List<Muscle> targetMusclesItemsList = kMusclesList[0];
-
 class _CreateExercisePageState extends State<CreateExercisePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final TextEditingController nameFieldTextEditingController =
       TextEditingController();
   final FocusNode nameFocusNode = FocusNode();
+
+  int currentSetsValue = 0;
+  int currentRepsValue = 0;
+  int currentRPEValue = 1;
+  int currentDistanceValue = 0;
+  double currentWeightValue = 0.0;
+  int currentPercentageOfExertionValue = 0;
+  List<Muscle> selectedTargetedMusclesNames = [];
+  String selectedTargetedMuscleGroup =
+      kTargetMuscleGroupsNames[MuscleGroup.chest.index];
+  List<Muscle> targetMusclesItemsList = kMusclesList[0];
 
   @override
   Widget build(BuildContext context) {
@@ -226,6 +226,7 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
                               });
                             });
                             nameFieldTextEditingController.clear();
+
                             context
                                 .read<ErrorMessageStringProvider>()
                                 .setValue(null);
