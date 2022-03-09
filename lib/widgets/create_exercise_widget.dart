@@ -180,8 +180,8 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
                             for (Muscle targetedMuscle
                                 in selectedTargetedMusclesNames) {
                               listOfMuscles.add({
-                                "muscleName": targetedMuscle.muscleName,
-                                "muscleGroupIndex":
+                                kMuscleNameField: targetedMuscle.muscleName,
+                                kMuscleGroupIndexField:
                                     targetedMuscle.muscleGroup.index,
                               });
                             }

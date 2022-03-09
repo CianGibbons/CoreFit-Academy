@@ -75,6 +75,8 @@ const String kTimeSecondsField = 'timeSeconds';
 const String kParentCourseField = 'parentCourse';
 const String kParentWorkoutField = 'parentWorkout';
 const String kTargetedMusclesField = 'targetedMuscles';
+const String kMuscleNameField = 'muscleName';
+const String kMuscleGroupIndexField = 'muscleGroupIndex';
 const String kTargetedMuscleGroupField = 'targetedMuscleGroup';
 const String kPercentageOfExertionField = 'percentageOfExertion';
 

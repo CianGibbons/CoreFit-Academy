@@ -97,9 +97,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             var muscles = exercise.get(kTargetedMusclesField);
                             List<Muscle> targetedMuscles = [];
                             for (var muscle in muscles) {
-                              String muscleName = muscle['muscleName'];
+                              String muscleName = muscle[kMuscleNameField];
                               MuscleGroup muscleGroup = MuscleGroup
-                                  .values[muscle['muscleGroupIndex']];
+                                  .values[muscle[kMuscleGroupIndexField]];
 
                               Muscle muscleObj = Muscle(
                                   muscleName: muscleName,
@@ -217,9 +217,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             var muscles = exercise.get(kTargetedMusclesField);
                             List<Muscle> targetedMuscles = [];
                             for (var muscle in muscles) {
-                              String muscleName = muscle['muscleName'];
+                              String muscleName = muscle[kMuscleNameField];
                               MuscleGroup muscleGroup = MuscleGroup
-                                  .values[muscle['muscleGroupIndex']];
+                                  .values[muscle[kMuscleGroupIndexField]];
 
                               Muscle muscleObj = Muscle(
                                   muscleName: muscleName,
