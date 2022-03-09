@@ -11,6 +11,9 @@ import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
 import 'package:duration_picker/duration_picker.dart';
 import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
+import 'package:corefit_academy/components/custom_number_picker_double.dart';
+import 'package:flutter_material_pickers/flutter_material_pickers.dart';
+import 'package:corefit_academy/models/muscle.dart';
 
 class CreateExercisePage extends StatefulWidget {
   CreateExercisePage({Key? key, required this.workoutObject}) : super(key: key);
@@ -24,6 +27,12 @@ int currentSetsValue = 0;
 int currentRepsValue = 0;
 int currentRPEValue = 1;
 int currentDistanceValue = 0;
+double currentWeightValue = 0.0;
+int currentPercentageOfExertionValue = 0;
+List<Muscle> selectedTargetedMusclesNames = [];
+String selectedTargetedMuscleGroup =
+    kTargetMuscleGroupsNames[MuscleGroup.chest.index];
+List<Muscle> targetMusclesItemsList = kMusclesList[0];
 
 class _CreateExercisePageState extends State<CreateExercisePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -31,6 +40,7 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
   final TextEditingController nameFieldTextEditingController =
       TextEditingController();
   final FocusNode nameFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     final _createExerciseFormKey = GlobalKey<FormState>();
@@ -107,20 +117,55 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
                     CustomNumberPickerHorizontal(
                       fieldName: kDistanceKMNameFieldLabel,
                       initialValue: currentDistanceValue,
-                      maxValue: 42000,
+                      maxValue: 200000,
                       step: 200,
                       itemWidth: 80,
                       sendCurrentValue: (int value) {
                         currentDistanceValue = value;
                       },
                     ),
-                    Text(context
-                        .read<DurationSelectedProvider>()
-                        .value
-                        .toString()),
+                    CustomNumberPickerDoubleHorizontal(
+                      fieldName: kWeightKGNameFieldLabel,
+                      initialValue: currentWeightValue,
+                      maxValue: 200.0,
+                      step: 0.5,
+                      itemWidth: 80,
+                      sendCurrentValue: (double value) {
+                        currentWeightValue = value;
+                      },
+                    ),
+                    CustomNumberPickerHorizontal(
+                      fieldName: kPercentageOfExertionNameFieldLabel,
+                      initialValue: currentPercentageOfExertionValue,
+                      maxValue: 100,
+                      step: 1,
+                      itemWidth: 80,
+                      sendCurrentValue: (int value) {
+                        currentPercentageOfExertionValue = value;
+                      },
+                    ),
+                    Text(
+                      selectedTargetedMuscleGroup,
+                    ),
+                    CustomElevatedButton(
+                      onPressed: handleSetTargetedMuscleGroup,
+                      child: const Text(kSetMuscleGroupTitle),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                    ),
+                    Text(
+                      selectedTargetedMusclesNames.toString(),
+                    ),
+                    CustomElevatedButton(
+                      onPressed: handleSetTargetedMuscles,
+                      child: const Text(kSetTargetedMusclesTitle),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                    ),
+                    Text(
+                      context.read<DurationSelectedProvider>().value.toString(),
+                    ),
                     CustomElevatedButton(
                       onPressed: handleSetTimeClick,
-                      child: const Text("Set Time"),
+                      child: const Text(kSetTimeAction),
                       backgroundColor: Theme.of(context).colorScheme.primary,
                     ),
                     Padding(
@@ -131,6 +176,16 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
                         onPressed: () {
                           if (_createExerciseFormKey.currentState!.validate() &&
                               nameFieldTextEditingController.text.isNotEmpty) {
+                            List<Map> listOfMuscles = [];
+                            for (Muscle targetedMuscle
+                                in selectedTargetedMusclesNames) {
+                              listOfMuscles.add({
+                                "muscleName": targetedMuscle.muscleName,
+                                "muscleGroupIndex":
+                                    targetedMuscle.muscleGroup.index,
+                              });
+                            }
+
                             Duration timeForExercise =
                                 context.read<DurationSelectedProvider>().value;
                             int hours = timeForExercise.inHours;
@@ -144,18 +199,21 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
                               kUserIdField: widget._firebase.currentUser!.uid,
                               kNameField: nameFieldTextEditingController.text,
                               kViewersField: [],
-                              kTargetedMusclesField: [],
+                              kTargetedMuscleGroupField:
+                                  selectedTargetedMuscleGroup,
+                              kTargetedMusclesField: listOfMuscles,
                               kParentWorkoutField:
                                   widget.workoutObject.workoutReference,
                               kRpeField: currentRPEValue,
                               kDistanceKmField: currentDistanceValue.round(),
-                              kPercentageOfExertionField: 0,
+                              kPercentageOfExertionField:
+                                  currentPercentageOfExertionValue,
                               kRepsField: currentRepsValue,
                               kSetsField: currentSetsValue,
                               kTimeHoursField: hours,
                               kTimeMinutesField: minutes,
                               kTimeSecondsField: seconds,
-                              kWeightKgField: 0
+                              kWeightKgField: currentWeightValue,
                             }).then((value) {
                               List idList = [];
                               idList.add(kExercisesCollection + '/' + value.id);
@@ -207,5 +265,33 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
     context.read<DurationSelectedProvider>().setValue(resultingDuration!);
     // Setting State to ensure that the duration value is updated on the Modal Sheet
     setState(() {});
+  }
+
+  void handleSetTargetedMuscleGroup() {
+    showMaterialScrollPicker<String>(
+      headerColor: Theme.of(context).colorScheme.primary,
+      title: kSelectMuscleGroupTitle,
+      context: context,
+      items: kTargetMuscleGroupsNames,
+      selectedItem: selectedTargetedMuscleGroup,
+      onChanged: (value) => setState(() {
+        selectedTargetedMuscleGroup = value;
+        selectedTargetedMusclesNames = [];
+        targetMusclesItemsList =
+            kMusclesList[kTargetMuscleGroupsNames.indexOf(value)];
+      }),
+    );
+  }
+
+  void handleSetTargetedMuscles() {
+    showMaterialCheckboxPicker<Muscle>(
+      headerColor: Theme.of(context).colorScheme.primary,
+      context: context,
+      title: kSelectTargetedMusclesTitle,
+      items: targetMusclesItemsList,
+      selectedItems: selectedTargetedMusclesNames,
+      onChanged: (value) =>
+          setState(() => selectedTargetedMusclesNames = value),
+    );
   }
 }

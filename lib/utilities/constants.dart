@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:corefit_academy/models/muscle.dart';
 
 TextStyle coreFitTextStyle = GoogleFonts.roboto(
     textStyle: const TextStyle(
@@ -28,6 +29,7 @@ const String kCloneCourseAction = 'Clone Course';
 const String kCreateCourseAction = 'Create New Course';
 const String kCreateWorkoutAction = 'Create New Workout';
 const String kCreateExerciseAction = 'Create New Exercise';
+const String kSetTimeAction = 'Set Time';
 
 const String kCreateCourseActionButton = 'Create Course';
 const String kCreateExerciseActionButton = 'Create Exercise';
@@ -41,6 +43,8 @@ const String kRepsNameFieldLabel = "Reps";
 const String kREPNameFieldLabel = "RPE";
 const String kSetsNameFieldLabel = "Sets";
 const String kDistanceKMNameFieldLabel = "Distance (KM)";
+const String kWeightKGNameFieldLabel = "Weight (KG)";
+const String kPercentageOfExertionNameFieldLabel = "Percentage of Exertion (%)";
 
 const String kErrorEnterValidEmailString = 'Enter a valid email address!';
 const String kErrorEnterValidIntString = 'Enter a valid number!';
@@ -71,6 +75,7 @@ const String kTimeSecondsField = 'timeSeconds';
 const String kParentCourseField = 'parentCourse';
 const String kParentWorkoutField = 'parentWorkout';
 const String kTargetedMusclesField = 'targetedMuscles';
+const String kTargetedMuscleGroupField = 'targetedMuscleGroup';
 const String kPercentageOfExertionField = 'percentageOfExertion';
 
 const String kAddFriend = 'Add Friend';
@@ -82,3 +87,83 @@ const String kShowNumberViewersForWorkout = "Number of Viewers in Workout: ";
 
 const String kShowNumberWorkoutsForCourse = "Number of Workouts in Course: ";
 const String kShowNumberViewersForCourse = "Number of Viewers in Course: ";
+
+const String kSelectMuscleGroupTitle = "Select Muscle Group";
+const String kSelectTargetedMusclesTitle = "Select Muscles";
+const String kSetMuscleGroupTitle = "Set Muscle Group";
+const String kSetTargetedMusclesTitle = "Set Targeted Muscles";
+
+const List<String> kTargetMuscleGroupsNames = [
+  "Chest",
+  "Back",
+  "Arms",
+  "Shoulders",
+  "Legs",
+  "Calves",
+  "Core"
+];
+enum MuscleGroup { chest, back, arms, shoulders, legs, calves, core }
+
+List<Muscle> kChestMuscles = [
+  Muscle(muscleName: "Pectoralis major", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Pectoralis minor", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Serratus anterior", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Subclavius", muscleGroup: MuscleGroup.chest),
+];
+
+List<Muscle> kBackMuscles = [
+  Muscle(muscleName: "Trapezius", muscleGroup: MuscleGroup.back),
+  Muscle(muscleName: "Latissimus dorsi", muscleGroup: MuscleGroup.back),
+  Muscle(muscleName: "Levator scapulae", muscleGroup: MuscleGroup.back),
+  Muscle(muscleName: "Rhomboid major", muscleGroup: MuscleGroup.back),
+  Muscle(muscleName: "Rhomboid minor", muscleGroup: MuscleGroup.back),
+  Muscle(
+      muscleName: "Serratus posterior superior", muscleGroup: MuscleGroup.back),
+  Muscle(
+      muscleName: "Serratus posterior inferior", muscleGroup: MuscleGroup.back),
+];
+
+List<Muscle> kArmsMuscles = [
+  Muscle(muscleName: "ARM MUSCLE 1", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "ARM MUSCLE 2", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "ARM MUSCLE 3", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "ARM MUSCLE 4", muscleGroup: MuscleGroup.chest),
+];
+
+List<Muscle> kShouldersMuscles = [
+  Muscle(muscleName: "SHOULDER MUSCLE 1", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "SHOULDER MUSCLE 2", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "SHOULDER MUSCLE 3", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "SHOULDER MUSCLE 4", muscleGroup: MuscleGroup.chest),
+];
+
+List<Muscle> kLegsMuscles = [
+  Muscle(muscleName: "LEG MUSCLE 1", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "LEG MUSCLE 2", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "LEG MUSCLE 3", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "LEG MUSCLE 4", muscleGroup: MuscleGroup.chest),
+];
+
+List<Muscle> kCalvesMuscles = [
+  Muscle(muscleName: "Pectoralis major", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Pectoralis minor", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Serratus anterior", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Subclavius", muscleGroup: MuscleGroup.chest),
+];
+
+List<Muscle> kCoreMuscles = [
+  Muscle(muscleName: "Pectoralis major", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Pectoralis minor", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Serratus anterior", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Subclavius", muscleGroup: MuscleGroup.chest),
+];
+
+List<List<Muscle>> kMusclesList = [
+  kChestMuscles,
+  kBackMuscles,
+  kArmsMuscles,
+  kShouldersMuscles,
+  kLegsMuscles,
+  kCalvesMuscles,
+  kCoreMuscles,
+];

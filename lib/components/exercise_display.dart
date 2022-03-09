@@ -58,12 +58,6 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
                       ),
                     ),
                     Text(
-                      "RPE: " + widget.exerciseObject.rpe.toString(),
-                      style: const TextStyle(
-                        fontSize: 12.0,
-                      ),
-                    ),
-                    Text(
                       "Distance (KM): " +
                           widget.exerciseObject.distanceKM.toString(),
                       style: const TextStyle(
@@ -71,8 +65,45 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
                       ),
                     ),
                     Text(
+                      "Weight (KG): " +
+                          widget.exerciseObject.weightKG.toString(),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "RPE: " + widget.exerciseObject.rpe.toString(),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "Percentage of Exertion: " +
+                          widget.exerciseObject.percentageOfExertion
+                              .toString() +
+                          "%",
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
                       "Time: " +
                           widget.exerciseObject.getTotalTime().toString(),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "Targeted Muscle Group: " +
+                          widget.exerciseObject.targetedMuscleGroup,
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "Targeted Muscles:\n\t\t\t\t\t\t" +
+                          widget.exerciseObject.targetedMuscles!
+                              .join('\n\t\t\t\t\t\t'),
                       style: const TextStyle(
                         fontSize: 12.0,
                       ),
