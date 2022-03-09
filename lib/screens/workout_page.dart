@@ -297,9 +297,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             children: workoutsLoaded,
                           );
                         }),
-                    Column(
-                      children: workoutsLoaded,
-                    ),
                   ],
                 ),
               ),
