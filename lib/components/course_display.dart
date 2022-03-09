@@ -20,6 +20,7 @@ class _CourseDisplayState extends State<CourseDisplay> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        print("Course: " + widget.courseObject.toString());
         Navigator.push(
           context,
           MaterialPageRoute(

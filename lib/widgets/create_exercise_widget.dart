@@ -44,6 +44,7 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
   @override
   Widget build(BuildContext context) {
     final _createExerciseFormKey = GlobalKey<FormState>();
+    var viewers = widget.workoutObject.viewers;
 
     // Getting the height of the SafeArea
     double height = MediaQuery.of(context).size.height;
@@ -198,7 +199,7 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
                               kCreatedAtField: DateTime.now(),
                               kUserIdField: widget._firebase.currentUser!.uid,
                               kNameField: nameFieldTextEditingController.text,
-                              kViewersField: [],
+                              kViewersField: viewers,
                               kTargetedMuscleGroupField:
                                   selectedTargetedMuscleGroup,
                               kTargetedMusclesField: listOfMuscles,

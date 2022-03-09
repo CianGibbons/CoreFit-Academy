@@ -16,10 +16,12 @@ class Exercise {
   double? percentageOfExertion;
   String targetedMuscleGroup;
   List<Muscle>? targetedMuscles;
+  List<String>? viewers = [];
 
   Exercise({
     required this.name,
     required this.exerciseReference,
+    this.viewers,
     this.sets,
     this.reps,
     this.distanceKM,
@@ -64,6 +66,6 @@ class Exercise {
         "timeSeconds: $timeSeconds, distanceKM: $distanceKM, weightKG: $weightKG," +
         " rpe: $rpe, percentageOfExertion: $percentageOfExertion, " +
         "targetedMuscleGroup: $targetedMuscleGroup, " +
-        "targetedMuscles: $targetedMuscles }";
+        "targetedMuscles: $targetedMuscles, viewers: $viewers }";
   }
 }

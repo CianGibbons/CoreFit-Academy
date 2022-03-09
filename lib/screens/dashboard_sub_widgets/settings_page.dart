@@ -16,6 +16,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool showSpinner = false;
+  final FirebaseAuth _firebase = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class _SettingsPageState extends State<SettingsPage> {
       child: SafeArea(
         child: Column(
           children: [
+            Text("Logged In User: " + _firebase.currentUser!.email!),
             Row(
               children: [
                 const Text(kThemeSettingsName),
