@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:corefit_academy/components/custom_text_form_field.dart';
 import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
+import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/validators/validate_email.dart';
 import 'package:corefit_academy/utilities/constants.dart';
@@ -28,14 +29,24 @@ class _CoursePageState extends State<CoursePage> {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // List<WorkoutDisplay> workoutsLoaded = [];
-  List<WorkoutDisplay> ownedWorkoutsMaster = [];
-  List<WorkoutDisplay> viewerWorkoutsMaster = [];
+  List<WorkoutDisplay> workoutsLoaded = [];
 
   final _addViewerFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    var stream1Owned = _firestore
+        .collection(kWorkoutsCollection)
+        .where(kParentCourseField,
+            isEqualTo: widget.courseObject.courseReference)
+        .where(kUserIdField, isEqualTo: _firebase.currentUser!.uid)
+        .snapshots();
+    var stream2Viewing = _firestore
+        .collection(kWorkoutsCollection)
+        .where(kParentCourseField,
+            isEqualTo: widget.courseObject.courseReference)
+        .where(kViewersField, arrayContains: _firebase.currentUser!.uid)
+        .snapshots();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.courseObject.name),
@@ -79,20 +90,16 @@ class _CoursePageState extends State<CoursePage> {
                 margin: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Column(
                   children: [
-                    StreamBuilder(
-                      stream: _firestore
-                          .collection(kWorkoutsCollection)
-                          .where(kParentCourseField,
-                              isEqualTo: widget.courseObject.courseReference)
-                          .where(kUserIdField,
-                              isEqualTo: _firebase.currentUser!.uid)
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<dynamic> snapshot) {
+                    StreamBuilder2(
+                      streams: Tuple2(stream1Owned, stream2Viewing),
+                      builder: (context,
+                          Tuple2<AsyncSnapshot<dynamic>, AsyncSnapshot<dynamic>>
+                              snapshots) {
+                        List<WorkoutDisplay> viewerWorkoutWidgets = [];
                         List<WorkoutDisplay> ownedWorkoutWidgets = [];
                         List<Workout> workoutObjects = [];
-                        if (snapshot.hasData) {
-                          final workouts = snapshot.data!.docs;
+                        if (snapshots.item1.hasData) {
+                          final workouts = snapshots.item1.data!.docs;
 
                           for (var workout in workouts) {
                             var workoutName = workout.get(kNameField);
@@ -128,6 +135,7 @@ class _CoursePageState extends State<CoursePage> {
                               exercises: exerciseStrings,
                               numExercises: exerciseStrings.length,
                               targetedMuscles: targetedMuscles,
+                              viewers: widget.courseObject.viewers,
                             );
 
                             workoutObjects.add(workoutObject);
@@ -140,26 +148,9 @@ class _CoursePageState extends State<CoursePage> {
                             ));
                           }
                         }
-                        ownedWorkoutsMaster = ownedWorkoutWidgets;
-                        return Column(
-                          children: ownedWorkoutWidgets,
-                        );
-                      },
-                    ),
-                    StreamBuilder(
-                      stream: _firestore
-                          .collection(kWorkoutsCollection)
-                          .where(kParentCourseField,
-                              isEqualTo: widget.courseObject.courseReference)
-                          .where(kViewersField,
-                              arrayContains: _firebase.currentUser!.uid)
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<dynamic> snapshot) {
-                        List<WorkoutDisplay> viewerWorkoutWidgets = [];
-                        List<Workout> workoutObjects = [];
-                        if (snapshot.hasData) {
-                          final workouts = snapshot.data!.docs;
+                        workoutObjects = [];
+                        if (snapshots.item2.hasData) {
+                          final workouts = snapshots.item2.data!.docs;
 
                           for (var workout in workouts) {
                             var workoutName = workout.get(kNameField);
@@ -195,6 +186,7 @@ class _CoursePageState extends State<CoursePage> {
                               exercises: exerciseStrings,
                               numExercises: exerciseStrings.length,
                               targetedMuscles: targetedMuscles,
+                              viewers: widget.courseObject.viewers,
                             );
 
                             workoutObjects.add(workoutObject);
@@ -207,9 +199,11 @@ class _CoursePageState extends State<CoursePage> {
                             ));
                           }
                         }
-                        viewerWorkoutsMaster = viewerWorkoutWidgets;
+                        workoutsLoaded =
+                            ownedWorkoutWidgets + viewerWorkoutWidgets;
+
                         return Column(
-                          children: viewerWorkoutWidgets,
+                          children: workoutsLoaded,
                         );
                       },
                     ),
@@ -310,14 +304,7 @@ class _CoursePageState extends State<CoursePage> {
                             }).then((value) {
                               //Add the User to the Exercises within each of the workouts
                               List<String> allExercises = [];
-                              for (var workoutDisplay in ownedWorkoutsMaster) {
-                                var iterator = workoutDisplay
-                                    .workoutObject.exercises!.iterator;
-                                while (iterator.moveNext()) {
-                                  allExercises.add(iterator.current);
-                                }
-                              }
-                              for (var workoutDisplay in viewerWorkoutsMaster) {
+                              for (var workoutDisplay in workoutsLoaded) {
                                 var iterator = workoutDisplay
                                     .workoutObject.exercises!.iterator;
                                 while (iterator.moveNext()) {
@@ -334,6 +321,7 @@ class _CoursePageState extends State<CoursePage> {
                               }
                             });
                           }
+                          widget.courseObject.viewers!.add(userId);
                         });
 
                         Navigator.pop(context);

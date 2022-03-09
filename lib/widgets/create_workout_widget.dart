@@ -73,7 +73,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                       kUserIdField: widget._firebase.currentUser!.uid,
                       kNameField: textEditingController.text,
                       kExercisesField: [],
-                      kViewersField: [],
+                      kViewersField: widget.courseObject.viewers,
                       kTargetedMusclesField: [],
                       kParentCourseField: widget.courseObject.courseReference,
                     }).then((value) {
