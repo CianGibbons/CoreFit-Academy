@@ -9,6 +9,7 @@ import 'package:corefit_academy/components/exercise_display.dart';
 import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
 import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
+import 'package:corefit_academy/models/muscle.dart';
 
 class WorkoutPage extends StatefulWidget {
   const WorkoutPage(
@@ -73,8 +74,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                   double.parse(rawDistanceKm.toString());
                             }
 
-                            // var parentWorkoutReference = workoutObject.workoutReference;
-
                             var rawPercentageOfExertion =
                                 exercise.get(kPercentageOfExertionField);
                             double percentageOfExertion = 0;
@@ -92,9 +91,21 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             var rawSets = exercise.get(kSetsField);
                             int sets = rawSets;
 
+                            var targetedMuscleGroup =
+                                exercise.get(kTargetedMuscleGroupField);
+
                             var muscles = exercise.get(kTargetedMusclesField);
-                            List<String> targetedMuscles =
-                                List<String>.from(muscles);
+                            List<Muscle> targetedMuscles = [];
+                            for (var muscle in muscles) {
+                              String muscleName = muscle['muscleName'];
+                              MuscleGroup muscleGroup = MuscleGroup
+                                  .values[muscle['muscleGroupIndex']];
+
+                              Muscle muscleObj = Muscle(
+                                  muscleName: muscleName,
+                                  muscleGroup: muscleGroup);
+                              targetedMuscles.add(muscleObj);
+                            }
 
                             var rawTimeHours = exercise.get(kTimeHoursField);
                             int timeHours = int.parse(rawTimeHours.toString());
@@ -133,6 +144,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                               weightKG: weightKg,
                               rpe: rpe,
                               percentageOfExertion: percentageOfExertion,
+                              targetedMuscleGroup: targetedMuscleGroup,
                               targetedMuscles: targetedMuscles,
                             );
 
@@ -182,8 +194,6 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                   double.parse(rawDistanceKm.toString());
                             }
 
-                            // var parentWorkoutReference = workoutObject.workoutReference;
-
                             var rawPercentageOfExertion =
                                 exercise.get(kPercentageOfExertionField);
                             double percentageOfExertion = 0;
@@ -201,9 +211,21 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             var rawSets = exercise.get(kSetsField);
                             int sets = rawSets;
 
+                            var targetedMuscleGroup =
+                                exercise.get(kTargetedMuscleGroupField);
+
                             var muscles = exercise.get(kTargetedMusclesField);
-                            List<String> targetedMuscles =
-                                List<String>.from(muscles);
+                            List<Muscle> targetedMuscles = [];
+                            for (var muscle in muscles) {
+                              String muscleName = muscle['muscleName'];
+                              MuscleGroup muscleGroup = MuscleGroup
+                                  .values[muscle['muscleGroupIndex']];
+
+                              Muscle muscleObj = Muscle(
+                                  muscleName: muscleName,
+                                  muscleGroup: muscleGroup);
+                              targetedMuscles.add(muscleObj);
+                            }
 
                             var rawTimeHours = exercise.get(kTimeHoursField);
                             int timeHours = int.parse(rawTimeHours.toString());
@@ -242,6 +264,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                               weightKG: weightKg,
                               rpe: rpe,
                               percentageOfExertion: percentageOfExertion,
+                              targetedMuscleGroup: targetedMuscleGroup,
                               targetedMuscles: targetedMuscles,
                             );
 

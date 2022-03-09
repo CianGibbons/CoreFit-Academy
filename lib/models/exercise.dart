@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:units_converter/units_converter.dart';
+import 'package:corefit_academy/models/muscle.dart';
 
 class Exercise {
   DocumentReference exerciseReference;
@@ -13,7 +14,8 @@ class Exercise {
   double? weightKG;
   int? rpe;
   double? percentageOfExertion;
-  List<String>? targetedMuscles;
+  String targetedMuscleGroup;
+  List<Muscle>? targetedMuscles;
 
   Exercise({
     required this.name,
@@ -25,6 +27,7 @@ class Exercise {
     this.rpe,
     this.percentageOfExertion,
     this.targetedMuscles,
+    this.targetedMuscleGroup = "Unknown",
     this.timeHours = 0,
     this.timeMinutes = 0,
     this.timeSeconds = 0,
@@ -48,14 +51,6 @@ class Exercise {
     return null;
   }
 
-  void addTargetedMuscle(String newTargetedMuscle) {
-    targetedMuscles!.add(newTargetedMuscle);
-  }
-
-  void removeTargetedMuscle(String targetedMuscleToBeRemoved) {
-    targetedMuscles!.remove(targetedMuscleToBeRemoved);
-  }
-
   Duration getTotalTime() {
     return Duration(
         hours: timeHours, minutes: timeMinutes, seconds: timeSeconds);
@@ -63,12 +58,12 @@ class Exercise {
 
   @override
   String toString() {
-    // TODO: implement toString
     return super.toString() +
         " --> { name: $name, exerciseReference: $exerciseReference, sets: $sets," +
         " reps: $reps, timeHours: $timeHours, timeMinutes: $timeMinutes, " +
         "timeSeconds: $timeSeconds, distanceKM: $distanceKM, weightKG: $weightKG," +
         " rpe: $rpe, percentageOfExertion: $percentageOfExertion, " +
+        "targetedMuscleGroup: $targetedMuscleGroup, " +
         "targetedMuscles: $targetedMuscles }";
   }
 }

@@ -25,6 +25,7 @@ dependencies:
   font_awesome_flutter: ^9.2.0
   numberpicker: ^2.1.1
   duration_picker: ^1.1.0+1
+  flutter_material_pickers: ^3.1.2
 
 dev_dependencies:
   flutter_test:
