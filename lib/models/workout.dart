@@ -7,6 +7,15 @@ class Workout {
   List<String>? viewers = [];
   List<String>? exercises;
   List<String>? targetedMuscles;
+  int itemId = -1;
+
+  set id(val) {
+    itemId = val;
+  }
+
+  int get id {
+    return itemId;
+  }
 
   Workout({
     required this.name,

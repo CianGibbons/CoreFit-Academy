@@ -12,6 +12,7 @@ class CustomNumberPickerHorizontal extends StatefulWidget {
     this.step = 1,
     this.itemHeight = 40,
     this.itemWidth = 40,
+    this.fontSize = 20,
   }) : super(key: key);
 
   final String fieldName;
@@ -22,6 +23,7 @@ class CustomNumberPickerHorizontal extends StatefulWidget {
   final double itemHeight;
   final double itemWidth;
   final int step;
+  final double fontSize;
 
   @override
   _CustomNumberPickerHorizontalState createState() =>
@@ -82,7 +84,7 @@ class _CustomNumberPickerHorizontalState
                 selectedTextStyle: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
+                  fontSize: widget.fontSize,
                 ),
                 axis: Axis.horizontal,
                 decoration: BoxDecoration(

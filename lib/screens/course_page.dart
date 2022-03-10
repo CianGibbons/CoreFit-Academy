@@ -26,11 +26,9 @@ class CoursePage extends StatefulWidget {
 
 class _CoursePageState extends State<CoursePage> {
   final FirebaseAuth _firebase = FirebaseAuth.instance;
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<WorkoutDisplay> workoutsLoaded = [];
-
   final _addViewerFormKey = GlobalKey<FormState>();
 
   @override
@@ -83,134 +81,130 @@ class _CoursePageState extends State<CoursePage> {
       ),
       body: ListView(
         children: [
-          Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                  children: [
-                    StreamBuilder2(
-                      streams: Tuple2(stream1Owned, stream2Viewing),
-                      builder: (context,
-                          Tuple2<AsyncSnapshot<dynamic>, AsyncSnapshot<dynamic>>
-                              snapshots) {
-                        List<WorkoutDisplay> viewerWorkoutWidgets = [];
-                        List<WorkoutDisplay> ownedWorkoutWidgets = [];
-                        List<Workout> workoutObjects = [];
-                        if (snapshots.item1.hasData) {
-                          final workouts = snapshots.item1.data!.docs;
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
+              children: [
+                StreamBuilder2(
+                  streams: Tuple2(stream1Owned, stream2Viewing),
+                  builder: (context,
+                      Tuple2<AsyncSnapshot<dynamic>, AsyncSnapshot<dynamic>>
+                          snapshots) {
+                    List<WorkoutDisplay> ownedWorkoutWidgets = [];
+                    List<WorkoutDisplay> viewerWorkoutWidgets = [];
 
-                          for (var workout in workouts) {
-                            var workoutName = workout.get(kNameField);
+                    List<Workout> workoutObjects = [];
+                    if (snapshots.item1.hasData) {
+                      final workouts = snapshots.item1.data!.docs;
 
-                            List exerciseDynamic = List.empty();
-                            exerciseDynamic = workout.get(kExercisesField);
+                      for (var workout in workouts) {
+                        var workoutName = workout.get(kNameField);
 
-                            List<String>? exerciseStrings = [];
-                            var exercisesIterator = exerciseDynamic.iterator;
-                            while (exercisesIterator.moveNext()) {
-                              var current = exercisesIterator.current;
-                              if (current.runtimeType == String) {
-                                String value = current;
-                                value = current.replaceAll("exercises/", "");
-                                exerciseStrings.add(value);
-                              } else {
-                                DocumentReference currentRef = current;
-                                exerciseStrings.add(currentRef.id);
-                              }
-                            }
+                        List exerciseDynamic = List.empty();
+                        exerciseDynamic = workout.get(kExercisesField);
 
-                            var muscles = workout.get(kTargetedMusclesField);
-                            List<String> targetedMuscles =
-                                List<String>.from(muscles);
-
-                            var workoutRef = workout;
-                            DocumentReference referenceToWorkout =
-                                workoutRef.reference;
-
-                            var workoutObject = Workout(
-                              workoutReference: referenceToWorkout,
-                              name: workoutName,
-                              exercises: exerciseStrings,
-                              numExercises: exerciseStrings.length,
-                              targetedMuscles: targetedMuscles,
-                              viewers: widget.courseObject.viewers,
-                            );
-
-                            workoutObjects.add(workoutObject);
-                          }
-
-                          for (var workoutObject in workoutObjects) {
-                            ownedWorkoutWidgets.add(WorkoutDisplay(
-                              workoutObject: workoutObject,
-                              viewer: false,
-                            ));
+                        List<String>? exerciseStrings = [];
+                        var exercisesIterator = exerciseDynamic.iterator;
+                        while (exercisesIterator.moveNext()) {
+                          var current = exercisesIterator.current;
+                          if (current.runtimeType == String) {
+                            String value = current;
+                            value = current.replaceAll("exercises/", "");
+                            exerciseStrings.add(value);
+                          } else {
+                            DocumentReference currentRef = current;
+                            exerciseStrings.add(currentRef.id);
                           }
                         }
-                        workoutObjects = [];
-                        if (snapshots.item2.hasData) {
-                          final workouts = snapshots.item2.data!.docs;
 
-                          for (var workout in workouts) {
-                            var workoutName = workout.get(kNameField);
+                        var muscles = workout.get(kTargetedMusclesField);
+                        List<String> targetedMuscles =
+                            List<String>.from(muscles);
 
-                            List exerciseDynamic = List.empty();
-                            exerciseDynamic = workout.get(kExercisesField);
+                        var workoutRef = workout;
+                        DocumentReference referenceToWorkout =
+                            workoutRef.reference;
 
-                            List<String>? exerciseStrings = [];
-                            var exercisesIterator = exerciseDynamic.iterator;
-                            while (exercisesIterator.moveNext()) {
-                              var current = exercisesIterator.current;
-                              if (current.runtimeType == String) {
-                                String value = current;
-                                value = current.replaceAll("exercises/", "");
-                                exerciseStrings.add(value);
-                              } else {
-                                DocumentReference currentRef = current;
-                                exerciseStrings.add(currentRef.id);
-                              }
-                            }
-
-                            var muscles = workout.get(kTargetedMusclesField);
-                            List<String> targetedMuscles =
-                                List<String>.from(muscles);
-
-                            var workoutRef = workout;
-                            DocumentReference referenceToWorkout =
-                                workoutRef.reference;
-
-                            var workoutObject = Workout(
-                              workoutReference: referenceToWorkout,
-                              name: workoutName,
-                              exercises: exerciseStrings,
-                              numExercises: exerciseStrings.length,
-                              targetedMuscles: targetedMuscles,
-                              viewers: widget.courseObject.viewers,
-                            );
-
-                            workoutObjects.add(workoutObject);
-                          }
-
-                          for (var workoutObject in workoutObjects) {
-                            viewerWorkoutWidgets.add(WorkoutDisplay(
-                              workoutObject: workoutObject,
-                              viewer: true,
-                            ));
-                          }
-                        }
-                        workoutsLoaded =
-                            ownedWorkoutWidgets + viewerWorkoutWidgets;
-
-                        return Column(
-                          children: workoutsLoaded,
+                        var workoutObject = Workout(
+                          workoutReference: referenceToWorkout,
+                          name: workoutName,
+                          exercises: exerciseStrings,
+                          numExercises: exerciseStrings.length,
+                          targetedMuscles: targetedMuscles,
+                          viewers: widget.courseObject.viewers,
                         );
-                      },
-                    ),
-                  ],
+
+                        workoutObjects.add(workoutObject);
+                      }
+
+                      for (var workoutObject in workoutObjects) {
+                        ownedWorkoutWidgets.add(WorkoutDisplay(
+                          workoutObject: workoutObject,
+                          viewer: false,
+                        ));
+                      }
+                    }
+                    workoutObjects = [];
+                    if (snapshots.item2.hasData) {
+                      final workouts = snapshots.item2.data!.docs;
+
+                      for (var workout in workouts) {
+                        var workoutName = workout.get(kNameField);
+
+                        List exerciseDynamic = List.empty();
+                        exerciseDynamic = workout.get(kExercisesField);
+
+                        List<String>? exerciseStrings = [];
+                        var exercisesIterator = exerciseDynamic.iterator;
+                        while (exercisesIterator.moveNext()) {
+                          var current = exercisesIterator.current;
+                          if (current.runtimeType == String) {
+                            String value = current;
+                            value = current.replaceAll("exercises/", "");
+                            exerciseStrings.add(value);
+                          } else {
+                            DocumentReference currentRef = current;
+                            exerciseStrings.add(currentRef.id);
+                          }
+                        }
+
+                        var muscles = workout.get(kTargetedMusclesField);
+                        List<String> targetedMuscles =
+                            List<String>.from(muscles);
+
+                        var workoutRef = workout;
+                        DocumentReference referenceToWorkout =
+                            workoutRef.reference;
+
+                        var workoutObject = Workout(
+                          workoutReference: referenceToWorkout,
+                          name: workoutName,
+                          exercises: exerciseStrings,
+                          numExercises: exerciseStrings.length,
+                          targetedMuscles: targetedMuscles,
+                          viewers: widget.courseObject.viewers,
+                        );
+
+                        workoutObjects.add(workoutObject);
+                      }
+
+                      for (var workoutObject in workoutObjects) {
+                        viewerWorkoutWidgets.add(WorkoutDisplay(
+                          workoutObject: workoutObject,
+                          viewer: true,
+                        ));
+                      }
+                    }
+                    workoutsLoaded = ownedWorkoutWidgets + viewerWorkoutWidgets;
+
+                    return Column(
+                      children: workoutsLoaded,
+                    );
+                  },
                 ),
-              ),
-            ],
+              ],
+            ),
           )
         ],
       ),
@@ -290,7 +284,7 @@ class _CoursePageState extends State<CoursePage> {
                         //Add the user to the course
                         _firestore
                             .collection(kCoursesCollection)
-                            .doc(widget.courseObject.courseReference.id)
+                            .doc(widget.courseObject.courseReference!.id)
                             .update({
                           kViewersField: FieldValue.arrayUnion([userId])
                         }).then((value) async {

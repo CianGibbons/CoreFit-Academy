@@ -23,23 +23,23 @@ class CreateExercisePage extends StatefulWidget {
   _CreateExercisePageState createState() => _CreateExercisePageState();
 }
 
-int currentSetsValue = 0;
-int currentRepsValue = 0;
-int currentRPEValue = 1;
-int currentDistanceValue = 0;
-double currentWeightValue = 0.0;
-int currentPercentageOfExertionValue = 0;
-List<Muscle> selectedTargetedMusclesNames = [];
-String selectedTargetedMuscleGroup =
-    kTargetMuscleGroupsNames[MuscleGroup.chest.index];
-List<Muscle> targetMusclesItemsList = kMusclesList[0];
-
 class _CreateExercisePageState extends State<CreateExercisePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final TextEditingController nameFieldTextEditingController =
       TextEditingController();
   final FocusNode nameFocusNode = FocusNode();
+
+  int currentSetsValue = 0;
+  int currentRepsValue = 0;
+  int currentRPEValue = 1;
+  double currentDistanceValue = 0.0;
+  double currentWeightValue = 0.0;
+  double currentPercentageOfExertionValue = 0;
+  List<Muscle> selectedTargetedMusclesNames = [];
+  String selectedTargetedMuscleGroup =
+      kTargetMuscleGroupsNames[MuscleGroup.chest.index];
+  List<Muscle> targetMusclesItemsList = kMusclesList[0];
 
   @override
   Widget build(BuildContext context) {
@@ -61,195 +61,194 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
             topRight: Radius.circular(20.0),
           ),
         ),
-        child: GestureDetector(
-          child: ListView(
-            children: [
-              Form(
-                key: _createExerciseFormKey,
-                child: Column(
-                  children: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          kCreateExerciseAction,
-                          style: kTitleStyle.copyWith(
-                              color: Theme.of(context).colorScheme.primary),
-                        ),
+        child: ListView(
+          children: [
+            Form(
+              key: _createExerciseFormKey,
+              child: Column(
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        kCreateExerciseAction,
+                        style: kTitleStyle.copyWith(
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                     ),
-                    CustomTextFormField(
-                      autoFocus: true,
-                      controller: nameFieldTextEditingController,
-                      inputLabel: kExerciseNameFieldLabel,
-                      obscureText: false,
-                      textInputType: TextInputType.text,
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      validator: validateString,
-                      errorText:
-                          context.watch<ErrorMessageStringProvider>().value,
+                  ),
+                  CustomTextFormField(
+                    autoFocus: true,
+                    controller: nameFieldTextEditingController,
+                    inputLabel: kExerciseNameFieldLabel,
+                    obscureText: false,
+                    textInputType: TextInputType.text,
+                    activeColor: Theme.of(context).colorScheme.primary,
+                    validator: validateString,
+                    errorText:
+                        context.watch<ErrorMessageStringProvider>().value,
+                  ),
+                  CustomNumberPickerHorizontal(
+                    fieldName: kSetsNameFieldLabel,
+                    initialValue: currentSetsValue,
+                    itemWidth: 80,
+                    sendCurrentValue: (int value) {
+                      currentSetsValue = value;
+                    },
+                  ),
+                  CustomNumberPickerHorizontal(
+                    fieldName: kRepsNameFieldLabel,
+                    initialValue: currentRepsValue,
+                    itemWidth: 80,
+                    sendCurrentValue: (int value) {
+                      currentRepsValue = value;
+                    },
+                  ),
+                  CustomNumberPickerHorizontal(
+                    fieldName: kREPNameFieldLabel,
+                    initialValue: currentRPEValue,
+                    maxValue: 10,
+                    minValue: 1,
+                    itemWidth: 80,
+                    sendCurrentValue: (int value) {
+                      currentRPEValue = value;
+                    },
+                  ),
+                  CustomNumberPickerDoubleHorizontal(
+                    fieldName: kDistanceKMNameFieldLabel,
+                    initialValue: currentDistanceValue,
+                    maxValue: 200000,
+                    step: 200,
+                    itemWidth: 80,
+                    sendCurrentValue: (double value) {
+                      currentDistanceValue = value;
+                    },
+                  ),
+                  CustomNumberPickerDoubleHorizontal(
+                    fieldName: kWeightKGNameFieldLabel,
+                    initialValue: currentWeightValue,
+                    maxValue: 200.0,
+                    step: 0.5,
+                    itemWidth: 80,
+                    sendCurrentValue: (double value) {
+                      currentWeightValue = value;
+                    },
+                  ),
+                  CustomNumberPickerDoubleHorizontal(
+                    fieldName: kPercentageOfExertionNameFieldLabel,
+                    initialValue: currentPercentageOfExertionValue,
+                    maxValue: 100,
+                    step: 1,
+                    itemWidth: 80,
+                    sendCurrentValue: (double value) {
+                      currentPercentageOfExertionValue = value;
+                    },
+                  ),
+                  Text(
+                    selectedTargetedMuscleGroup,
+                  ),
+                  CustomElevatedButton(
+                    onPressed: handleSetTargetedMuscleGroup,
+                    child: const Text(kSetMuscleGroupTitle),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  Text(
+                    selectedTargetedMusclesNames.toString(),
+                  ),
+                  CustomElevatedButton(
+                    onPressed: handleSetTargetedMuscles,
+                    child: const Text(kSetTargetedMusclesTitle),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  Text(
+                    context.read<DurationSelectedProvider>().value.toString(),
+                  ),
+                  CustomElevatedButton(
+                    onPressed: handleSetTimeClick,
+                    child: const Text(kSetTimeAction),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
                     ),
-                    CustomNumberPickerHorizontal(
-                      fieldName: kSetsNameFieldLabel,
-                      initialValue: currentSetsValue,
-                      itemWidth: 80,
-                      sendCurrentValue: (int value) {
-                        currentSetsValue = value;
-                      },
-                    ),
-                    CustomNumberPickerHorizontal(
-                      fieldName: kRepsNameFieldLabel,
-                      initialValue: currentRepsValue,
-                      itemWidth: 80,
-                      sendCurrentValue: (int value) {
-                        currentRepsValue = value;
-                      },
-                    ),
-                    CustomNumberPickerHorizontal(
-                      fieldName: kREPNameFieldLabel,
-                      initialValue: currentRPEValue,
-                      maxValue: 10,
-                      minValue: 1,
-                      itemWidth: 80,
-                      sendCurrentValue: (int value) {
-                        currentRPEValue = value;
-                      },
-                    ),
-                    CustomNumberPickerHorizontal(
-                      fieldName: kDistanceKMNameFieldLabel,
-                      initialValue: currentDistanceValue,
-                      maxValue: 200000,
-                      step: 200,
-                      itemWidth: 80,
-                      sendCurrentValue: (int value) {
-                        currentDistanceValue = value;
-                      },
-                    ),
-                    CustomNumberPickerDoubleHorizontal(
-                      fieldName: kWeightKGNameFieldLabel,
-                      initialValue: currentWeightValue,
-                      maxValue: 200.0,
-                      step: 0.5,
-                      itemWidth: 80,
-                      sendCurrentValue: (double value) {
-                        currentWeightValue = value;
-                      },
-                    ),
-                    CustomNumberPickerHorizontal(
-                      fieldName: kPercentageOfExertionNameFieldLabel,
-                      initialValue: currentPercentageOfExertionValue,
-                      maxValue: 100,
-                      step: 1,
-                      itemWidth: 80,
-                      sendCurrentValue: (int value) {
-                        currentPercentageOfExertionValue = value;
-                      },
-                    ),
-                    Text(
-                      selectedTargetedMuscleGroup,
-                    ),
-                    CustomElevatedButton(
-                      onPressed: handleSetTargetedMuscleGroup,
-                      child: const Text(kSetMuscleGroupTitle),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                    ),
-                    Text(
-                      selectedTargetedMusclesNames.toString(),
-                    ),
-                    CustomElevatedButton(
-                      onPressed: handleSetTargetedMuscles,
-                      child: const Text(kSetTargetedMusclesTitle),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                    ),
-                    Text(
-                      context.read<DurationSelectedProvider>().value.toString(),
-                    ),
-                    CustomElevatedButton(
-                      onPressed: handleSetTimeClick,
-                      child: const Text(kSetTimeAction),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom,
-                      ),
-                      child: CustomElevatedButton(
-                        onPressed: () {
-                          if (_createExerciseFormKey.currentState!.validate() &&
-                              nameFieldTextEditingController.text.isNotEmpty) {
-                            List<Map> listOfMuscles = [];
-                            for (Muscle targetedMuscle
-                                in selectedTargetedMusclesNames) {
-                              listOfMuscles.add({
-                                kMuscleNameField: targetedMuscle.muscleName,
-                                kMuscleGroupIndexField:
-                                    targetedMuscle.muscleGroup.index,
-                              });
-                            }
-
-                            Duration timeForExercise =
-                                context.read<DurationSelectedProvider>().value;
-                            int hours = timeForExercise.inHours;
-                            int minutes =
-                                timeForExercise.inMinutes - (hours * 60);
-                            int seconds = timeForExercise.inSeconds -
-                                ((hours * 60 * 60) + (minutes * 60));
-
-                            _firestore.collection(kExercisesCollection).add({
-                              kCreatedAtField: DateTime.now(),
-                              kUserIdField: widget._firebase.currentUser!.uid,
-                              kNameField: nameFieldTextEditingController.text,
-                              kViewersField: viewers,
-                              kTargetedMuscleGroupField:
-                                  selectedTargetedMuscleGroup,
-                              kTargetedMusclesField: listOfMuscles,
-                              kParentWorkoutField:
-                                  widget.workoutObject.workoutReference,
-                              kRpeField: currentRPEValue,
-                              kDistanceKmField: currentDistanceValue.round(),
-                              kPercentageOfExertionField:
-                                  currentPercentageOfExertionValue,
-                              kRepsField: currentRepsValue,
-                              kSetsField: currentSetsValue,
-                              kTimeHoursField: hours,
-                              kTimeMinutesField: minutes,
-                              kTimeSecondsField: seconds,
-                              kWeightKgField: currentWeightValue,
-                            }).then((value) {
-                              List idList = [];
-                              idList.add(kExercisesCollection + '/' + value.id);
-                              _firestore
-                                  .collection(kWorkoutsCollection)
-                                  .doc(widget.workoutObject.workoutReference.id)
-                                  .update({
-                                kExercisesField: FieldValue.arrayUnion(idList)
-                              });
+                    child: CustomElevatedButton(
+                      onPressed: () {
+                        if (_createExerciseFormKey.currentState!.validate() &&
+                            nameFieldTextEditingController.text.isNotEmpty) {
+                          List<Map> listOfMuscles = [];
+                          for (Muscle targetedMuscle
+                              in selectedTargetedMusclesNames) {
+                            listOfMuscles.add({
+                              kMuscleNameField: targetedMuscle.muscleName,
+                              kMuscleGroupIndexField:
+                                  targetedMuscle.muscleGroup.index,
                             });
-                            nameFieldTextEditingController.clear();
-                            context
-                                .read<ErrorMessageStringProvider>()
-                                .setValue(null);
-                            Navigator.pop(context);
-                          } else {
-                            // Set the Error Message to Please Enter a Name for the Exercise
-                            // This also notifies any widget that a change has been made
-                            // these widgets will then rebuild due to the update in this value
-                            // ie. the text field will show that the Name Field is empty in this case.
-                            context
-                                .read<ErrorMessageStringProvider>()
-                                .setValue(kErrorEnterValidNameString);
                           }
-                        },
-                        child: const Text(kCreateExerciseActionButton),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                      ),
+
+                          Duration timeForExercise =
+                              context.read<DurationSelectedProvider>().value;
+                          int hours = timeForExercise.inHours;
+                          int minutes =
+                              timeForExercise.inMinutes - (hours * 60);
+                          int seconds = timeForExercise.inSeconds -
+                              ((hours * 60 * 60) + (minutes * 60));
+
+                          _firestore.collection(kExercisesCollection).add({
+                            kCreatedAtField: DateTime.now(),
+                            kUserIdField: widget._firebase.currentUser!.uid,
+                            kNameField: nameFieldTextEditingController.text,
+                            kViewersField: viewers,
+                            kTargetedMuscleGroupField:
+                                selectedTargetedMuscleGroup,
+                            kTargetedMusclesField: listOfMuscles,
+                            kParentWorkoutField:
+                                widget.workoutObject.workoutReference,
+                            kRpeField: currentRPEValue,
+                            kDistanceKmField: currentDistanceValue,
+                            kPercentageOfExertionField:
+                                currentPercentageOfExertionValue,
+                            kRepsField: currentRepsValue,
+                            kSetsField: currentSetsValue,
+                            kTimeHoursField: hours,
+                            kTimeMinutesField: minutes,
+                            kTimeSecondsField: seconds,
+                            kWeightKgField: currentWeightValue,
+                          }).then((value) {
+                            List idList = [];
+                            idList.add(kExercisesCollection + '/' + value.id);
+                            _firestore
+                                .collection(kWorkoutsCollection)
+                                .doc(widget.workoutObject.workoutReference.id)
+                                .update({
+                              kExercisesField: FieldValue.arrayUnion(idList)
+                            });
+                          });
+                          nameFieldTextEditingController.clear();
+
+                          context
+                              .read<ErrorMessageStringProvider>()
+                              .setValue(null);
+                          Navigator.pop(context);
+                        } else {
+                          // Set the Error Message to Please Enter a Name for the Exercise
+                          // This also notifies any widget that a change has been made
+                          // these widgets will then rebuild due to the update in this value
+                          // ie. the text field will show that the Name Field is empty in this case.
+                          context
+                              .read<ErrorMessageStringProvider>()
+                              .setValue(kErrorEnterValidNameString);
+                        }
+                      },
+                      child: const Text(kCreateExerciseActionButton),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                     ),
-                    const SizedBox(height: 20.0)
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 20.0)
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
