@@ -158,6 +158,7 @@ class _LogExercisePageState extends State<LogExercisePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.done),
         onPressed: () {
           List<Map> currentListOfMuscles = [];
           for (Muscle targetedMuscle in currentTargetedMuscles) {

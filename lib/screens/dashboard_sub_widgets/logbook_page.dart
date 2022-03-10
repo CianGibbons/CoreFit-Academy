@@ -5,14 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:corefit_academy/models/course.dart';
 import 'package:corefit_academy/models/workout.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/providers/valid_workout_selected_provider.dart';
 
+import '../../models/exercise.dart';
+import '../../models/muscle.dart';
+import '../../utilities/providers/duration_selected_provider.dart';
+import '../log_exercise_page.dart';
+
 class LogBook extends StatefulWidget {
-  const LogBook({Key? key, required this.user, this.sendData})
-      : super(key: key);
+  const LogBook({Key? key, required this.user}) : super(key: key);
   final User user;
-  final LogbookCallback? sendData;
 
   @override
   State<LogBook> createState() => _LogBookState();
@@ -39,6 +43,7 @@ class _LogBookState extends State<LogBook> {
 
   bool _showCourseDdlBool = false;
   bool _showWorkoutDdlBool = false;
+
   @override
   Widget build(BuildContext context) {
     if (courseDropdownItems.isEmpty) {
@@ -55,10 +60,12 @@ class _LogBookState extends State<LogBook> {
           padding: const EdgeInsets.all(8.0),
           child: SafeArea(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                //Get all Courses
                 CustomElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    //TODO: SHOW ALL USER LOGS
+                  },
                   child: const Text("See Logbook"),
                   backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
@@ -83,211 +90,226 @@ class _LogBookState extends State<LogBook> {
                 ),
                 FutureBuilder(
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasData) {
-                        var data = snapshot.data;
-                        if (data.runtimeType == List<Course>) {
-                          List<Course> courses = data as List<Course>;
-                          var i = 1;
-                          for (var course in courses) {
-                            course.id = i;
-                            i++;
-                          }
-                          if (courses.isNotEmpty) {
-                            courseDropdownItems = [pleaseSelectItem] +
-                                courses
-                                    .map<DropdownMenuItem<int>>(
-                                        (value) => DropdownMenuItem<int>(
-                                              value: value.id,
-                                              child: Text(value.name),
-                                            ))
-                                    .toList();
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData &&
+                        snapshot.data.runtimeType == List<Course>) {
+                      List<Course> courses = snapshot.data as List<Course>;
+                      var i = 1;
+                      for (var course in courses) {
+                        course.id = i;
+                        i++;
+                      }
+                      if (courses.isNotEmpty) {
+                        courseDropdownItems = [pleaseSelectItem] +
+                            courses
+                                .map<DropdownMenuItem<int>>(
+                                    (value) => DropdownMenuItem<int>(
+                                          value: value.id,
+                                          child: Text(value.name),
+                                        ))
+                                .toList();
 
-                            return Visibility(
-                              visible: _showCourseDdlBool,
-                              child: Column(
-                                children: [
-                                  const Text(
-                                      "Select a Course to Log a Workout From"),
-                                  DropdownButton<int>(
-                                    value: selectedCourseValue,
-                                    onChanged: (val) {
+                        return Visibility(
+                          visible: _showCourseDdlBool,
+                          child: Column(
+                            children: [
+                              const Text(
+                                  "Select a Course to Log a Workout From"),
+                              DropdownButton<int>(
+                                value: selectedCourseValue,
+                                onChanged: (val) {
+                                  setState(() {
+                                    selectedWorkout = null;
+                                    selectedCourseValue = val!;
+                                    selectedWorkoutValue = 0;
+                                    workoutDropdownItems = [];
+                                    if (selectedCourseValue != 0) {
+                                      Course? selected;
+                                      for (var course in courses) {
+                                        if (course.id == selectedCourseValue) {
+                                          selected = course;
+                                          break;
+                                        }
+                                      }
+                                      if (selected != null) {
+                                        setState(() {
+                                          selectedCourse = selected;
+                                          _showWorkoutDdlBool = true;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          selectedCourse = null;
+                                          _showWorkoutDdlBool = false;
+                                        });
+                                      }
+                                    } else {
                                       setState(() {
-                                        selectedWorkout = null;
-                                        selectedCourseValue = val!;
-                                        selectedWorkoutValue = 0;
-                                        workoutDropdownItems = [];
-                                        if (selectedCourseValue != 0) {
-                                          Course? selected;
-                                          for (var course in courses) {
-                                            if (course.id ==
-                                                selectedCourseValue) {
-                                              selected = course;
-                                              break;
-                                            }
-                                          }
-                                          if (selected != null) {
-                                            setState(() {
-                                              selectedCourse = selected;
-                                              _showWorkoutDdlBool = true;
-                                            });
-                                          } else {
-                                            context
-                                                .read<
-                                                    ValidWorkoutSelectedBoolProvider>()
-                                                .setValue(false);
-                                            setState(() {
-                                              selectedCourse = null;
-                                              _showWorkoutDdlBool = false;
-                                            });
-                                          }
-                                        } else {
-                                          context
-                                              .read<
-                                                  ValidWorkoutSelectedBoolProvider>()
-                                              .setValue(false);
-                                          setState(() {
-                                            selectedCourse = null;
-                                            _showWorkoutDdlBool = false;
-                                          });
-                                        }
+                                        selectedCourse = null;
+                                        _showWorkoutDdlBool = false;
                                       });
-                                    },
-                                    items: courseDropdownItems,
-                                  ),
-                                  if (_showCourseDdlBool &&
-                                      selectedCourse != null)
-                                    FutureBuilder(
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.done) {
-                                          if (snapshot.hasData) {
-                                            var data = snapshot.data;
-                                            if (data.runtimeType ==
-                                                List<Workout>) {
-                                              List<Workout> workouts =
-                                                  data as List<Workout>;
+                                    }
+                                  });
+                                },
+                                items: courseDropdownItems,
+                              ),
+                              if (_showCourseDdlBool && selectedCourse != null)
+                                FutureBuilder(
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      if (snapshot.hasData) {
+                                        var data = snapshot.data;
+                                        if (data.runtimeType == List<Workout>) {
+                                          List<Workout> workouts =
+                                              data as List<Workout>;
 
-                                              var i = 1;
-                                              for (var workout in workouts) {
-                                                workout.id = i;
-                                                i++;
-                                              }
+                                          var i = 1;
+                                          for (var workout in workouts) {
+                                            workout.id = i;
+                                            i++;
+                                          }
 
-                                              if (workouts.isNotEmpty) {
-                                                workoutDropdownItems = [
-                                                      pleaseSelectItem
-                                                    ] +
-                                                    workouts
-                                                        .map<
-                                                            DropdownMenuItem<
-                                                                int>>((value) =>
-                                                            DropdownMenuItem<
-                                                                int>(
-                                                              value: value.id,
-                                                              child: Text(
-                                                                  value.name),
-                                                            ))
-                                                        .toList();
-                                                return Visibility(
-                                                  visible: _showWorkoutDdlBool,
-                                                  child: Column(
-                                                    children: [
-                                                      const Text(
-                                                          "Select a Workout to Log"),
-                                                      DropdownButton<int>(
-                                                        value:
-                                                            selectedWorkoutValue,
-                                                        onChanged: (val) {
-                                                          setState(() {
-                                                            selectedWorkoutValue =
-                                                                val!;
-                                                            if (selectedWorkoutValue !=
-                                                                0) {
-                                                              Workout? selected;
-                                                              for (var workout
-                                                                  in workouts) {
-                                                                if (workout
-                                                                        .id ==
-                                                                    selectedWorkoutValue) {
-                                                                  selected =
-                                                                      workout;
-                                                                  break;
-                                                                }
-                                                              }
-                                                              if (selected !=
-                                                                  null) {
-                                                                context
-                                                                    .read<
-                                                                        ValidWorkoutSelectedBoolProvider>()
-                                                                    .setValue(
-                                                                        true);
-                                                                setState(() {
-                                                                  selectedWorkout =
-                                                                      selected;
-                                                                });
-                                                                widget.sendData!(
-                                                                    selectedCourse!,
-                                                                    selectedWorkout!);
-                                                              } else {
-                                                                //No Workout Selected Hide FAB
-                                                                context
-                                                                    .read<
-                                                                        ValidWorkoutSelectedBoolProvider>()
-                                                                    .setValue(
-                                                                        false);
-                                                              }
-                                                            } else {
-                                                              // Please Select is selected so hide the FAB
-                                                              context
-                                                                  .read<
-                                                                      ValidWorkoutSelectedBoolProvider>()
-                                                                  .setValue(
-                                                                      false);
-                                                              setState(() {
-                                                                selectedWorkout =
-                                                                    null;
-                                                              });
+                                          if (workouts.isNotEmpty) {
+                                            workoutDropdownItems = [
+                                                  pleaseSelectItem
+                                                ] +
+                                                workouts
+                                                    .map<
+                                                        DropdownMenuItem<
+                                                            int>>((value) =>
+                                                        DropdownMenuItem<int>(
+                                                          value: value.id,
+                                                          child:
+                                                              Text(value.name),
+                                                        ))
+                                                    .toList();
+                                            return Visibility(
+                                              visible: _showWorkoutDdlBool,
+                                              child: Column(
+                                                children: [
+                                                  const Text(
+                                                      "Select a Workout to Log"),
+                                                  DropdownButton<int>(
+                                                    value: selectedWorkoutValue,
+                                                    onChanged: (val) {
+                                                      setState(() {
+                                                        selectedWorkoutValue =
+                                                            val!;
+                                                        if (selectedWorkoutValue !=
+                                                            0) {
+                                                          Workout? selected;
+                                                          for (var workout
+                                                              in workouts) {
+                                                            if (workout.id ==
+                                                                selectedWorkoutValue) {
+                                                              selected =
+                                                                  workout;
+                                                              break;
                                                             }
+                                                          }
+                                                          if (selected !=
+                                                              null) {
+                                                            setState(() {
+                                                              selectedWorkout =
+                                                                  selected;
+                                                            });
+                                                          }
+                                                        } else {
+                                                          setState(() {
+                                                            selectedWorkout =
+                                                                null;
                                                           });
-                                                        },
-                                                        items:
-                                                            workoutDropdownItems,
-                                                      ),
-                                                    ],
+                                                        }
+                                                      });
+                                                    },
+                                                    items: workoutDropdownItems,
                                                   ),
-                                                );
-                                              } else {
-                                                return const Text(
-                                                    "No Workout were found for this Course!");
-                                              }
-                                            }
+                                                ],
+                                              ),
+                                            );
                                           } else {
-                                            return const Center(
-                                                child:
-                                                    CircularProgressIndicator());
+                                            return const Text(
+                                                "No Workout were found for this Course!");
                                           }
                                         }
-                                        return Container();
-                                      },
-                                      future: getWorkouts(selectedCourse!),
-                                    ),
-                                ],
-                              ),
-                            );
-                          } else {
-                            return const Text(
-                                "No Courses were found! Please Create a new Course");
-                          }
-                        }
+                                      } else {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      }
+                                    }
+                                    return Container();
+                                  },
+                                  future: getWorkouts(selectedCourse!),
+                                ),
+                            ],
+                          ),
+                        );
                       } else {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Text(
+                            "No Courses were found! Please Create a new Course");
                       }
                     }
-                    return Container();
+                    return const Center(child: CircularProgressIndicator());
                   },
                   future: getCourses(),
                 ),
+                if (selectedCourse != null)
+                  Text("Selected Course: ${selectedCourse!.name}"),
+                if (selectedWorkout != null)
+                  Text("Selected Workout: ${selectedWorkout!.name}"),
+                if (selectedWorkout != null && selectedCourse != null)
+                  CustomElevatedButton(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: Container(
+                        child: Padding(
+                      padding:
+                          const EdgeInsets.only(left: 0, top: 8.0, bottom: 8.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Text(
+                            "Log Exercise",
+                            style: TextStyle(fontSize: 20.0),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 12.0),
+                            child: Icon(FontAwesomeIcons.pencilAlt, size: 20.0),
+                          ),
+                        ],
+                      ),
+                    )),
+                    onPressed: () async {
+                      if (selectedCourse != null && selectedWorkout != null) {
+                        var exerciseData = await getExercises(selectedWorkout!);
+                        if (exerciseData.runtimeType == List<Exercise>) {
+                          List<Exercise> exercises = exerciseData;
+                          int currentIndex = 0;
+                          context.read<DurationSelectedProvider>().setValue(
+                              Duration(
+                                  hours: exercises[currentIndex].timeHours,
+                                  minutes: exercises[currentIndex].timeMinutes,
+                                  seconds:
+                                      exercises[currentIndex].timeSeconds));
+                          var workoutLogReference = await _firestore
+                              .collection(kLogWorkoutCollection)
+                              .add({
+                            kWorkoutLogIdField:
+                                _firebase.currentUser!.uid.toString() +
+                                    DateTime.now().toIso8601String(),
+                            kExercisesField: []
+                          });
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return LogExercisePage(
+                              targetExercises: exercises,
+                              currentIndex: currentIndex,
+                              workoutLogReference: workoutLogReference,
+                            );
+                          }));
+                        }
+                      }
+                    },
+                  ),
               ],
             ),
           ),
@@ -512,6 +534,203 @@ class _LogBookState extends State<LogBook> {
     List<Workout> courseObjects = ownedWorkouts + viewingWorkouts;
     return courseObjects;
   }
-}
 
-typedef LogbookCallback = void Function(Course course, Workout workout);
+  Future<List<Exercise>> getExercises(Workout workout) async {
+    var snapshot1Owned = await _firestore
+        .collection(kExercisesCollection)
+        .where(kParentWorkoutField, isEqualTo: workout.workoutReference)
+        .where(kUserIdField, isEqualTo: _firebase.currentUser!.uid)
+        .get();
+    var snapshot2Viewing = await _firestore
+        .collection(kExercisesCollection)
+        .where(kParentWorkoutField, isEqualTo: workout.workoutReference)
+        .where(kViewersField, arrayContains: _firebase.currentUser!.uid)
+        .get();
+
+    List<Exercise> ownedExercises = [];
+    List<Exercise> viewingExercises = [];
+
+    if (snapshot1Owned.docs.isNotEmpty) {
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+          snapshot1Owned.docs;
+      for (var exercise in docs) {
+        // name,RPE,distanceKm,parentWorkout,percentageOfExertion,
+        // reps,sets,targetedMuscles,timeHours,timeMinutes,
+        // timeSeconds,userId,weightKg,viewers
+
+        var exerciseName = exercise.get(kNameField);
+
+        var rawRPE = exercise.get(kRpeField);
+        int rpe = rawRPE;
+
+        var rawDistanceKm = exercise.get(kDistanceKmField);
+        double distanceKm = 0;
+        if (rawDistanceKm.runtimeType == double) {
+          distanceKm = rawDistanceKm;
+        } else if (rawDistanceKm.runtimeType == int) {
+          distanceKm = double.parse(rawDistanceKm.toString());
+        }
+
+        var rawPercentageOfExertion = exercise.get(kPercentageOfExertionField);
+        double percentageOfExertion = 0;
+        if (rawPercentageOfExertion.runtimeType == double) {
+          percentageOfExertion = rawPercentageOfExertion;
+        } else if (rawPercentageOfExertion.runtimeType == int) {
+          percentageOfExertion =
+              double.parse(rawPercentageOfExertion.toString());
+        }
+
+        var rawReps = exercise.get(kRepsField);
+        int reps = rawReps;
+
+        var rawSets = exercise.get(kSetsField);
+        int sets = rawSets;
+
+        var targetedMuscleGroup = exercise.get(kTargetedMuscleGroupField);
+
+        var muscles = exercise.get(kTargetedMusclesField);
+        List<Muscle> targetedMuscles = [];
+        for (var muscle in muscles) {
+          String muscleName = muscle[kMuscleNameField];
+          MuscleGroup muscleGroup =
+              MuscleGroup.values[muscle[kMuscleGroupIndexField]];
+
+          Muscle muscleObj =
+              Muscle(muscleName: muscleName, muscleGroup: muscleGroup);
+          targetedMuscles.add(muscleObj);
+        }
+
+        var rawTimeHours = exercise.get(kTimeHoursField);
+        int timeHours = int.parse(rawTimeHours.toString());
+
+        var rawTimeMinutes = exercise.get(kTimeMinutesField);
+        int timeMinutes = int.parse(rawTimeMinutes.toString());
+
+        var rawTimeSeconds = exercise.get(kTimeSecondsField);
+        int timeSeconds = int.parse(rawTimeSeconds.toString());
+
+        var rawWeightKg = exercise.get(kWeightKgField);
+        double weightKg = 0;
+        if (rawWeightKg.runtimeType == double) {
+          weightKg = rawWeightKg;
+        } else if (rawWeightKg.runtimeType == int) {
+          weightKg = double.parse(rawWeightKg.toString());
+        }
+
+        var exerciseRef = exercise;
+        DocumentReference referenceToExercise = exerciseRef.reference;
+
+        var exerciseObject = Exercise(
+          exerciseReference: referenceToExercise,
+          name: exerciseName,
+          sets: sets,
+          reps: reps,
+          timeHours: timeHours,
+          timeMinutes: timeMinutes,
+          timeSeconds: timeSeconds,
+          distanceKM: distanceKm,
+          weightKG: weightKg,
+          rpe: rpe,
+          percentageOfExertion: percentageOfExertion,
+          targetedMuscleGroup: targetedMuscleGroup,
+          targetedMuscles: targetedMuscles,
+          viewers: workout.viewers,
+        );
+        ownedExercises.add(exerciseObject);
+      }
+    }
+    if (snapshot2Viewing.docs.isNotEmpty) {
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+          snapshot1Owned.docs;
+      for (var exercise in docs) {
+        // name,RPE,distanceKm,parentWorkout,percentageOfExertion,
+        // reps,sets,targetedMuscles,timeHours,timeMinutes,
+        // timeSeconds,userId,weightKg,viewers
+
+        var exerciseName = exercise.get(kNameField);
+
+        var rawRPE = exercise.get(kRpeField);
+        int rpe = rawRPE;
+
+        var rawDistanceKm = exercise.get(kDistanceKmField);
+        double distanceKm = 0;
+        if (rawDistanceKm.runtimeType == double) {
+          distanceKm = rawDistanceKm;
+        } else if (rawDistanceKm.runtimeType == int) {
+          distanceKm = double.parse(rawDistanceKm.toString());
+        }
+
+        var rawPercentageOfExertion = exercise.get(kPercentageOfExertionField);
+        double percentageOfExertion = 0;
+        if (rawPercentageOfExertion.runtimeType == double) {
+          percentageOfExertion = rawPercentageOfExertion;
+        } else if (rawPercentageOfExertion.runtimeType == int) {
+          percentageOfExertion =
+              double.parse(rawPercentageOfExertion.toString());
+        }
+
+        var rawReps = exercise.get(kRepsField);
+        int reps = rawReps;
+
+        var rawSets = exercise.get(kSetsField);
+        int sets = rawSets;
+
+        var targetedMuscleGroup = exercise.get(kTargetedMuscleGroupField);
+
+        var muscles = exercise.get(kTargetedMusclesField);
+        List<Muscle> targetedMuscles = [];
+        for (var muscle in muscles) {
+          String muscleName = muscle[kMuscleNameField];
+          MuscleGroup muscleGroup =
+              MuscleGroup.values[muscle[kMuscleGroupIndexField]];
+
+          Muscle muscleObj =
+              Muscle(muscleName: muscleName, muscleGroup: muscleGroup);
+          targetedMuscles.add(muscleObj);
+        }
+
+        var rawTimeHours = exercise.get(kTimeHoursField);
+        int timeHours = int.parse(rawTimeHours.toString());
+
+        var rawTimeMinutes = exercise.get(kTimeMinutesField);
+        int timeMinutes = int.parse(rawTimeMinutes.toString());
+
+        var rawTimeSeconds = exercise.get(kTimeSecondsField);
+        int timeSeconds = int.parse(rawTimeSeconds.toString());
+
+        var rawWeightKg = exercise.get(kWeightKgField);
+        double weightKg = 0;
+        if (rawWeightKg.runtimeType == double) {
+          weightKg = rawWeightKg;
+        } else if (rawWeightKg.runtimeType == int) {
+          weightKg = double.parse(rawWeightKg.toString());
+        }
+
+        var exerciseRef = exercise;
+        DocumentReference referenceToExercise = exerciseRef.reference;
+
+        var exerciseObject = Exercise(
+          exerciseReference: referenceToExercise,
+          name: exerciseName,
+          sets: sets,
+          reps: reps,
+          timeHours: timeHours,
+          timeMinutes: timeMinutes,
+          timeSeconds: timeSeconds,
+          distanceKM: distanceKm,
+          weightKG: weightKg,
+          rpe: rpe,
+          percentageOfExertion: percentageOfExertion,
+          targetedMuscleGroup: targetedMuscleGroup,
+          targetedMuscles: targetedMuscles,
+          viewers: workout.viewers,
+        );
+
+        viewingExercises.add(exerciseObject);
+      }
+    }
+
+    List<Exercise> exerciseObjects = ownedExercises + viewingExercises;
+    return exerciseObjects;
+  }
+}
