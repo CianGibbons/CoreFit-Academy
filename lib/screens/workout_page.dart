@@ -27,9 +27,10 @@ class _WorkoutPageState extends State<WorkoutPage> {
   final FirebaseAuth _firebase = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  List<ExerciseDisplay> workoutsLoaded = [];
+  List<ExerciseDisplay> exercisesLoaded = [];
   List<ExerciseDisplay> ownedExerciseWidgetsLoaded = [];
   List<ExerciseDisplay> viewedExerciseWidgetsLoaded = [];
+
   @override
   Widget build(BuildContext context) {
     var stream1Owned = _firestore
@@ -175,7 +176,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                               ownedExerciseWidgets.add(current);
                             }
                             ownedExerciseWidgetsLoaded = ownedExerciseWidgets;
-                            workoutsLoaded = viewedExerciseWidgetsLoaded +
+                            exercisesLoaded = viewedExerciseWidgetsLoaded +
                                 ownedExerciseWidgetsLoaded;
                           }
                           List<ExerciseDisplay> viewerExerciseWidgets = [];
@@ -290,11 +291,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             }
                             viewedExerciseWidgetsLoaded = viewerExerciseWidgets;
 
-                            workoutsLoaded = viewedExerciseWidgetsLoaded +
+                            exercisesLoaded = viewedExerciseWidgetsLoaded +
                                 ownedExerciseWidgetsLoaded;
                           }
                           return Column(
-                            children: workoutsLoaded,
+                            children: exercisesLoaded,
                           );
                         }),
                   ],

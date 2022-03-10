@@ -5,16 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:corefit_academy/models/course.dart';
 import 'package:corefit_academy/models/workout.dart';
+import 'package:provider/provider.dart';
+import 'package:corefit_academy/utilities/providers/valid_workout_selected_provider.dart';
 
 class LogBook extends StatefulWidget {
-  const LogBook({Key? key, required this.user}) : super(key: key);
+  const LogBook({Key? key, required this.user, this.sendData})
+      : super(key: key);
   final User user;
+  final LogbookCallback? sendData;
 
   @override
   State<LogBook> createState() => _LogBookState();
 }
 
 class _LogBookState extends State<LogBook> {
+  //TODO: Update Provider Upon Selecting Course with no Workouts to False
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebase = FirebaseAuth.instance;
 
@@ -67,6 +72,9 @@ class _LogBookState extends State<LogBook> {
                         _showWorkoutDdlBool = false;
                         selectedCourseValue = 0;
                         selectedWorkoutValue = 0;
+                        context
+                            .read<ValidWorkoutSelectedBoolProvider>()
+                            .setValue(false);
                       }
                     });
                   },
@@ -99,10 +107,13 @@ class _LogBookState extends State<LogBook> {
                               visible: _showCourseDdlBool,
                               child: Column(
                                 children: [
+                                  const Text(
+                                      "Select a Course to Log a Workout From"),
                                   DropdownButton<int>(
                                     value: selectedCourseValue,
                                     onChanged: (val) {
                                       setState(() {
+                                        selectedWorkout = null;
                                         selectedCourseValue = val!;
                                         selectedWorkoutValue = 0;
                                         workoutDropdownItems = [];
@@ -121,12 +132,20 @@ class _LogBookState extends State<LogBook> {
                                               _showWorkoutDdlBool = true;
                                             });
                                           } else {
+                                            context
+                                                .read<
+                                                    ValidWorkoutSelectedBoolProvider>()
+                                                .setValue(false);
                                             setState(() {
                                               selectedCourse = null;
                                               _showWorkoutDdlBool = false;
                                             });
                                           }
                                         } else {
+                                          context
+                                              .read<
+                                                  ValidWorkoutSelectedBoolProvider>()
+                                              .setValue(false);
                                           setState(() {
                                             selectedCourse = null;
                                             _showWorkoutDdlBool = false;
@@ -172,49 +191,70 @@ class _LogBookState extends State<LogBook> {
                                                         .toList();
                                                 return Visibility(
                                                   visible: _showWorkoutDdlBool,
-                                                  child: DropdownButton<int>(
-                                                    value: selectedWorkoutValue,
-                                                    onChanged: (val) {
-                                                      setState(() {
-                                                        selectedWorkoutValue =
-                                                            val!;
-                                                        if (selectedWorkoutValue !=
-                                                            0) {
-                                                          Workout? selected;
-                                                          for (var workout
-                                                              in workouts) {
-                                                            if (workout.id ==
-                                                                selectedWorkoutValue) {
-                                                              selected =
-                                                                  workout;
-                                                              break;
-                                                            }
-                                                          }
-                                                          if (selected !=
-                                                              null) {
-                                                            setState(() {
-                                                              selectedWorkout =
-                                                                  selected;
-                                                              // _showWorkoutDdlBool = true;
-                                                              //TODO: SHOW FAB
-                                                            });
-                                                          } else {
-                                                            setState(() {
-                                                              //TODO: HIDE FAB
-                                                              // _showWorkoutDdlBool = false;
-                                                            });
-                                                          }
-                                                        } else {
+                                                  child: Column(
+                                                    children: [
+                                                      const Text(
+                                                          "Select a Workout to Log"),
+                                                      DropdownButton<int>(
+                                                        value:
+                                                            selectedWorkoutValue,
+                                                        onChanged: (val) {
                                                           setState(() {
-                                                            selectedWorkout =
-                                                                null;
-                                                            // _showWorkoutDdlBool = false;
-                                                            //  TODO: Hide FAB
+                                                            selectedWorkoutValue =
+                                                                val!;
+                                                            if (selectedWorkoutValue !=
+                                                                0) {
+                                                              Workout? selected;
+                                                              for (var workout
+                                                                  in workouts) {
+                                                                if (workout
+                                                                        .id ==
+                                                                    selectedWorkoutValue) {
+                                                                  selected =
+                                                                      workout;
+                                                                  break;
+                                                                }
+                                                              }
+                                                              if (selected !=
+                                                                  null) {
+                                                                context
+                                                                    .read<
+                                                                        ValidWorkoutSelectedBoolProvider>()
+                                                                    .setValue(
+                                                                        true);
+                                                                setState(() {
+                                                                  selectedWorkout =
+                                                                      selected;
+                                                                });
+                                                                widget.sendData!(
+                                                                    selectedCourse!,
+                                                                    selectedWorkout!);
+                                                              } else {
+                                                                //No Workout Selected Hide FAB
+                                                                context
+                                                                    .read<
+                                                                        ValidWorkoutSelectedBoolProvider>()
+                                                                    .setValue(
+                                                                        false);
+                                                              }
+                                                            } else {
+                                                              // Please Select is selected so hide the FAB
+                                                              context
+                                                                  .read<
+                                                                      ValidWorkoutSelectedBoolProvider>()
+                                                                  .setValue(
+                                                                      false);
+                                                              setState(() {
+                                                                selectedWorkout =
+                                                                    null;
+                                                              });
+                                                            }
                                                           });
-                                                        }
-                                                      });
-                                                    },
-                                                    items: workoutDropdownItems,
+                                                        },
+                                                        items:
+                                                            workoutDropdownItems,
+                                                      ),
+                                                    ],
                                                   ),
                                                 );
                                               } else {
@@ -473,3 +513,5 @@ class _LogBookState extends State<LogBook> {
     return courseObjects;
   }
 }
+
+typedef LogbookCallback = void Function(Course course, Workout workout);
