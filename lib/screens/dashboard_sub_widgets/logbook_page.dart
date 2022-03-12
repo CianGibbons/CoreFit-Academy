@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
+import 'package:corefit_academy/screens/show_logs_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/constants.dart';
@@ -8,11 +9,10 @@ import 'package:corefit_academy/models/workout.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/providers/valid_workout_selected_provider.dart';
-
-import '../../models/exercise.dart';
-import '../../models/muscle.dart';
-import '../../utilities/providers/duration_selected_provider.dart';
-import '../log_exercise_page.dart';
+import 'package:corefit_academy/models/exercise.dart';
+import 'package:corefit_academy/models/muscle.dart';
+import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
+import 'package:corefit_academy/screens/log_exercise_page.dart';
 
 class LogBook extends StatefulWidget {
   const LogBook({Key? key, required this.user}) : super(key: key);
@@ -23,7 +23,6 @@ class LogBook extends StatefulWidget {
 }
 
 class _LogBookState extends State<LogBook> {
-  //TODO: Update Provider Upon Selecting Course with no Workouts to False
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebase = FirebaseAuth.instance;
 
@@ -65,6 +64,10 @@ class _LogBookState extends State<LogBook> {
                 CustomElevatedButton(
                   onPressed: () {
                     //TODO: SHOW ALL USER LOGS
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return LogsPage();
+                    }));
                   },
                   child: const Text("See Logbook"),
                   backgroundColor: Theme.of(context).colorScheme.primary,
@@ -260,8 +263,7 @@ class _LogBookState extends State<LogBook> {
                 if (selectedWorkout != null && selectedCourse != null)
                   CustomElevatedButton(
                     backgroundColor: Theme.of(context).colorScheme.primary,
-                    child: Container(
-                        child: Padding(
+                    child: Padding(
                       padding:
                           const EdgeInsets.only(left: 0, top: 8.0, bottom: 8.0),
                       child: Row(
@@ -277,7 +279,7 @@ class _LogBookState extends State<LogBook> {
                           ),
                         ],
                       ),
-                    )),
+                    ),
                     onPressed: () async {
                       if (selectedCourse != null && selectedWorkout != null) {
                         var exerciseData = await getExercises(selectedWorkout!);
@@ -293,10 +295,12 @@ class _LogBookState extends State<LogBook> {
                           var workoutLogReference = await _firestore
                               .collection(kLogWorkoutCollection)
                               .add({
+                            kNameField: selectedWorkout!.name,
                             kWorkoutLogIdField:
                                 _firebase.currentUser!.uid.toString() +
                                     DateTime.now().toIso8601String(),
-                            kExercisesField: []
+                            kUserIdField: _firebase.currentUser!.uid,
+                            kExercisesField: [],
                           });
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
