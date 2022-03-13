@@ -29,16 +29,22 @@ const String kCloneCourseAction = 'Clone Course';
 const String kCreateCourseAction = 'Create New Course';
 const String kCreateWorkoutAction = 'Create New Workout';
 const String kCreateExerciseAction = 'Create New Exercise';
+const String kSeeLogbookAction = 'See Logbook';
 const String kLogExerciseTitle = 'Log Exercise';
 const String kSetTimeAction = 'Set Time';
 
 const String kCreateCourseActionButton = 'Create Course';
 const String kCreateExerciseActionButton = 'Create Exercise';
 const String kCreateWorkoutActionButton = 'Create Workout';
+const String kLogExerciseActionButton = 'Log Exercise';
 
 const String kCourseNameFieldLabel = 'Course Name';
 const String kWorkoutNameFieldLabel = 'Workout Name';
 const String kExerciseNameFieldLabel = 'Exercise Name';
+
+const String kSelectCourseToLogFromInstruction =
+    "Select a Course to Log a Workout From";
+const String kSelectWorkoutToLogFromInstruction = "Select a Workout to Log";
 
 const String kRepsNameFieldLabel = "Reps";
 const String kREPNameFieldLabel = "RPE";
@@ -59,6 +65,9 @@ const String kErrorNoCoursesFoundString =
 const String kErrorNoExercisesFoundString =
     "No Exercises Found for this Workout!";
 const String kEmailOfFriendString = 'Email of Friend';
+
+const String kSelectedCourse = "Selected Course: ";
+const String kSelectedWorkout = "Selected Workout: ";
 
 const String kUsersCollection = 'users';
 const String kCoursesCollection = 'courses';
@@ -106,6 +115,7 @@ const String kPercentageOfExertionField = 'percentageOfExertion';
 const String kExerciseReferenceField = 'exerciseReference';
 
 const String kAddFriend = 'Add Friend';
+const String kAddLogAction = 'Add Log';
 const String kCancel = 'Cancel';
 const String kPleaseSelectString = 'Please Select!';
 

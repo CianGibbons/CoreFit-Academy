@@ -294,19 +294,30 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             exercisesLoaded = viewedExerciseWidgetsLoaded +
                                 ownedExerciseWidgetsLoaded;
                           }
-                          if (exercisesLoaded.isNotEmpty) {
-                            return Column(
-                              children: exercisesLoaded,
+
+                          if (exercisesLoaded.isNotEmpty &&
+                              snapshots.item1.connectionState ==
+                                  ConnectionState.active &&
+                              snapshots.item2.connectionState ==
+                                  ConnectionState.active) {
+                            return Column(children: exercisesLoaded);
+                          }
+
+                          if (exercisesLoaded.isEmpty &&
+                              (snapshots.item1.connectionState ==
+                                      ConnectionState.active ||
+                                  snapshots.item2.connectionState ==
+                                      ConnectionState.active)) {
+                            return Center(
+                              child: Text(
+                                kErrorNoExercisesFoundString,
+                                textAlign: TextAlign.center,
+                                style:
+                                    kErrorMessageStyle.copyWith(fontSize: 20.0),
+                              ),
                             );
                           }
-                          return Center(
-                            child: Text(
-                              kErrorNoExercisesFoundString,
-                              textAlign: TextAlign.center,
-                              style:
-                                  kErrorMessageStyle.copyWith(fontSize: 20.0),
-                            ),
-                          );
+                          return const CircularProgressIndicator();
                         }),
                   ],
                 ),

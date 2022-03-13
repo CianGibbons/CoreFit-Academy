@@ -167,16 +167,28 @@ class _CourseListPageState extends State<CourseListPage> {
                     }
                     coursesLoaded = ownedCourseWidgets + viewerCourseWidgets;
 
-                    if (coursesLoaded.isNotEmpty) {
+                    if (coursesLoaded.isNotEmpty &&
+                        snapshots.item1.connectionState ==
+                            ConnectionState.active &&
+                        snapshots.item2.connectionState ==
+                            ConnectionState.active) {
                       return Column(children: coursesLoaded);
                     }
-                    return Center(
-                      child: Text(
-                        kErrorNoCoursesFoundString,
-                        textAlign: TextAlign.center,
-                        style: kErrorMessageStyle.copyWith(fontSize: 20.0),
-                      ),
-                    );
+
+                    if (coursesLoaded.isEmpty &&
+                        (snapshots.item1.connectionState ==
+                                ConnectionState.active ||
+                            snapshots.item2.connectionState ==
+                                ConnectionState.active)) {
+                      return Center(
+                        child: Text(
+                          kErrorNoCoursesFoundString,
+                          textAlign: TextAlign.center,
+                          style: kErrorMessageStyle.copyWith(fontSize: 20.0),
+                        ),
+                      );
+                    }
+                    return const CircularProgressIndicator();
                   },
                 ),
               ],

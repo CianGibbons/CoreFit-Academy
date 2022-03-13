@@ -69,7 +69,7 @@ class _LogBookState extends State<LogBook> {
                       return LogsPage();
                     }));
                   },
-                  child: const Text("See Logbook"),
+                  child: const Text(kSeeLogbookAction),
                   backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
                 CustomElevatedButton(
@@ -88,7 +88,7 @@ class _LogBookState extends State<LogBook> {
                       }
                     });
                   },
-                  child: Text(_showCourseDdlBool ? "Cancel" : "Add Log"),
+                  child: Text(_showCourseDdlBool ? kCancel : kAddLogAction),
                   backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
                 FutureBuilder(
@@ -116,8 +116,7 @@ class _LogBookState extends State<LogBook> {
                           visible: _showCourseDdlBool,
                           child: Column(
                             children: [
-                              const Text(
-                                  "Select a Course to Log a Workout From"),
+                              const Text(kSelectCourseToLogFromInstruction),
                               DropdownButton<int>(
                                 value: selectedCourseValue,
                                 onChanged: (val) {
@@ -191,7 +190,7 @@ class _LogBookState extends State<LogBook> {
                                               child: Column(
                                                 children: [
                                                   const Text(
-                                                      "Select a Workout to Log"),
+                                                      kSelectWorkoutToLogFromInstruction),
                                                   DropdownButton<int>(
                                                     value: selectedWorkoutValue,
                                                     onChanged: (val) {
@@ -232,7 +231,7 @@ class _LogBookState extends State<LogBook> {
                                             );
                                           } else {
                                             return const Text(
-                                                "No Workout were found for this Course!");
+                                                kErrorNoWorkoutsFoundString);
                                           }
                                         }
                                       } else {
@@ -248,8 +247,7 @@ class _LogBookState extends State<LogBook> {
                           ),
                         );
                       } else {
-                        return const Text(
-                            "No Courses were found! Please Create a new Course");
+                        return const Text(kErrorNoCoursesFoundString);
                       }
                     }
                     return const Center(child: CircularProgressIndicator());
@@ -257,9 +255,9 @@ class _LogBookState extends State<LogBook> {
                   future: getCourses(),
                 ),
                 if (selectedCourse != null)
-                  Text("Selected Course: ${selectedCourse!.name}"),
+                  Text(kSelectedCourse + selectedCourse!.name),
                 if (selectedWorkout != null)
-                  Text("Selected Workout: ${selectedWorkout!.name}"),
+                  Text(kSelectedWorkout + selectedWorkout!.name),
                 if (selectedWorkout != null && selectedCourse != null)
                   CustomElevatedButton(
                     backgroundColor: Theme.of(context).colorScheme.primary,
@@ -270,7 +268,7 @@ class _LogBookState extends State<LogBook> {
                         mainAxisSize: MainAxisSize.min,
                         children: const [
                           Text(
-                            "Log Exercise",
+                            kLogExerciseActionButton,
                             style: TextStyle(fontSize: 20.0),
                           ),
                           Padding(

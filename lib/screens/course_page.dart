@@ -110,7 +110,8 @@ class _CoursePageState extends State<CoursePage> {
                           var current = exercisesIterator.current;
                           if (current.runtimeType == String) {
                             String value = current;
-                            value = current.replaceAll("exercises/", "");
+                            value = current.replaceAll(
+                                kExercisesCollection + "/", "");
                             exerciseStrings.add(value);
                           } else {
                             DocumentReference currentRef = current;
@@ -161,7 +162,8 @@ class _CoursePageState extends State<CoursePage> {
                           var current = exercisesIterator.current;
                           if (current.runtimeType == String) {
                             String value = current;
-                            value = current.replaceAll("exercises/", "");
+                            value = current.replaceAll(
+                                kExercisesCollection + "/", "");
                             exerciseStrings.add(value);
                           } else {
                             DocumentReference currentRef = current;
@@ -197,16 +199,25 @@ class _CoursePageState extends State<CoursePage> {
                       }
                     }
                     workoutsLoaded = ownedWorkoutWidgets + viewerWorkoutWidgets;
-                    if (workoutsLoaded.length > 0) {
-                      return Column(
-                        children: workoutsLoaded,
+                    if (workoutsLoaded.isNotEmpty &&
+                        snapshots.item1.connectionState ==
+                            ConnectionState.active &&
+                        snapshots.item2.connectionState ==
+                            ConnectionState.active) {
+                      return Column(children: workoutsLoaded);
+                    }
+                    if (workoutsLoaded.isEmpty &&
+                        (snapshots.item1.connectionState ==
+                                ConnectionState.active ||
+                            snapshots.item2.connectionState ==
+                                ConnectionState.active)) {
+                      return Text(
+                        kErrorNoWorkoutsFoundString,
+                        textAlign: TextAlign.center,
+                        style: kErrorMessageStyle.copyWith(fontSize: 20.0),
                       );
                     }
-                    return Text(
-                      kErrorNoWorkoutsFoundString,
-                      textAlign: TextAlign.center,
-                      style: kErrorMessageStyle.copyWith(fontSize: 20.0),
-                    );
+                    return const CircularProgressIndicator();
                   },
                 ),
               ],
