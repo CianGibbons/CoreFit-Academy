@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
-import 'package:corefit_academy/screens/show_logs_page.dart';
+import 'package:corefit_academy/screens/logged_workouts_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/constants.dart';
@@ -295,12 +295,15 @@ class _LogBookState extends State<LogBook> {
                           var workoutLogReference = await _firestore
                               .collection(kLogWorkoutCollection)
                               .add({
+                            kCourseNameField: selectedCourse!.name,
+                            kWorkoutNameField: selectedWorkout!.name,
                             kNameField: selectedWorkout!.name,
                             kWorkoutLogIdField:
                                 _firebase.currentUser!.uid.toString() +
                                     DateTime.now().toIso8601String(),
                             kUserIdField: _firebase.currentUser!.uid,
-                            kExercisesField: [],
+                            kExerciseLogsField: [],
+                            kCreatedAtField: DateTime.now()
                           });
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
@@ -469,7 +472,7 @@ class _LogBookState extends State<LogBook> {
           var current = exercisesIterator.current;
           if (current.runtimeType == String) {
             String value = current;
-            value = current.replaceAll("exercises/", "");
+            value = current.replaceAll(kExercisesCollection + "/", "");
             exerciseStrings.add(value);
           } else {
             DocumentReference currentRef = current;
@@ -509,7 +512,7 @@ class _LogBookState extends State<LogBook> {
           var current = exercisesIterator.current;
           if (current.runtimeType == String) {
             String value = current;
-            value = current.replaceAll("exercises/", "");
+            value = current.replaceAll(kExercisesCollection + "/", "");
             exerciseStrings.add(value);
           } else {
             DocumentReference currentRef = current;

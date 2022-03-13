@@ -62,6 +62,8 @@ const String kLogWorkoutCollection = 'workoutLog';
 
 const String kRpeField = 'RPE';
 const String kWorkoutLogIdField = 'workoutLogId';
+const String kWorkoutNameField = 'workoutName';
+const String kCourseNameField = 'courseName';
 const String kTargetRpeField = 'targetRPE';
 const String kSetsField = 'sets';
 const String kTargetSetsField = 'targetSets';
@@ -102,8 +104,9 @@ const String kPleaseSelectString = 'Please Select!';
 
 const String kShowNumberExercisesForWorkout =
     "Number of Exercises in Workout: ";
+const String kShowNumberExercisesLoggedForWorkout =
+    "Number of Logged Exercises in Workout: ";
 const String kShowNumberViewersForWorkout = "Number of Viewers in Workout: ";
-
 const String kShowNumberWorkoutsForCourse = "Number of Workouts in Course: ";
 const String kShowNumberViewersForCourse = "Number of Viewers in Course: ";
 
