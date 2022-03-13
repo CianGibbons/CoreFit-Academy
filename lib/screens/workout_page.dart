@@ -294,8 +294,18 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             exercisesLoaded = viewedExerciseWidgetsLoaded +
                                 ownedExerciseWidgetsLoaded;
                           }
-                          return Column(
-                            children: exercisesLoaded,
+                          if (exercisesLoaded.isNotEmpty) {
+                            return Column(
+                              children: exercisesLoaded,
+                            );
+                          }
+                          return Center(
+                            child: Text(
+                              kErrorNoExercisesFoundString,
+                              textAlign: TextAlign.center,
+                              style:
+                                  kErrorMessageStyle.copyWith(fontSize: 20.0),
+                            ),
                           );
                         }),
                   ],

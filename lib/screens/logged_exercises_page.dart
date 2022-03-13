@@ -39,7 +39,7 @@ class ExerciseLogPage extends StatelessWidget {
               } else {
                 return Center(
                   child: Text(
-                    "No Logged Exercises were found!",
+                    kErrorNoLoggedExercisesFoundString,
                     textAlign: TextAlign.center,
                     style: kErrorMessageStyle.copyWith(fontSize: 20),
                   ),

@@ -51,6 +51,13 @@ const String kErrorEnterValidEmailString = 'Enter a valid email address!';
 const String kErrorEnterValidIntString = 'Enter a valid number!';
 const String kErrorUserNotFound = 'User not found!';
 const String kErrorEnterValidNameString = 'Enter a valid name!';
+const String kErrorNoWorkoutsFoundString = "No Workouts Found for this Course!";
+const String kErrorNoLoggedExercisesFoundString =
+    "No Logged Exercises were found!";
+const String kErrorNoCoursesFoundString =
+    "No Courses Found, Please Create a Course!";
+const String kErrorNoExercisesFoundString =
+    "No Exercises Found for this Workout!";
 const String kEmailOfFriendString = 'Email of Friend';
 
 const String kUsersCollection = 'users';

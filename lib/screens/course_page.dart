@@ -197,9 +197,15 @@ class _CoursePageState extends State<CoursePage> {
                       }
                     }
                     workoutsLoaded = ownedWorkoutWidgets + viewerWorkoutWidgets;
-
-                    return Column(
-                      children: workoutsLoaded,
+                    if (workoutsLoaded.length > 0) {
+                      return Column(
+                        children: workoutsLoaded,
+                      );
+                    }
+                    return Text(
+                      kErrorNoWorkoutsFoundString,
+                      textAlign: TextAlign.center,
+                      style: kErrorMessageStyle.copyWith(fontSize: 20.0),
                     );
                   },
                 ),

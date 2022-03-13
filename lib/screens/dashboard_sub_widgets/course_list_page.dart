@@ -166,7 +166,17 @@ class _CourseListPageState extends State<CourseListPage> {
                       }
                     }
                     coursesLoaded = ownedCourseWidgets + viewerCourseWidgets;
-                    return Column(children: coursesLoaded);
+
+                    if (coursesLoaded.isNotEmpty) {
+                      return Column(children: coursesLoaded);
+                    }
+                    return Center(
+                      child: Text(
+                        kErrorNoCoursesFoundString,
+                        textAlign: TextAlign.center,
+                        style: kErrorMessageStyle.copyWith(fontSize: 20.0),
+                      ),
+                    );
                   },
                 ),
               ],
