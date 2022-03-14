@@ -372,8 +372,81 @@ class _CoursePageState extends State<CoursePage> {
         });
   }
 
+  void _deleteOwnedCourse() async {
+    await _firestore
+        .collection(kWorkoutsCollection)
+        .where(kParentCourseField,
+            isEqualTo: widget.courseObject.courseReference)
+        .get()
+        .then((value) async {
+      for (var workout in value.docs) {
+        await _firestore
+            .collection(kExercisesCollection)
+            .where(kParentWorkoutField, isEqualTo: workout.reference)
+            .get()
+            .then((value) async {
+          for (var exercise in value.docs) {
+            await _firestore
+                .collection(kExercisesCollection)
+                .doc(exercise.reference.id)
+                .delete();
+          }
+        });
+        await _firestore
+            .collection(kWorkoutsCollection)
+            .doc(workout.reference.id)
+            .delete();
+      }
+      Navigator.pop(context);
+      await _firestore
+          .collection(kCoursesCollection)
+          .doc(widget.courseObject.courseReference!.id)
+          .delete();
+    });
+  }
+
+  void _removeViewedCourse() async {
+    var userId = _firebase.currentUser!.uid;
+    await _firestore
+        .collection(kWorkoutsCollection)
+        .where(kParentCourseField,
+            isEqualTo: widget.courseObject.courseReference)
+        .get()
+        .then((value) async {
+      for (var workout in value.docs) {
+        await _firestore
+            .collection(kExercisesCollection)
+            .where(kParentWorkoutField, isEqualTo: workout.reference)
+            .get()
+            .then((value) async {
+          for (var exercise in value.docs) {
+            await _firestore
+                .collection(kExercisesCollection)
+                .doc(exercise.reference.id)
+                .update({
+              kViewersField: FieldValue.arrayRemove([userId])
+            });
+          }
+        });
+        await _firestore
+            .collection(kWorkoutsCollection)
+            .doc(workout.reference.id)
+            .update({
+          kViewersField: FieldValue.arrayRemove([userId])
+        });
+      }
+      Navigator.pop(context);
+      await _firestore
+          .collection(kCoursesCollection)
+          .doc(widget.courseObject.courseReference!.id)
+          .update({
+        kViewersField: FieldValue.arrayRemove([userId])
+      });
+    });
+  }
+
   void handleMenuBarClick(String value) {
-    //TODO: Implement Viewers, Delete Course, Clone Course, Remove Course
+    //TODO: Implement Clone Course, Remove Course
     switch (value) {
       case kAddFriendsToCourseAction:
         _displayAddViewerToCourseDialog(context);
@@ -381,8 +454,10 @@ class _CoursePageState extends State<CoursePage> {
       case kCloneCourseAction:
         break;
       case kDeleteCourseAction:
+        _deleteOwnedCourse();
         break;
       case kRemoveCourseAction:
+        _removeViewedCourse();
         break;
     }
   }

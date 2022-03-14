@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:corefit_academy/screens/log_exercise_page.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:corefit_academy/screens/log_exercise_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:corefit_academy/widgets/create_course_widget.dart';
@@ -12,11 +12,11 @@ import 'package:corefit_academy/utilities/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
 import 'package:corefit_academy/utilities/providers/valid_workout_selected_provider.dart';
-import 'package:corefit_academy/models/course.dart';
-import 'package:corefit_academy/models/workout.dart';
-import 'package:corefit_academy/models/exercise.dart';
-import 'package:corefit_academy/models/muscle.dart';
-import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
+// import 'package:corefit_academy/models/course.dart';
+// import 'package:corefit_academy/models/workout.dart';
+// import 'package:corefit_academy/models/exercise.dart';
+// import 'package:corefit_academy/models/muscle.dart';
+// import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
 
 class NavigationController extends StatefulWidget {
   const NavigationController({Key? key, required this.user}) : super(key: key);
@@ -28,8 +28,8 @@ class NavigationController extends StatefulWidget {
 }
 
 class _NavigationControllerState extends State<NavigationController> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _firebase = FirebaseAuth.instance;
+  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // final FirebaseAuth _firebase = FirebaseAuth.instance;
 
   int _selectedIndex = 0;
 

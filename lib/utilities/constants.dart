@@ -24,6 +24,8 @@ const String kThemeDarkName = 'Dark';
 
 const String kAddFriendsToCourseAction = 'Add Friends To Course';
 const String kDeleteCourseAction = 'Delete Course';
+const String kDeleteWorkoutLogAction = 'Delete Workout Log';
+const String kSkipExerciseLogAction = 'Skip Exercise Log';
 const String kRemoveCourseAction = 'Remove Course';
 const String kCloneCourseAction = 'Clone Course';
 const String kCreateCourseAction = 'Create New Course';

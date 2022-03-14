@@ -53,6 +53,21 @@ class _LogExercisePageState extends State<LogExercisePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(kLogExerciseTitle),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: handleMenuBarClick,
+            itemBuilder: (BuildContext context) {
+              Set<String> activeMenuItems = {kSkipExerciseLogAction};
+
+              return activeMenuItems.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: ListView(
         children: [
@@ -242,5 +257,27 @@ class _LogExercisePageState extends State<LogExercisePage> {
     context.read<DurationSelectedProvider>().setValue(resultingDuration!);
     // Setting State to ensure that the duration value is updated on the Modal Sheet
     setState(() {});
+  }
+
+  void _skipExerciseLog() {
+    Navigator.pop(context);
+    if (widget.targetExercises.length > widget.currentIndex + 1) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return LogExercisePage(
+          targetExercises: widget.targetExercises,
+          currentIndex: widget.currentIndex + 1,
+          workoutLogReference: widget.workoutLogReference,
+        );
+      }));
+    }
+  }
+
+  void handleMenuBarClick(String value) {
+    //TODO: Implement Clone Course, Remove Course
+    switch (value) {
+      case kSkipExerciseLogAction:
+        _skipExerciseLog();
+        break;
+    }
   }
 }
