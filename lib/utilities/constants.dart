@@ -24,6 +24,8 @@ const String kThemeDarkName = 'Dark';
 
 const String kAddFriendsToCourseAction = 'Add Friends To Course';
 const String kDeleteCourseAction = 'Delete Course';
+const String kDeleteWorkoutAction = 'Delete Workout';
+const String kDeleteExerciseAction = 'Delete Exercise';
 const String kDeleteWorkoutLogAction = 'Delete Workout Log';
 const String kSkipExerciseLogAction = 'Skip Exercise Log';
 const String kRemoveCourseAction = 'Remove Course';
@@ -67,6 +69,7 @@ const String kErrorNoCoursesFoundString =
 const String kErrorNoExercisesFoundString =
     "No Exercises Found for this Workout!";
 const String kEmailOfFriendString = 'Email of Friend';
+const String kNewCourseNameString = 'New Course Name';
 
 const String kSelectedCourse = "Selected Course: ";
 const String kSelectedWorkout = "Selected Workout: ";
@@ -119,6 +122,8 @@ const String kExerciseReferenceField = 'exerciseReference';
 const String kAddFriend = 'Add Friend';
 const String kAddLogAction = 'Add Log';
 const String kCancel = 'Cancel';
+const String kDelete = 'Delete';
+const String kRemove = 'Remove';
 const String kPleaseSelectString = 'Please Select!';
 
 const String kShowNumberExercisesForWorkout =

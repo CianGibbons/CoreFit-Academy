@@ -626,6 +626,7 @@ class _LogBookState extends State<LogBook> {
         DocumentReference referenceToExercise = exerciseRef.reference;
 
         var exerciseObject = Exercise(
+          parentWorkoutReference: workout.workoutReference,
           exerciseReference: referenceToExercise,
           name: exerciseName,
           sets: sets,
@@ -715,6 +716,7 @@ class _LogBookState extends State<LogBook> {
         DocumentReference referenceToExercise = exerciseRef.reference;
 
         var exerciseObject = Exercise(
+          parentWorkoutReference: workout.workoutReference,
           exerciseReference: referenceToExercise,
           name: exerciseName,
           sets: sets,

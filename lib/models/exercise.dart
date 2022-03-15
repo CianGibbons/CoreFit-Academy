@@ -4,6 +4,7 @@ import 'package:corefit_academy/models/muscle.dart';
 
 class Exercise {
   DocumentReference exerciseReference;
+  DocumentReference parentWorkoutReference;
   String name;
   int? sets;
   int? reps;
@@ -21,6 +22,7 @@ class Exercise {
   Exercise({
     required this.name,
     required this.exerciseReference,
+    required this.parentWorkoutReference,
     this.viewers,
     this.sets,
     this.reps,
