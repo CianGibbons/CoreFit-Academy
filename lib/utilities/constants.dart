@@ -73,6 +73,8 @@ const String kNewCourseNameString = 'New Course Name';
 
 const String kSelectedCourse = "Selected Course: ";
 const String kSelectedWorkout = "Selected Workout: ";
+const String kErrorSelectedWorkoutNoExercisesString =
+    "Selected Workout currently has no Exercises!";
 
 const String kUsersCollection = 'users';
 const String kCoursesCollection = 'courses';

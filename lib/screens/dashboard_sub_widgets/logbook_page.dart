@@ -258,7 +258,15 @@ class _LogBookState extends State<LogBook> {
                   Text(kSelectedCourse + selectedCourse!.name),
                 if (selectedWorkout != null)
                   Text(kSelectedWorkout + selectedWorkout!.name),
-                if (selectedWorkout != null && selectedCourse != null)
+                if (selectedWorkout != null &&
+                    selectedWorkout!.exercises!.isEmpty)
+                  const Text(
+                    kErrorSelectedWorkoutNoExercisesString,
+                    style: kErrorMessageStyle,
+                  ),
+                if (selectedWorkout != null &&
+                    selectedCourse != null &&
+                    selectedWorkout!.exercises!.isNotEmpty)
                   CustomElevatedButton(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     child: Padding(
@@ -324,17 +332,13 @@ class _LogBookState extends State<LogBook> {
   }
 
   Future<List<Course>> getCourses() async {
-    var snapshotOwnedCourses = await _firestore
-        .collection(kCoursesCollection)
-        .where(kUserIdField, isEqualTo: widget.user.uid)
-        .get();
-    var snapshotViewingCourses = await _firestore
-        .collection(kCoursesCollection)
-        .where(kViewersField, arrayContains: widget.user.uid)
-        .get();
     List<Course> ownedCourses = [];
     List<Course> viewingCourses = [];
-    if (snapshotOwnedCourses.docs.isNotEmpty) {
+    await _firestore
+        .collection(kCoursesCollection)
+        .where(kUserIdField, isEqualTo: widget.user.uid)
+        .get()
+        .then((snapshotOwnedCourses) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
           snapshotOwnedCourses.docs;
       for (var course in docs) {
@@ -384,10 +388,15 @@ class _LogBookState extends State<LogBook> {
         );
         ownedCourses.add(courseObject);
       }
-    }
-    if (snapshotViewingCourses.docs.isNotEmpty) {
+    });
+
+    await _firestore
+        .collection(kCoursesCollection)
+        .where(kViewersField, arrayContains: widget.user.uid)
+        .get()
+        .then((snapshotViewingCourses) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-          snapshotOwnedCourses.docs;
+          snapshotViewingCourses.docs;
       for (var course in docs) {
         var courseName = course.get(kNameField);
 
@@ -435,27 +444,22 @@ class _LogBookState extends State<LogBook> {
         );
         viewingCourses.add(courseObject);
       }
-    }
+    });
+
     List<Course> courseObjects = ownedCourses + viewingCourses;
+
     return courseObjects;
   }
 
   Future<List<Workout>> getWorkouts(Course course) async {
-    var snapshotOwnedWorkouts = await _firestore
+    List<Workout> ownedWorkouts = [];
+    List<Workout> viewingWorkouts = [];
+    await _firestore
         .collection(kWorkoutsCollection)
         .where(kParentCourseField, isEqualTo: selectedCourse!.courseReference)
         .where(kUserIdField, isEqualTo: _firebase.currentUser!.uid)
-        .get();
-    var snapshotViewedWorkouts = await _firestore
-        .collection(kWorkoutsCollection)
-        .where(kParentCourseField, isEqualTo: selectedCourse!.courseReference)
-        .where(kViewersField, arrayContains: _firebase.currentUser!.uid)
-        .get();
-
-    List<Workout> ownedWorkouts = [];
-    List<Workout> viewingWorkouts = [];
-
-    if (snapshotOwnedWorkouts.docs.isNotEmpty) {
+        .get()
+        .then((snapshotOwnedWorkouts) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
           snapshotOwnedWorkouts.docs;
       for (var workout in docs) {
@@ -494,8 +498,14 @@ class _LogBookState extends State<LogBook> {
         );
         ownedWorkouts.add(workoutObject);
       }
-    }
-    if (snapshotViewedWorkouts.docs.isNotEmpty) {
+    });
+
+    await _firestore
+        .collection(kWorkoutsCollection)
+        .where(kParentCourseField, isEqualTo: selectedCourse!.courseReference)
+        .where(kViewersField, arrayContains: _firebase.currentUser!.uid)
+        .get()
+        .then((snapshotViewedWorkouts) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
           snapshotViewedWorkouts.docs;
       for (var workout in docs) {
@@ -534,28 +544,22 @@ class _LogBookState extends State<LogBook> {
         );
         viewingWorkouts.add(workoutObject);
       }
-    }
+    });
 
     List<Workout> courseObjects = ownedWorkouts + viewingWorkouts;
     return courseObjects;
   }
 
   Future<List<Exercise>> getExercises(Workout workout) async {
-    var snapshot1Owned = await _firestore
-        .collection(kExercisesCollection)
-        .where(kParentWorkoutField, isEqualTo: workout.workoutReference)
-        .where(kUserIdField, isEqualTo: _firebase.currentUser!.uid)
-        .get();
-    var snapshot2Viewing = await _firestore
-        .collection(kExercisesCollection)
-        .where(kParentWorkoutField, isEqualTo: workout.workoutReference)
-        .where(kViewersField, arrayContains: _firebase.currentUser!.uid)
-        .get();
-
     List<Exercise> ownedExercises = [];
     List<Exercise> viewingExercises = [];
 
-    if (snapshot1Owned.docs.isNotEmpty) {
+    await _firestore
+        .collection(kExercisesCollection)
+        .where(kParentWorkoutField, isEqualTo: workout.workoutReference)
+        .where(kUserIdField, isEqualTo: _firebase.currentUser!.uid)
+        .get()
+        .then((snapshot1Owned) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
           snapshot1Owned.docs;
       for (var exercise in docs) {
@@ -644,10 +648,16 @@ class _LogBookState extends State<LogBook> {
         );
         ownedExercises.add(exerciseObject);
       }
-    }
-    if (snapshot2Viewing.docs.isNotEmpty) {
+    });
+
+    await _firestore
+        .collection(kExercisesCollection)
+        .where(kParentWorkoutField, isEqualTo: workout.workoutReference)
+        .where(kViewersField, arrayContains: _firebase.currentUser!.uid)
+        .get()
+        .then((snapshot2Viewing) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-          snapshot1Owned.docs;
+          snapshot2Viewing.docs;
       for (var exercise in docs) {
         // name,RPE,distanceKm,parentWorkout,percentageOfExertion,
         // reps,sets,targetedMuscles,timeHours,timeMinutes,
@@ -735,7 +745,7 @@ class _LogBookState extends State<LogBook> {
 
         viewingExercises.add(exerciseObject);
       }
-    }
+    });
 
     List<Exercise> exerciseObjects = ownedExercises + viewingExercises;
     return exerciseObjects;
