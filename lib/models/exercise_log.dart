@@ -26,10 +26,14 @@ class ExerciseLog {
   int? targetRpe;
   double? targetPercentageOfExertion;
   DocumentReference exerciseRef;
+  DocumentReference exerciseLogRef;
+  DocumentReference parentWorkoutLogRef;
   DateTime createdAt;
 
   ExerciseLog({
     required this.createdAt,
+    required this.parentWorkoutLogRef,
+    required this.exerciseLogRef,
     required this.exerciseRef,
     required this.name,
     required this.sets,

@@ -85,7 +85,8 @@ class _ExerciseLogPageState extends State<ExerciseLogPage> {
           snapshotExerciseLogs.docs;
 
       for (var exerciseLog in docs) {
-        var exerciseRef = exerciseLog.reference;
+        var exerciseLogRef = exerciseLog.reference;
+        var exerciseRef = exerciseLog.get(kExerciseReferenceField);
         var exerciseName = exerciseLog.get(kNameField);
 
         var rawSets = exerciseLog.get(kSetsField);
@@ -190,7 +191,9 @@ class _ExerciseLogPageState extends State<ExerciseLogPage> {
         }
 
         ExerciseLog exerciseLogObj = ExerciseLog(
+          parentWorkoutLogRef: widget.workoutLog.workoutLogRef,
           createdAt: exerciseLogDate,
+          exerciseLogRef: exerciseLogRef,
           exerciseRef: exerciseRef,
           name: exerciseName,
           sets: sets,
