@@ -27,6 +27,7 @@ const String kDeleteCourseAction = 'Delete Course';
 const String kDeleteWorkoutAction = 'Delete Workout';
 const String kDeleteExerciseAction = 'Delete Exercise';
 const String kDeleteWorkoutLogAction = 'Delete Workout Log';
+const String kDeleteExerciseLogAction = 'Delete Exercise Log';
 const String kSkipExerciseLogAction = 'Skip Exercise Log';
 const String kRemoveCourseAction = 'Remove Course';
 const String kCloneCourseAction = 'Clone Course';

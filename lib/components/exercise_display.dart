@@ -33,7 +33,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
           children: [
             // A SlidableAction can have an icon and/or a label.
             SlidableAction(
-              onPressed: _showDeleteOwnedWorkoutDialog,
+              onPressed: _showDeleteOwnedExerciseDialog,
               backgroundColor: const Color(0xFFFE4A49),
               foregroundColor: Colors.white,
               icon: Icons.delete,
@@ -257,7 +257,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
     });
   }
 
-  void _showDeleteOwnedWorkoutDialog(BuildContext context) async {
+  void _showDeleteOwnedExerciseDialog(BuildContext context) async {
     return showDialog(
         context: context,
         builder: (context) {
