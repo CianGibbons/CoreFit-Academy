@@ -133,7 +133,6 @@ class _ExerciseLogDisplayState extends State<ExerciseLogDisplay> {
       kExerciseLogsField:
           FieldValue.arrayRemove([widget.exerciseLog.exerciseLogRef])
     }).then((value) async {
-      print(widget.exerciseLog.exerciseLogRef);
       _firestore
           .collection(kLogExerciseCollection)
           .doc(widget.exerciseLog.exerciseLogRef.id)

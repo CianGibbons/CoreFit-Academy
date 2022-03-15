@@ -122,10 +122,6 @@ class _CoursePageState extends State<CoursePage> {
                           }
                         }
 
-                        var muscles = workout.get(kTargetedMusclesField);
-                        List<String> targetedMuscles =
-                            List<String>.from(muscles);
-
                         var workoutRef = workout;
                         DocumentReference referenceToWorkout =
                             workoutRef.reference;
@@ -135,7 +131,6 @@ class _CoursePageState extends State<CoursePage> {
                           name: workoutName,
                           exercises: exerciseStrings,
                           numExercises: exerciseStrings.length,
-                          targetedMuscles: targetedMuscles,
                           viewers: widget.courseObject.viewers,
                         );
 
@@ -175,10 +170,6 @@ class _CoursePageState extends State<CoursePage> {
                           }
                         }
 
-                        var muscles = workout.get(kTargetedMusclesField);
-                        List<String> targetedMuscles =
-                            List<String>.from(muscles);
-
                         var workoutRef = workout;
                         DocumentReference referenceToWorkout =
                             workoutRef.reference;
@@ -188,7 +179,6 @@ class _CoursePageState extends State<CoursePage> {
                           name: workoutName,
                           exercises: exerciseStrings,
                           numExercises: exerciseStrings.length,
-                          targetedMuscles: targetedMuscles,
                           viewers: widget.courseObject.viewers,
                         );
 
@@ -493,9 +483,6 @@ class _CoursePageState extends State<CoursePage> {
             }
           }
 
-          var muscles = workout.get(kTargetedMusclesField);
-          List<String> targetedMuscles = List<String>.from(muscles);
-
           DocumentReference? currentWorkout;
 
           _firestore.collection(kWorkoutsCollection).add({
@@ -504,7 +491,6 @@ class _CoursePageState extends State<CoursePage> {
             kNameField: workoutName,
             kExercisesField: [],
             kViewersField: [],
-            kTargetedMusclesField: targetedMuscles,
             kParentCourseField: courseID,
           }).then((workoutID) {
             currentWorkout = workoutID;
@@ -559,10 +545,17 @@ class _CoursePageState extends State<CoursePage> {
                   String muscleName = muscle[kMuscleNameField];
                   MuscleGroup muscleGroup =
                       MuscleGroup.values[muscle[kMuscleGroupIndexField]];
-
                   Muscle muscleObj =
                       Muscle(muscleName: muscleName, muscleGroup: muscleGroup);
                   targetedMuscles.add(muscleObj);
+                }
+
+                List<Map> listOfMuscles = [];
+                for (Muscle targetedMuscle in targetedMuscles) {
+                  listOfMuscles.add({
+                    kMuscleNameField: targetedMuscle.muscleName,
+                    kMuscleGroupIndexField: targetedMuscle.muscleGroup.index,
+                  });
                 }
 
                 var rawTimeHours = exerciseSnapshot.get(kTimeHoursField);
@@ -588,7 +581,7 @@ class _CoursePageState extends State<CoursePage> {
                   kNameField: exerciseName,
                   kViewersField: [],
                   kTargetedMuscleGroupField: targetedMuscleGroup,
-                  kTargetedMusclesField: targetedMuscles,
+                  kTargetedMusclesField: listOfMuscles,
                   kParentWorkoutField: currentWorkout,
                   kRpeField: rpe,
                   kDistanceKmField: distanceKm,
@@ -655,7 +648,7 @@ class _CoursePageState extends State<CoursePage> {
         builder: (context) {
           return Form(
               child: AlertDialog(
-            title: const Text(kDeleteCourseAction),
+            title: const Text(kRemoveCourseAction),
             actions: <Widget>[
               CustomElevatedButton(
                 onPressed: () {

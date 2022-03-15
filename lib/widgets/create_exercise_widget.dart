@@ -214,14 +214,14 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
                             kTimeMinutesField: minutes,
                             kTimeSecondsField: seconds,
                             kWeightKgField: currentWeightValue,
-                          }).then((value) {
+                          }).then((value) async {
                             List idList = [];
                             idList.add(kExercisesCollection + '/' + value.id);
-                            _firestore
+                            await _firestore
                                 .collection(kWorkoutsCollection)
                                 .doc(widget.workoutObject.workoutReference.id)
                                 .update({
-                              kExercisesField: FieldValue.arrayUnion(idList)
+                              kExercisesField: FieldValue.arrayUnion(idList),
                             });
                           });
                           nameFieldTextEditingController.clear();

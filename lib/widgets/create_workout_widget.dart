@@ -74,7 +74,6 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                       kNameField: textEditingController.text,
                       kExercisesField: [],
                       kViewersField: widget.courseObject.viewers,
-                      kTargetedMusclesField: [],
                       kParentCourseField: widget.courseObject.courseReference,
                     }).then((value) {
                       List idList = [];

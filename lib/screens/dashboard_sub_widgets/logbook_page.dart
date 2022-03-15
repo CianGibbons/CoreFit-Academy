@@ -482,9 +482,6 @@ class _LogBookState extends State<LogBook> {
           }
         }
 
-        var muscles = workout.get(kTargetedMusclesField);
-        List<String> targetedMuscles = List<String>.from(muscles);
-
         var workoutRef = workout;
         DocumentReference referenceToWorkout = workoutRef.reference;
 
@@ -493,7 +490,6 @@ class _LogBookState extends State<LogBook> {
           name: workoutName,
           exercises: exerciseStrings,
           numExercises: exerciseStrings.length,
-          targetedMuscles: targetedMuscles,
           viewers: course.viewers,
         );
         ownedWorkouts.add(workoutObject);
@@ -528,9 +524,6 @@ class _LogBookState extends State<LogBook> {
           }
         }
 
-        var muscles = workout.get(kTargetedMusclesField);
-        List<String> targetedMuscles = List<String>.from(muscles);
-
         var workoutRef = workout;
         DocumentReference referenceToWorkout = workoutRef.reference;
 
@@ -539,7 +532,6 @@ class _LogBookState extends State<LogBook> {
           name: workoutName,
           exercises: exerciseStrings,
           numExercises: exerciseStrings.length,
-          targetedMuscles: targetedMuscles,
           viewers: course.viewers,
         );
         viewingWorkouts.add(workoutObject);

@@ -6,7 +6,6 @@ class Workout {
   int numExercises;
   List<String>? viewers = [];
   List<String>? exercises;
-  List<String>? targetedMuscles;
   int itemId = -1;
 
   set id(val) {
@@ -22,7 +21,6 @@ class Workout {
     required this.workoutReference,
     this.exercises,
     this.viewers,
-    this.targetedMuscles,
     this.numExercises = 0,
   });
 
@@ -30,6 +28,6 @@ class Workout {
   String toString() {
     return super.toString() +
         " --> { name: $name, workoutReference: $workoutReference, exercises: $exercises," +
-        " targetedMuscles: $targetedMuscles, numExercises: $numExercises, viewers: $viewers }";
+        " numExercises: $numExercises, viewers: $viewers }";
   }
 }

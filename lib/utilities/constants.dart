@@ -115,6 +115,7 @@ const String kTargetTimeSecondsField = 'targetTimeSeconds';
 const String kParentCourseField = 'parentCourse';
 const String kParentWorkoutField = 'parentWorkout';
 const String kTargetedMusclesField = 'targetedMuscles';
+const String kTargetedMuscleGroupsIdsField = 'targetedMuscleGroupsIds';
 const String kMuscleNameField = 'muscleName';
 const String kMuscleGroupIndexField = 'muscleGroupIndex';
 const String kTargetedMuscleGroupField = 'targetedMuscleGroup';
