@@ -11,13 +11,19 @@ import 'package:corefit_academy/utilities/providers/error_message_string_provide
 import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
 import 'package:corefit_academy/models/muscle.dart';
 import 'package:multiple_stream_builder/multiple_stream_builder.dart';
+import 'package:corefit_academy/models/course.dart';
+import 'package:corefit_academy/components/custom_elevated_button.dart';
 
 class WorkoutPage extends StatefulWidget {
   const WorkoutPage(
-      {Key? key, required this.workoutObject, this.viewer = false})
+      {Key? key,
+      required this.parentCourseObject,
+      required this.workoutObject,
+      this.viewer = false})
       : super(key: key);
   final bool viewer;
   final Workout workoutObject;
+  final Course parentCourseObject;
 
   @override
   State<WorkoutPage> createState() => _WorkoutPageState();
@@ -47,9 +53,25 @@ class _WorkoutPageState extends State<WorkoutPage> {
         .snapshots();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.workoutObject.name),
-      ),
+      appBar: widget.viewer
+          ? AppBar(title: Text(widget.workoutObject.name))
+          : AppBar(
+              title: Text(widget.workoutObject.name),
+              actions: <Widget>[
+                PopupMenuButton<String>(
+                  onSelected: handleMenuBarClick,
+                  itemBuilder: (BuildContext context) {
+                    Set<String> activeMenuItems = {kDeleteWorkoutAction};
+                    return activeMenuItems.map((String choice) {
+                      return PopupMenuItem<String>(
+                        value: choice,
+                        child: Text(choice),
+                      );
+                    }).toList();
+                  },
+                ),
+              ],
+            ),
       body: ListView(
         children: [
           Column(
@@ -150,6 +172,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                   exerciseRef.reference;
 
                               var exerciseObject = Exercise(
+                                parentWorkoutReference:
+                                    widget.workoutObject.workoutReference,
                                 exerciseReference: referenceToExercise,
                                 name: exerciseName,
                                 sets: sets,
@@ -264,6 +288,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                   exerciseRef.reference;
 
                               var exerciseObject = Exercise(
+                                parentWorkoutReference:
+                                    widget.workoutObject.workoutReference,
                                 exerciseReference: referenceToExercise,
                                 name: exerciseName,
                                 sets: sets,
@@ -358,6 +384,81 @@ class _WorkoutPageState extends State<WorkoutPage> {
       );
     } else {
       return Container();
+    }
+  }
+
+  void _showDeleteOwnedWorkoutDialog() async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Form(
+              child: AlertDialog(
+            title: const Text(kDeleteWorkoutAction),
+            actions: <Widget>[
+              CustomElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _deleteOwnedWorkout();
+                    Navigator.pop(context);
+                  });
+                },
+                child: const Text(kDelete),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+              CustomElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+                child: const Text(kCancel),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+            ],
+          ));
+        });
+  }
+
+  void _deleteOwnedWorkout() async {
+    await _firestore
+        .collection(kExercisesCollection)
+        .where(kParentWorkoutField,
+            isEqualTo: widget.workoutObject.workoutReference)
+        .get()
+        .then((value) async {
+      for (var exercise in value.docs) {
+        //For each exercise delete from database
+        await _firestore
+            .collection(kExercisesCollection)
+            .doc(exercise.reference.id)
+            .delete();
+      }
+    }).then((value) async {
+      //After exercises are deleted, delete workout
+      await _firestore
+          .collection(kWorkoutsCollection)
+          .doc(widget.workoutObject.workoutReference.id)
+          .delete();
+    }).then((value) async {
+      //TODO: GET ACCESS TO COURSE REFERENCE
+      //  After workout is deleted remove workout from its parent course workouts list
+      await _firestore
+          .collection(kCoursesCollection)
+          .doc(widget.parentCourseObject.courseReference!.id)
+          .update({
+        kWorkoutsField: FieldValue.arrayRemove([
+          kWorkoutsCollection + "/" + widget.workoutObject.workoutReference.id
+        ]),
+      });
+    });
+    Navigator.pop(context);
+  }
+
+  void handleMenuBarClick(String value) {
+    switch (value) {
+      case kDeleteWorkoutAction:
+        _showDeleteOwnedWorkoutDialog();
+        break;
     }
   }
 }

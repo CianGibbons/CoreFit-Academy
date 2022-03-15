@@ -53,7 +53,7 @@ class WorkoutLogDisplay extends StatelessWidget {
                         fontSize: 18.0,
                       ),
                     ),
-                    Text(DateFormat('yyyy-MM-dd – kk:mm')
+                    Text(DateFormat('yyyy-MM-dd – HH:mm')
                         .format(workoutLog.createdAt)),
                     Text(kShowNumberExercisesLoggedForWorkout +
                         workoutLog.exercises!.length.toString()),

@@ -3,13 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:corefit_academy/screens/workout_page.dart';
 import 'package:corefit_academy/utilities/constants.dart';
+import 'package:corefit_academy/models/course.dart';
 
 class WorkoutDisplay extends StatefulWidget {
   const WorkoutDisplay(
-      {Key? key, required this.workoutObject, this.viewer = false})
+      {Key? key,
+      required this.parentCourseObject,
+      required this.workoutObject,
+      this.viewer = false})
       : super(key: key);
   final bool viewer;
   final Workout workoutObject;
+  final Course parentCourseObject;
 
   @override
   State<WorkoutDisplay> createState() => _WorkoutDisplayState();
@@ -26,6 +31,7 @@ class _WorkoutDisplayState extends State<WorkoutDisplay> {
           MaterialPageRoute(
             builder: (context) => WorkoutPage(
               workoutObject: widget.workoutObject,
+              parentCourseObject: widget.parentCourseObject,
               viewer: widget.viewer,
             ),
           ),

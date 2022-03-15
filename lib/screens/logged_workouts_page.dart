@@ -97,8 +97,14 @@ class LogsPage extends StatelessWidget {
           exercises: workoutLogExerciseStrings,
           workoutLogRef: workoutLogRef,
         );
-
-        workoutLogs.add(workoutLogObj);
+        if (workoutLogObj.exercises!.isEmpty) {
+          await _firestore
+              .collection(kLogWorkoutCollection)
+              .doc(workoutLogObj.workoutLogRef.id)
+              .delete();
+        } else {
+          workoutLogs.add(workoutLogObj);
+        }
       }
     }
 

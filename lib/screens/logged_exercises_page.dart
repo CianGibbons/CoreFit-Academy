@@ -5,18 +5,40 @@ import 'package:flutter/material.dart';
 import 'package:corefit_academy/models/exercise_log.dart';
 import 'package:corefit_academy/models/muscle.dart';
 import 'package:corefit_academy/components/exercise_log_display.dart';
+import 'package:corefit_academy/screens/logged_workouts_page.dart';
 
-class ExerciseLogPage extends StatelessWidget {
-  ExerciseLogPage({Key? key, required this.workoutLog}) : super(key: key);
+class ExerciseLogPage extends StatefulWidget {
+  const ExerciseLogPage({Key? key, required this.workoutLog}) : super(key: key);
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final WorkoutLog workoutLog;
+
+  @override
+  State<ExerciseLogPage> createState() => _ExerciseLogPageState();
+}
+
+class _ExerciseLogPageState extends State<ExerciseLogPage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(workoutLog.workoutName),
+        title: Text(widget.workoutLog.workoutName),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: handleMenuBarClick,
+            itemBuilder: (BuildContext context) {
+              Set<String> activeMenuItems = {kDeleteWorkoutLogAction};
+
+              return activeMenuItems.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
+        ],
       ),
       body: FutureBuilder(
           future: getExerciseLogs(),
@@ -54,7 +76,7 @@ class ExerciseLogPage extends StatelessWidget {
   Future<List<ExerciseLog>> getExerciseLogs() async {
     var snapshotExerciseLogs = await _firestore
         .collection(kLogExerciseCollection)
-        .where(kWorkoutLogField, isEqualTo: workoutLog.workoutLogRef)
+        .where(kWorkoutLogField, isEqualTo: widget.workoutLog.workoutLogRef)
         .get();
 
     List<ExerciseLog> exerciseLogs = [];
@@ -197,5 +219,41 @@ class ExerciseLogPage extends StatelessWidget {
     }
 
     return exerciseLogs;
+  }
+
+  void _deleteWorkoutLog() async {
+    await _firestore
+        .collection(kLogExerciseCollection)
+        .where(kWorkoutLogField, isEqualTo: widget.workoutLog.workoutLogRef)
+        .get()
+        .then((value) async {
+      for (var exerciseLog in value.docs) {
+        await _firestore
+            .collection(kLogExerciseCollection)
+            .doc(exerciseLog.reference.id)
+            .delete();
+      }
+      await _firestore
+          .collection(kLogWorkoutCollection)
+          .doc(widget.workoutLog.workoutLogRef.id)
+          .delete();
+    });
+    //Pop from Logged Exercise Page to Logged Workout Page
+    Navigator.pop(context);
+    //Pop from Logged Workout Page to Logbook Page
+    Navigator.pop(context);
+    //Push Back to LogsPage in order to rebuild the FutureBuilder
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return LogsPage();
+    }));
+  }
+
+  void handleMenuBarClick(String value) {
+    //TODO: Implement Clone Course, Remove Course
+    switch (value) {
+      case kDeleteWorkoutLogAction:
+        _deleteWorkoutLog();
+        break;
+    }
   }
 }

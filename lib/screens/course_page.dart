@@ -3,6 +3,7 @@ import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:corefit_academy/components/workout_display.dart';
 import 'package:corefit_academy/models/course.dart';
 import 'package:corefit_academy/models/workout.dart';
+import 'package:corefit_academy/utilities/validators/validate_string.dart';
 import 'package:corefit_academy/widgets/create_workout_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/validators/validate_email.dart';
 import 'package:corefit_academy/utilities/constants.dart';
+import 'package:corefit_academy/models/muscle.dart';
 
 class CoursePage extends StatefulWidget {
   const CoursePage({Key? key, required this.courseObject, this.viewer = false})
@@ -30,6 +32,7 @@ class _CoursePageState extends State<CoursePage> {
 
   List<WorkoutDisplay> workoutsLoaded = [];
   final _addViewerFormKey = GlobalKey<FormState>();
+  final _cloneCourseFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +144,7 @@ class _CoursePageState extends State<CoursePage> {
 
                       for (var workoutObject in workoutObjects) {
                         ownedWorkoutWidgets.add(WorkoutDisplay(
+                          parentCourseObject: widget.courseObject,
                           workoutObject: workoutObject,
                           viewer: false,
                         ));
@@ -193,6 +197,7 @@ class _CoursePageState extends State<CoursePage> {
 
                       for (var workoutObject in workoutObjects) {
                         viewerWorkoutWidgets.add(WorkoutDisplay(
+                          parentCourseObject: widget.courseObject,
                           workoutObject: workoutObject,
                           viewer: true,
                         ));
@@ -256,7 +261,11 @@ class _CoursePageState extends State<CoursePage> {
     }
   }
 
-  TextEditingController textEditingController = TextEditingController();
+  TextEditingController addViewerTextEditingController =
+      TextEditingController();
+  TextEditingController cloneCourseTextEditingController =
+      TextEditingController();
+
   Future<void> _displayAddViewerToCourseDialog(BuildContext context) async {
     // Ensuring that should an Alert get dismissed by tapping outside it previously,
     // the Alert will not show the old error message.
@@ -270,7 +279,7 @@ class _CoursePageState extends State<CoursePage> {
               title: const Text(kAddFriendsToCourseAction),
               content: CustomTextFormField(
                 validator: validateEmail,
-                controller: textEditingController,
+                controller: addViewerTextEditingController,
                 paddingAll: 0.0,
                 iconData: FontAwesomeIcons.userPlus,
                 inputLabel: kEmailOfFriendString,
@@ -283,11 +292,11 @@ class _CoursePageState extends State<CoursePage> {
                 CustomElevatedButton(
                   onPressed: () async {
                     if (_addViewerFormKey.currentState!.validate() &&
-                        textEditingController.text.isNotEmpty) {
+                        addViewerTextEditingController.text.isNotEmpty) {
                       DocumentReference<Map<String, dynamic>> reference =
-                          _firestore
-                              .collection(kUsersCollection)
-                              .doc(textEditingController.text.toLowerCase());
+                          _firestore.collection(kUsersCollection).doc(
+                              addViewerTextEditingController.text
+                                  .toLowerCase());
 
                       var userSnaps = reference.snapshots();
                       var user = await userSnaps.first;
@@ -349,7 +358,7 @@ class _CoursePageState extends State<CoursePage> {
                       }
                     }
                     setState(() {
-                      textEditingController.clear();
+                      addViewerTextEditingController.clear();
                     });
                   },
                   child: const Text(kAddFriend),
@@ -358,7 +367,7 @@ class _CoursePageState extends State<CoursePage> {
                 CustomElevatedButton(
                   onPressed: () {
                     setState(() {
-                      textEditingController.clear();
+                      addViewerTextEditingController.clear();
                       context.read<ErrorMessageStringProvider>().setValue(null);
                       Navigator.pop(context);
                     });
@@ -372,17 +381,369 @@ class _CoursePageState extends State<CoursePage> {
         });
   }
 
+  void _deleteOwnedCourse() async {
+    //Get all workouts within this course
+    await _firestore
+        .collection(kWorkoutsCollection)
+        .where(kParentCourseField,
+            isEqualTo: widget.courseObject.courseReference)
+        .get()
+        .then((value) async {
+      //    For each workout get the exercises within
+      for (var workout in value.docs) {
+        await _firestore
+            .collection(kExercisesCollection)
+            .where(kParentWorkoutField, isEqualTo: workout.reference)
+            .get()
+            .then((value) async {
+          for (var exercise in value.docs) {
+            //For each exercise delete from database
+            await _firestore
+                .collection(kExercisesCollection)
+                .doc(exercise.reference.id)
+                .delete();
+          }
+        });
+        //After exercises are deleted, delete workout
+        await _firestore
+            .collection(kWorkoutsCollection)
+            .doc(workout.reference.id)
+            .delete();
+      }
+      //pop back to courses page
+      Navigator.pop(context);
+      //delete the course
+      await _firestore
+          .collection(kCoursesCollection)
+          .doc(widget.courseObject.courseReference!.id)
+          .delete();
+    });
+  }
+
+  void _removeViewedCourse() async {
+    var userId = _firebase.currentUser!.uid;
+    await _firestore
+        .collection(kWorkoutsCollection)
+        .where(kParentCourseField,
+            isEqualTo: widget.courseObject.courseReference)
+        .get()
+        .then((value) async {
+      for (var workout in value.docs) {
+        await _firestore
+            .collection(kExercisesCollection)
+            .where(kParentWorkoutField, isEqualTo: workout.reference)
+            .get()
+            .then((value) async {
+          for (var exercise in value.docs) {
+            await _firestore
+                .collection(kExercisesCollection)
+                .doc(exercise.reference.id)
+                .update({
+              kViewersField: FieldValue.arrayRemove([userId])
+            });
+          }
+        });
+        await _firestore
+            .collection(kWorkoutsCollection)
+            .doc(workout.reference.id)
+            .update({
+          kViewersField: FieldValue.arrayRemove([userId])
+        });
+      }
+      Navigator.pop(context);
+      await _firestore
+          .collection(kCoursesCollection)
+          .doc(widget.courseObject.courseReference!.id)
+          .update({
+        kViewersField: FieldValue.arrayRemove([userId])
+      });
+    });
+  }
+
+  void _cloneCourse(String newCourseName) async {
+    _firestore.collection(kCoursesCollection).add({
+      kCreatedAtField: DateTime.now(),
+      kUserIdField: _firebase.currentUser!.uid,
+      kNameField: newCourseName,
+      kWorkoutsField: [],
+      kViewersField: [],
+    }).then((courseID) async {
+      for (var workoutRef in widget.courseObject.workouts!) {
+        await _firestore
+            .collection(kWorkoutsCollection)
+            .doc(workoutRef)
+            .get()
+            .then((workout) async {
+          var workoutName = workout.get(kNameField);
+
+          List exerciseDynamic = List.empty();
+          exerciseDynamic = workout.get(kExercisesField);
+
+          List<String>? exerciseStrings = [];
+          var exercisesIterator = exerciseDynamic.iterator;
+          while (exercisesIterator.moveNext()) {
+            var current = exercisesIterator.current;
+            if (current.runtimeType == String) {
+              String value1 = current;
+              value1 = current.replaceAll(kExercisesCollection + "/", "");
+              exerciseStrings.add(value1);
+            } else {
+              DocumentReference currentRef = current;
+              exerciseStrings.add(currentRef.id);
+            }
+          }
+
+          var muscles = workout.get(kTargetedMusclesField);
+          List<String> targetedMuscles = List<String>.from(muscles);
+
+          DocumentReference? currentWorkout;
+
+          _firestore.collection(kWorkoutsCollection).add({
+            kCreatedAtField: DateTime.now(),
+            kUserIdField: _firebase.currentUser!.uid,
+            kNameField: workoutName,
+            kExercisesField: [],
+            kViewersField: [],
+            kTargetedMusclesField: targetedMuscles,
+            kParentCourseField: courseID,
+          }).then((workoutID) {
+            currentWorkout = workoutID;
+            List idList = [];
+            idList.add(kWorkoutsCollection + '/' + workoutID.id);
+            _firestore
+                .collection(kCoursesCollection)
+                .doc(courseID.id)
+                .update({kWorkoutsField: FieldValue.arrayUnion(idList)});
+          }).then((voidVal) async {
+            for (var exerciseID in exerciseStrings) {
+              _firestore
+                  .collection(kExercisesCollection)
+                  .doc(exerciseID)
+                  .get()
+                  .then((exerciseSnapshot) async {
+                var exerciseName = exerciseSnapshot.get(kNameField);
+
+                var rawRPE = exerciseSnapshot.get(kRpeField);
+                int rpe = rawRPE;
+
+                var rawDistanceKm = exerciseSnapshot.get(kDistanceKmField);
+                double distanceKm = 0;
+                if (rawDistanceKm.runtimeType == double) {
+                  distanceKm = rawDistanceKm;
+                } else if (rawDistanceKm.runtimeType == int) {
+                  distanceKm = double.parse(rawDistanceKm.toString());
+                }
+
+                var rawPercentageOfExertion =
+                    exerciseSnapshot.get(kPercentageOfExertionField);
+                double percentageOfExertion = 0;
+                if (rawPercentageOfExertion.runtimeType == double) {
+                  percentageOfExertion = rawPercentageOfExertion;
+                } else if (rawPercentageOfExertion.runtimeType == int) {
+                  percentageOfExertion =
+                      double.parse(rawPercentageOfExertion.toString());
+                }
+
+                var rawReps = exerciseSnapshot.get(kRepsField);
+                int reps = rawReps;
+
+                var rawSets = exerciseSnapshot.get(kSetsField);
+                int sets = rawSets;
+
+                var targetedMuscleGroup =
+                    exerciseSnapshot.get(kTargetedMuscleGroupField);
+
+                var muscles = exerciseSnapshot.get(kTargetedMusclesField);
+                List<Muscle> targetedMuscles = [];
+                for (var muscle in muscles) {
+                  String muscleName = muscle[kMuscleNameField];
+                  MuscleGroup muscleGroup =
+                      MuscleGroup.values[muscle[kMuscleGroupIndexField]];
+
+                  Muscle muscleObj =
+                      Muscle(muscleName: muscleName, muscleGroup: muscleGroup);
+                  targetedMuscles.add(muscleObj);
+                }
+
+                var rawTimeHours = exerciseSnapshot.get(kTimeHoursField);
+                int timeHours = int.parse(rawTimeHours.toString());
+
+                var rawTimeMinutes = exerciseSnapshot.get(kTimeMinutesField);
+                int timeMinutes = int.parse(rawTimeMinutes.toString());
+
+                var rawTimeSeconds = exerciseSnapshot.get(kTimeSecondsField);
+                int timeSeconds = int.parse(rawTimeSeconds.toString());
+
+                var rawWeightKg = exerciseSnapshot.get(kWeightKgField);
+                double weightKg = 0;
+                if (rawWeightKg.runtimeType == double) {
+                  weightKg = rawWeightKg;
+                } else if (rawWeightKg.runtimeType == int) {
+                  weightKg = double.parse(rawWeightKg.toString());
+                }
+
+                await _firestore.collection(kExercisesCollection).add({
+                  kCreatedAtField: DateTime.now(),
+                  kUserIdField: _firebase.currentUser!.uid,
+                  kNameField: exerciseName,
+                  kViewersField: [],
+                  kTargetedMuscleGroupField: targetedMuscleGroup,
+                  kTargetedMusclesField: targetedMuscles,
+                  kParentWorkoutField: currentWorkout,
+                  kRpeField: rpe,
+                  kDistanceKmField: distanceKm,
+                  kPercentageOfExertionField: percentageOfExertion,
+                  kRepsField: reps,
+                  kSetsField: sets,
+                  kTimeHoursField: timeHours,
+                  kTimeMinutesField: timeMinutes,
+                  kTimeSecondsField: timeSeconds,
+                  kWeightKgField: weightKg,
+                }).then((value) {
+                  //Add exercise to the workouts list of exercises
+                  List idList = [];
+                  idList.add(kExercisesCollection + '/' + value.id);
+                  _firestore
+                      .collection(kWorkoutsCollection)
+                      .doc(currentWorkout!.id)
+                      .update({kExercisesField: FieldValue.arrayUnion(idList)});
+                });
+              });
+            }
+          });
+        });
+      }
+    });
+    Navigator.pop(context);
+  }
+
+  void _showDeleteOwnedCourseDialog() async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Form(
+              child: AlertDialog(
+            title: const Text(kDeleteCourseAction),
+            actions: <Widget>[
+              CustomElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _deleteOwnedCourse();
+                    Navigator.pop(context);
+                  });
+                },
+                child: const Text(kDelete),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+              CustomElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+                child: const Text(kCancel),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+            ],
+          ));
+        });
+  }
+
+  void _showRemoveViewedCourseDialog() async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Form(
+              child: AlertDialog(
+            title: const Text(kDeleteCourseAction),
+            actions: <Widget>[
+              CustomElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _removeViewedCourse();
+                    Navigator.pop(context);
+                  });
+                },
+                child: const Text(kRemove),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+              CustomElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+                child: const Text(kCancel),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+            ],
+          ));
+        });
+  }
+
+  void _showCloneCourseDialog() async {
+    context.read<ErrorMessageStringProvider>().setValue(null);
+    cloneCourseTextEditingController.clear();
+    //  _cloneCourseFormKey
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Form(
+              key: _cloneCourseFormKey,
+              child: AlertDialog(
+                title: const Text(kCloneCourseAction),
+                content: CustomTextFormField(
+                  validator: validateString,
+                  controller: cloneCourseTextEditingController,
+                  paddingAll: 0.0,
+                  iconData: FontAwesomeIcons.copy,
+                  inputLabel: kNewCourseNameString,
+                  obscureText: false,
+                  textInputType: TextInputType.text,
+                  activeColor: Theme.of(context).colorScheme.primary,
+                  errorText: context.watch<ErrorMessageStringProvider>().value,
+                ),
+                actions: <Widget>[
+                  CustomElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        if (_cloneCourseFormKey.currentState!.validate() &&
+                            cloneCourseTextEditingController.text.isNotEmpty) {
+                          _cloneCourse(cloneCourseTextEditingController.text);
+                          Navigator.pop(context);
+                        }
+                      });
+                    },
+                    child: const Text(kCloneCourseAction),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                  CustomElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: const Text(kCancel),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                ],
+              ));
+        });
+  }
+
   void handleMenuBarClick(String value) {
-    //TODO: Implement Viewers, Delete Course, Clone Course, Remove Course
     switch (value) {
       case kAddFriendsToCourseAction:
         _displayAddViewerToCourseDialog(context);
         break;
       case kCloneCourseAction:
+        _showCloneCourseDialog();
         break;
       case kDeleteCourseAction:
+        _showDeleteOwnedCourseDialog();
         break;
       case kRemoveCourseAction:
+        _showRemoveViewedCourseDialog();
         break;
     }
   }
