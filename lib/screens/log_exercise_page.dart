@@ -233,6 +233,14 @@ class _LogExercisePageState extends State<LogExercisePage> {
           });
           Navigator.pop(context);
           if (widget.targetExercises.length > widget.currentIndex + 1) {
+            var hours =
+                widget.targetExercises[widget.currentIndex + 1].timeHours;
+            var minutes =
+                widget.targetExercises[widget.currentIndex + 1].timeMinutes;
+            var seconds =
+                widget.targetExercises[widget.currentIndex + 1].timeSeconds;
+            context.read<DurationSelectedProvider>().setValue(
+                Duration(hours: hours, minutes: minutes, seconds: seconds));
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return LogExercisePage(
                 targetExercises: widget.targetExercises,

@@ -311,6 +311,14 @@ class _LogBookState extends State<LogBook> {
                             kExerciseLogsField: [],
                             kCreatedAtField: DateTime.now()
                           });
+                          var hours = exercises[currentIndex].timeHours;
+                          var minutes = exercises[currentIndex].timeMinutes;
+                          var seconds = exercises[currentIndex].timeSeconds;
+                          context.read<DurationSelectedProvider>().setValue(
+                              Duration(
+                                  hours: hours,
+                                  minutes: minutes,
+                                  seconds: seconds));
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return LogExercisePage(
