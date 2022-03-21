@@ -22,9 +22,6 @@ class DashboardPage extends StatelessWidget {
           children: [
             Column(
               children: [
-                //TODO: Monitor Workout Progress and Record Data -> Visualise this Data
-                //TODO: Implement the use of Location Data to monitor exercises routes -> Visual Representation
-                //TODO: Set Goals for each Week/Month/Year -> Different Types of Goals - Muscle Build-up, Weight Gain/Loss, Distance for a Run, etc
                 buildWorkoutsLoggedThisWeekWidget(),
                 FutureBuilder(
                     future: _getNumberOfExercisesLoggedPerMuscleGroup(),
@@ -34,6 +31,7 @@ class DashboardPage extends StatelessWidget {
                       if (snapshot.connectionState == ConnectionState.done &&
                           snapshot.hasData) {
                         var map = snapshot.data;
+
                         for (var key in map.keys) {
                           muscleGroupRepresentation
                               .add(MuscleGroupRepresentation(
