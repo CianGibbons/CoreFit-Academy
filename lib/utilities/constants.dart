@@ -74,6 +74,8 @@ const String kNewCourseNameString = 'New Course Name';
 
 const String kSelectedCourse = "Selected Course: ";
 const String kSelectedWorkout = "Selected Workout: ";
+const String kErrorNoWorkoutLoggedThisWeek =
+    "No Workouts have been Logged this Week!";
 const String kErrorSelectedWorkoutNoExercisesString =
     "Selected Workout currently has no Exercises!";
 
@@ -132,6 +134,8 @@ const String kPleaseSelectString = 'Please Select!';
 
 const String kShowNumberExercisesForWorkout =
     "Number of Exercises in Workout: ";
+const String kShowNumberExercisesForMuscleGroup =
+    "Number of Exercises in Muscle Group: ";
 const String kShowNumberExercisesLoggedForWorkout =
     "Number of Logged Exercises in Workout: ";
 const String kShowNumberViewersForWorkout = "Number of Viewers in Workout: ";
