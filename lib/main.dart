@@ -1,5 +1,5 @@
 import 'package:corefit_academy/firebase_options.dart';
-import 'package:corefit_academy/auth_controller.dart';
+import 'package:corefit_academy/controllers/auth_controller.dart';
 import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
 import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
 import 'package:corefit_academy/utilities/providers/valid_workout_selected_provider.dart';

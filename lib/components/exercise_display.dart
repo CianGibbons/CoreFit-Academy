@@ -6,19 +6,28 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
 
+import '../controllers/exercise_request_controller.dart';
+import '../models/course.dart';
+import '../models/workout.dart';
+
 class ExerciseDisplay extends StatefulWidget {
   const ExerciseDisplay(
-      {Key? key, this.viewer = false, required this.exerciseObject})
+      {Key? key,
+      this.viewer = false,
+      required this.exerciseObject,
+      required this.parentWorkoutObject,
+      required this.grandparentCourseObject})
       : super(key: key);
   final bool viewer;
   final Exercise exerciseObject;
+  final Workout parentWorkoutObject;
+  final Course grandparentCourseObject;
 
   @override
   State<ExerciseDisplay> createState() => _ExerciseDisplayState();
 }
 
 class _ExerciseDisplayState extends State<ExerciseDisplay> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     if (!widget.viewer) {
@@ -33,7 +42,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
           children: [
             // A SlidableAction can have an icon and/or a label.
             SlidableAction(
-              onPressed: _showDeleteOwnedExerciseDialog,
+              onPressed: showDeleteOwnedExerciseDialog,
               backgroundColor: const Color(0xFFFE4A49),
               foregroundColor: Colors.white,
               icon: Icons.delete,
@@ -238,26 +247,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
     );
   }
 
-  void _deleteOwnedExercise(BuildContext context) async {
-    await _firestore
-        .collection(kExercisesCollection)
-        .doc(widget.exerciseObject.exerciseReference.id)
-        .delete()
-        .then((value) async {
-      await _firestore
-          .collection(kWorkoutsCollection)
-          .doc(widget.exerciseObject.parentWorkoutReference.id)
-          .update({
-        kExercisesField: FieldValue.arrayRemove([
-          kExercisesCollection +
-              "/" +
-              widget.exerciseObject.exerciseReference.id
-        ])
-      });
-    });
-  }
-
-  void _showDeleteOwnedExerciseDialog(BuildContext context) async {
+  void showDeleteOwnedExerciseDialog(BuildContext context) async {
     return showDialog(
         context: context,
         builder: (context) {
@@ -268,8 +258,13 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
               CustomElevatedButton(
                 onPressed: () {
                   setState(() {
-                    _deleteOwnedExercise(context);
-                    Navigator.pop(context);
+                    deleteOwnedExercise(
+                      context,
+                      widget.exerciseObject.exerciseReference.id,
+                      widget.exerciseObject.parentWorkoutReference.id,
+                      widget.parentWorkoutObject,
+                      widget.grandparentCourseObject,
+                    );
                   });
                 },
                 child: const Text(kDelete),
