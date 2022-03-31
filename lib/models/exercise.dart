@@ -18,6 +18,7 @@ class Exercise {
   String targetedMuscleGroup;
   List<Muscle>? targetedMuscles;
   List<String>? viewers = [];
+  bool viewer;
 
   Exercise({
     required this.name,
@@ -35,6 +36,7 @@ class Exercise {
     this.timeHours = 0,
     this.timeMinutes = 0,
     this.timeSeconds = 0,
+    this.viewer = false,
   });
 
   Unit? getDistanceInMiles() {

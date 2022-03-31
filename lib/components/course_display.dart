@@ -64,7 +64,7 @@ class _CourseDisplayState extends State<CourseDisplay> {
               Container(
                 child: widget.viewer
                     ? const Icon(Icons.remove_red_eye_outlined)
-                    : const Icon(FontAwesomeIcons.pencilAlt),
+                    : const Icon(FontAwesomeIcons.pencil),
               )
             ],
           ),

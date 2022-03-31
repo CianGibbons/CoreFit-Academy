@@ -1,12 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/models/exercise_log.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
-
 import 'package:corefit_academy/screens/logged_workouts_page.dart';
+
+import 'package:corefit_academy/controllers/exercise_log_request_controller.dart';
+import 'package:corefit_academy/controllers/workout_log_request_controller.dart';
 
 class ExerciseLogDisplay extends StatefulWidget {
   const ExerciseLogDisplay({Key? key, required this.exerciseLog})
@@ -18,7 +19,6 @@ class ExerciseLogDisplay extends StatefulWidget {
 }
 
 class _ExerciseLogDisplayState extends State<ExerciseLogDisplay> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     return Slidable(
@@ -126,17 +126,9 @@ class _ExerciseLogDisplayState extends State<ExerciseLogDisplay> {
   }
 
   void _deleteOwnedExerciseLog(context) async {
-    await _firestore
-        .collection(kLogWorkoutCollection)
-        .doc(widget.exerciseLog.parentWorkoutLogRef.id)
-        .update({
-      kExerciseLogsField:
-          FieldValue.arrayRemove([widget.exerciseLog.exerciseLogRef])
-    }).then((value) async {
-      _firestore
-          .collection(kLogExerciseCollection)
-          .doc(widget.exerciseLog.exerciseLogRef.id)
-          .delete();
+    await removeExerciseLogFromWorkoutLog(widget.exerciseLog)
+        .then((value) async {
+      deleteExerciseLog(widget.exerciseLog.exerciseLogRef.id);
     });
   }
 
@@ -161,7 +153,7 @@ class _ExerciseLogDisplayState extends State<ExerciseLogDisplay> {
                     //Push the User back to the Workout Logs Page in order to re-render the Logs Page
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return LogsPage();
+                      return const LoggedWorkoutsPage();
                     }));
                   });
                 },

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/models/exercise.dart';
 import 'package:duration_picker/duration_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +9,8 @@ import 'package:corefit_academy/components/custom_number_picker.dart';
 import 'package:corefit_academy/components/custom_number_picker_double.dart';
 import 'package:corefit_academy/models/muscle.dart';
 import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
+import 'package:corefit_academy/controllers/exercise_log_request_controller.dart';
+import 'package:corefit_academy/controllers/workout_log_request_controller.dart';
 
 class LogExercisePage extends StatefulWidget {
   const LogExercisePage(
@@ -28,9 +29,6 @@ class LogExercisePage extends StatefulWidget {
 }
 
 class _LogExercisePageState extends State<LogExercisePage> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _firebase = FirebaseAuth.instance;
-
   late int currentSetsValue = widget.targetExercises[widget.currentIndex].sets!;
   late int currentRepsValue = widget.targetExercises[widget.currentIndex].reps!;
   late int currentRPEValue = widget.targetExercises[widget.currentIndex].rpe!;
@@ -174,7 +172,7 @@ class _LogExercisePageState extends State<LogExercisePage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.done),
-        onPressed: () {
+        onPressed: () async {
           List<Map> currentListOfMuscles = [];
           for (Muscle targetedMuscle in currentTargetedMuscles) {
             currentListOfMuscles.add({
@@ -183,6 +181,7 @@ class _LogExercisePageState extends State<LogExercisePage> {
             });
           }
 
+          //Get the time picker value for the exercise
           Duration timeForExercise =
               context.read<DurationSelectedProvider>().value;
           int hours = timeForExercise.inHours;
@@ -190,49 +189,29 @@ class _LogExercisePageState extends State<LogExercisePage> {
           int seconds =
               timeForExercise.inSeconds - ((hours * 60 * 60) + (minutes * 60));
 
-          _firestore.collection(kLogExerciseCollection).add({
-            kCreatedAtField: DateTime.now(),
-            kExerciseReferenceField:
-                widget.targetExercises[widget.currentIndex].exerciseReference,
-            kUserIdField: _firebase.currentUser!.uid,
-            kNameField: widget.targetExercises[widget.currentIndex].name,
-            kTargetedMuscleGroupField: currentTargetedMuscleGroup,
-            kTargetedMusclesField: currentListOfMuscles,
-            kRpeField: currentRPEValue,
-            kDistanceKmField: currentDistanceValue,
-            kPercentageOfExertionField: currentPercentageOfExertionValue,
-            kRepsField: currentRepsValue,
-            kSetsField: currentSetsValue,
-            kTimeHoursField: hours,
-            kTimeMinutesField: minutes,
-            kTimeSecondsField: seconds,
-            kWeightKgField: currentWeightValue,
-            kTargetRpeField: widget.targetExercises[widget.currentIndex].rpe,
-            kTargetDistanceKmField:
-                widget.targetExercises[widget.currentIndex].distanceKM,
-            kTargetPercentageOfExertionField: widget
-                .targetExercises[widget.currentIndex].percentageOfExertion,
-            kTargetRepsField: widget.targetExercises[widget.currentIndex].reps,
-            kTargetSetsField: widget.targetExercises[widget.currentIndex].sets,
-            kTargetTimeHoursField:
-                widget.targetExercises[widget.currentIndex].timeHours,
-            kTargetTimeMinutesField:
-                widget.targetExercises[widget.currentIndex].timeMinutes,
-            kTargetTimeSecondsField:
-                widget.targetExercises[widget.currentIndex].timeSeconds,
-            kTargetWeightKgField:
-                widget.targetExercises[widget.currentIndex].weightKG,
-            kWorkoutLogField: widget.workoutLogReference,
-          }).then((value) {
-            _firestore
-                .collection(kLogWorkoutCollection)
-                .doc(widget.workoutLogReference.id)
-                .update({
-              kExerciseLogsField: FieldValue.arrayUnion([value])
-            });
+          await addExerciseLog(
+            currentIndex: widget.currentIndex,
+            currentTargetedMuscleGroup: currentTargetedMuscleGroup,
+            workoutLogReference: widget.workoutLogReference,
+            targetExercises: widget.targetExercises,
+            currentListOfMuscles: currentListOfMuscles,
+            currentRPEValue: currentRPEValue,
+            currentDistanceValue: currentDistanceValue,
+            currentPercentageOfExertionValue: currentPercentageOfExertionValue,
+            currentRepsValue: currentRepsValue,
+            currentSetsValue: currentSetsValue,
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds,
+            currentWeightValue: currentWeightValue,
+          ).then((value) async {
+            addExerciseLogToWorkoutLog(widget.workoutLogReference.id, value);
           });
+          // pop out of current log exercise page
           Navigator.pop(context);
+          // If there are still exercises to log
           if (widget.targetExercises.length > widget.currentIndex + 1) {
+            //Set the Duration for the timer picker for the next exercise
             var hours =
                 widget.targetExercises[widget.currentIndex + 1].timeHours;
             var minutes =
@@ -268,7 +247,9 @@ class _LogExercisePageState extends State<LogExercisePage> {
   }
 
   void _skipExerciseLog() {
+    //Pop out of the current exercise log page
     Navigator.pop(context);
+    //if there is another exercise to log, load the next exercise log page
     if (widget.targetExercises.length > widget.currentIndex + 1) {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
         return LogExercisePage(
@@ -281,7 +262,6 @@ class _LogExercisePageState extends State<LogExercisePage> {
   }
 
   void handleMenuBarClick(String value) {
-    //TODO: Implement Clone Course, Remove Course
     switch (value) {
       case kSkipExerciseLogAction:
         _skipExerciseLog();

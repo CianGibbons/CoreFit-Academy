@@ -4,8 +4,7 @@ import 'package:corefit_academy/utilities/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
-
-import 'components/logo_with_text.dart';
+import 'package:corefit_academy/components/logo_with_text.dart';
 
 class AuthController extends StatelessWidget {
   const AuthController({Key? key}) : super(key: key);

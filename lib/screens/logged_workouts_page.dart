@@ -1,14 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/utilities/constants.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/models/workout_log.dart';
 import 'package:corefit_academy/components/workout_log_display.dart';
+import 'package:corefit_academy/controllers/workout_log_request_controller.dart';
 
-class LogsPage extends StatelessWidget {
-  LogsPage({Key? key}) : super(key: key);
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _firebase = FirebaseAuth.instance;
+class LoggedWorkoutsPage extends StatelessWidget {
+  const LoggedWorkoutsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,66 +45,5 @@ class LogsPage extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Future<List<WorkoutLog>> getWorkoutLogs() async {
-    var snapshotWorkoutLogs = await _firestore
-        .collection(kLogWorkoutCollection)
-        .where(kUserIdField, isEqualTo: _firebase.currentUser!.uid)
-        .get();
-    List<WorkoutLog> workoutLogs = [];
-
-    if (snapshotWorkoutLogs.docs.isNotEmpty) {
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-          snapshotWorkoutLogs.docs;
-
-      for (var workoutLog in docs) {
-        var workoutLogRef = workoutLog.reference;
-        var workoutLogName = workoutLog.get(kNameField);
-        var workoutLogTime = workoutLog.get(kCreatedAtField);
-        Timestamp ts = workoutLogTime;
-        DateTime workoutLogDate =
-            DateTime.fromMillisecondsSinceEpoch(ts.millisecondsSinceEpoch);
-
-        List workoutLogExercisesDynamic = List.empty();
-
-        workoutLogExercisesDynamic = workoutLog.get(kExerciseLogsField);
-
-        List<String>? workoutLogExerciseStrings = [];
-
-        var workoutLogExercisesIterator = workoutLogExercisesDynamic.iterator;
-        while (workoutLogExercisesIterator.moveNext()) {
-          var current = workoutLogExercisesIterator.current;
-          if (current.runtimeType == String) {
-            String value = current;
-            value = current.replaceAll(kExerciseLogsField + "/", "");
-            workoutLogExerciseStrings.add(value);
-          } else {
-            DocumentReference currentRef = current;
-            workoutLogExerciseStrings.add(currentRef.id);
-          }
-        }
-        var workoutName = workoutLog.get(kWorkoutNameField);
-        var courseName = workoutLog.get(kCourseNameField);
-        WorkoutLog workoutLogObj = WorkoutLog(
-          name: workoutLogName,
-          createdAt: workoutLogDate,
-          workoutName: workoutName,
-          courseName: courseName,
-          exercises: workoutLogExerciseStrings,
-          workoutLogRef: workoutLogRef,
-        );
-        if (workoutLogObj.exercises!.isEmpty) {
-          await _firestore
-              .collection(kLogWorkoutCollection)
-              .doc(workoutLogObj.workoutLogRef.id)
-              .delete();
-        } else {
-          workoutLogs.add(workoutLogObj);
-        }
-      }
-    }
-
-    return workoutLogs;
   }
 }

@@ -7,6 +7,7 @@ class Workout {
   List<String>? viewers = [];
   List<String>? exercises;
   int itemId = -1;
+  bool viewer;
 
   set id(val) {
     itemId = val;
@@ -21,6 +22,7 @@ class Workout {
     required this.workoutReference,
     this.exercises,
     this.viewers,
+    this.viewer = false,
     this.numExercises = 0,
   });
 
