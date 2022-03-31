@@ -15,6 +15,7 @@ import 'package:corefit_academy/utilities/providers/valid_workout_selected_provi
 import 'package:corefit_academy/models/exercise.dart';
 import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
 import 'package:corefit_academy/screens/log_exercise_page.dart';
+import 'package:corefit_academy/controllers/workout_log_request_controller.dart';
 
 class LogBook extends StatefulWidget {
   const LogBook({Key? key, required this.user}) : super(key: key);
@@ -25,9 +26,6 @@ class LogBook extends StatefulWidget {
 }
 
 class _LogBookState extends State<LogBook> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _firebase = FirebaseAuth.instance;
-
   List<Course> courseObjects = [];
   List<Workout> workoutObj = [];
 
@@ -299,19 +297,8 @@ class _LogBookState extends State<LogBook> {
                                   minutes: exercises[currentIndex].timeMinutes,
                                   seconds:
                                       exercises[currentIndex].timeSeconds));
-                          var workoutLogReference = await _firestore
-                              .collection(kLogWorkoutCollection)
-                              .add({
-                            kCourseNameField: selectedCourse!.name,
-                            kWorkoutNameField: selectedWorkout!.name,
-                            kNameField: selectedWorkout!.name,
-                            kWorkoutLogIdField:
-                                _firebase.currentUser!.uid.toString() +
-                                    DateTime.now().toIso8601String(),
-                            kUserIdField: _firebase.currentUser!.uid,
-                            kExerciseLogsField: [],
-                            kCreatedAtField: DateTime.now()
-                          });
+                          var workoutLogReference = await addWorkoutLog(
+                              selectedCourse!, selectedWorkout!);
                           var hours = exercises[currentIndex].timeHours;
                           var minutes = exercises[currentIndex].timeMinutes;
                           var seconds = exercises[currentIndex].timeSeconds;
