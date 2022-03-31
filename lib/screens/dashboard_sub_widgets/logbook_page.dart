@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:corefit_academy/controllers/course_request_controller.dart';
 import 'package:corefit_academy/controllers/workout_request_controller.dart';
@@ -65,7 +64,7 @@ class _LogBookState extends State<LogBook> {
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return LogsPage();
+                      return const LoggedWorkoutsPage();
                     }));
                   },
                   child: const Text(kSeeLogbookAction),

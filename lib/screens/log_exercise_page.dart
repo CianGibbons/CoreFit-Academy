@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/models/exercise.dart';
 import 'package:duration_picker/duration_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:provider/provider.dart';
@@ -10,9 +9,8 @@ import 'package:corefit_academy/components/custom_number_picker.dart';
 import 'package:corefit_academy/components/custom_number_picker_double.dart';
 import 'package:corefit_academy/models/muscle.dart';
 import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
-
-import '../controllers/exercise_log_request_controller.dart';
-import '../controllers/workout_log_request_controller.dart';
+import 'package:corefit_academy/controllers/exercise_log_request_controller.dart';
+import 'package:corefit_academy/controllers/workout_log_request_controller.dart';
 
 class LogExercisePage extends StatefulWidget {
   const LogExercisePage(
@@ -31,9 +29,6 @@ class LogExercisePage extends StatefulWidget {
 }
 
 class _LogExercisePageState extends State<LogExercisePage> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _firebase = FirebaseAuth.instance;
-
   late int currentSetsValue = widget.targetExercises[widget.currentIndex].sets!;
   late int currentRepsValue = widget.targetExercises[widget.currentIndex].reps!;
   late int currentRPEValue = widget.targetExercises[widget.currentIndex].rpe!;

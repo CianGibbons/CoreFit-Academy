@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/models/exercise.dart';
@@ -6,9 +5,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
 
-import '../controllers/exercise_request_controller.dart';
-import '../models/course.dart';
-import '../models/workout.dart';
+import 'package:corefit_academy/controllers/exercise_request_controller.dart';
+import 'package:corefit_academy/models/course.dart';
+import 'package:corefit_academy/models/workout.dart';
 
 class ExerciseDisplay extends StatefulWidget {
   const ExerciseDisplay(
@@ -142,7 +141,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
                 Container(
                   child: widget.viewer
                       ? const Icon(Icons.remove_red_eye_outlined)
-                      : const Icon(FontAwesomeIcons.pencilAlt),
+                      : const Icon(FontAwesomeIcons.pencil),
                 )
               ],
             ),
@@ -239,7 +238,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
             Container(
               child: widget.viewer
                   ? const Icon(Icons.remove_red_eye_outlined)
-                  : const Icon(FontAwesomeIcons.pencilAlt),
+                  : const Icon(FontAwesomeIcons.pencil),
             )
           ],
         ),

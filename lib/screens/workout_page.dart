@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/models/workout.dart';
@@ -28,8 +27,6 @@ class WorkoutPage extends StatefulWidget {
 }
 
 class _WorkoutPageState extends State<WorkoutPage> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   List<ExerciseDisplay> exercisesLoaded = [];
 
   @override
