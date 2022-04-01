@@ -53,7 +53,6 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
           padding: const EdgeInsets.all(8.0),
           child: Container(
             padding: const EdgeInsets.all(10.0),
-            // height: 100,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.onBackground,
               shape: BoxShape.rectangle,
