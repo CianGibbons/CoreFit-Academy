@@ -68,7 +68,7 @@ class _WorkoutDisplayState extends State<WorkoutDisplay> {
               Container(
                 child: widget.viewer
                     ? const Icon(Icons.remove_red_eye_outlined)
-                    : const Icon(FontAwesomeIcons.pencilAlt),
+                    : const Icon(FontAwesomeIcons.pencil),
               )
             ],
           ),

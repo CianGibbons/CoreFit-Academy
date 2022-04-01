@@ -1,5 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
+import 'package:corefit_academy/controllers/course_request_controller.dart';
+import 'package:corefit_academy/controllers/workout_request_controller.dart';
+import 'package:corefit_academy/controllers/exercise_request_controller.dart';
 import 'package:corefit_academy/screens/logged_workouts_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +12,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/providers/valid_workout_selected_provider.dart';
 import 'package:corefit_academy/models/exercise.dart';
-import 'package:corefit_academy/models/muscle.dart';
 import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
 import 'package:corefit_academy/screens/log_exercise_page.dart';
+import 'package:corefit_academy/controllers/workout_log_request_controller.dart';
 
 class LogBook extends StatefulWidget {
   const LogBook({Key? key, required this.user}) : super(key: key);
@@ -23,9 +25,6 @@ class LogBook extends StatefulWidget {
 }
 
 class _LogBookState extends State<LogBook> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _firebase = FirebaseAuth.instance;
-
   List<Course> courseObjects = [];
   List<Workout> workoutObj = [];
 
@@ -63,10 +62,9 @@ class _LogBookState extends State<LogBook> {
               children: [
                 CustomElevatedButton(
                   onPressed: () {
-                    //TODO: SHOW ALL USER LOGS
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return LogsPage();
+                      return const LoggedWorkoutsPage();
                     }));
                   },
                   child: const Text(kSeeLogbookAction),
@@ -281,7 +279,7 @@ class _LogBookState extends State<LogBook> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 12.0),
-                            child: Icon(FontAwesomeIcons.pencilAlt, size: 20.0),
+                            child: Icon(FontAwesomeIcons.pencil, size: 20.0),
                           ),
                         ],
                       ),
@@ -298,19 +296,8 @@ class _LogBookState extends State<LogBook> {
                                   minutes: exercises[currentIndex].timeMinutes,
                                   seconds:
                                       exercises[currentIndex].timeSeconds));
-                          var workoutLogReference = await _firestore
-                              .collection(kLogWorkoutCollection)
-                              .add({
-                            kCourseNameField: selectedCourse!.name,
-                            kWorkoutNameField: selectedWorkout!.name,
-                            kNameField: selectedWorkout!.name,
-                            kWorkoutLogIdField:
-                                _firebase.currentUser!.uid.toString() +
-                                    DateTime.now().toIso8601String(),
-                            kUserIdField: _firebase.currentUser!.uid,
-                            kExerciseLogsField: [],
-                            kCreatedAtField: DateTime.now()
-                          });
+                          var workoutLogReference = await addWorkoutLog(
+                              selectedCourse!, selectedWorkout!);
                           var hours = exercises[currentIndex].timeHours;
                           var minutes = exercises[currentIndex].timeMinutes;
                           var seconds = exercises[currentIndex].timeSeconds;
@@ -337,417 +324,5 @@ class _LogBookState extends State<LogBook> {
         ),
       ],
     );
-  }
-
-  Future<List<Course>> getCourses() async {
-    List<Course> ownedCourses = [];
-    List<Course> viewingCourses = [];
-    await _firestore
-        .collection(kCoursesCollection)
-        .where(kUserIdField, isEqualTo: widget.user.uid)
-        .get()
-        .then((snapshotOwnedCourses) {
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-          snapshotOwnedCourses.docs;
-      for (var course in docs) {
-        var courseName = course.get(kNameField);
-
-        List workoutsDynamic = course.get(kWorkoutsField);
-        List<String>? workoutStrings = [];
-
-        var workoutsIterator = workoutsDynamic.iterator;
-        while (workoutsIterator.moveNext()) {
-          var current = workoutsIterator.current;
-          if (current.runtimeType == String) {
-            String value = current;
-            value = value.replaceAll(kWorkoutsField + "/", "");
-            workoutStrings.add(value);
-          } else {
-            DocumentReference currentRef = current;
-            workoutStrings.add(currentRef.id);
-          }
-        }
-
-        List viewersDynamic = course.get(kViewersField);
-        List<String>? viewerStrings = [];
-        var viewersIterator = viewersDynamic.iterator;
-        while (viewersIterator.moveNext()) {
-          var current = viewersIterator.current;
-          if (current.runtimeType == String) {
-            String value = current;
-            value = value.replaceAll(kViewersField + "/", "");
-            viewerStrings.add(value);
-          } else {
-            DocumentReference currentRef = current;
-            viewerStrings.add(currentRef.id);
-          }
-        }
-
-        var courseRef = course;
-        DocumentReference referenceToCourse1 = courseRef.reference;
-
-        var courseObject = Course(
-          name: courseName,
-          viewers: viewerStrings,
-          numViewers: viewersDynamic.length,
-          numWorkouts: workoutsDynamic.length,
-          workouts: workoutStrings,
-          courseReference: referenceToCourse1,
-        );
-        ownedCourses.add(courseObject);
-      }
-    });
-
-    await _firestore
-        .collection(kCoursesCollection)
-        .where(kViewersField, arrayContains: widget.user.uid)
-        .get()
-        .then((snapshotViewingCourses) {
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-          snapshotViewingCourses.docs;
-      for (var course in docs) {
-        var courseName = course.get(kNameField);
-
-        List workoutsDynamic = course.get(kWorkoutsField);
-        List<String>? workoutStrings = [];
-
-        var workoutsIterator = workoutsDynamic.iterator;
-        while (workoutsIterator.moveNext()) {
-          var current = workoutsIterator.current;
-          if (current.runtimeType == String) {
-            String value = current;
-            value = value.replaceAll(kWorkoutsField + "/", "");
-            workoutStrings.add(value);
-          } else {
-            DocumentReference currentRef = current;
-            workoutStrings.add(currentRef.id);
-          }
-        }
-
-        List viewersDynamic = course.get(kViewersField);
-        List<String>? viewerStrings = [];
-        var viewersIterator = viewersDynamic.iterator;
-        while (viewersIterator.moveNext()) {
-          var current = viewersIterator.current;
-          if (current.runtimeType == String) {
-            String value = current;
-            value = value.replaceAll(kViewersField + "/", "");
-            viewerStrings.add(value);
-          } else {
-            DocumentReference currentRef = current;
-            viewerStrings.add(currentRef.id);
-          }
-        }
-
-        var courseRef = course;
-        DocumentReference referenceToCourse1 = courseRef.reference;
-
-        var courseObject = Course(
-          name: courseName,
-          viewers: viewerStrings,
-          numViewers: viewersDynamic.length,
-          numWorkouts: workoutsDynamic.length,
-          workouts: workoutStrings,
-          courseReference: referenceToCourse1,
-        );
-        viewingCourses.add(courseObject);
-      }
-    });
-
-    List<Course> courseObjects = ownedCourses + viewingCourses;
-
-    return courseObjects;
-  }
-
-  Future<List<Workout>> getWorkouts(Course course) async {
-    List<Workout> ownedWorkouts = [];
-    List<Workout> viewingWorkouts = [];
-    await _firestore
-        .collection(kWorkoutsCollection)
-        .where(kParentCourseField, isEqualTo: selectedCourse!.courseReference)
-        .where(kUserIdField, isEqualTo: _firebase.currentUser!.uid)
-        .get()
-        .then((snapshotOwnedWorkouts) {
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-          snapshotOwnedWorkouts.docs;
-      for (var workout in docs) {
-        var workoutName = workout.get(kNameField);
-
-        List exerciseDynamic = List.empty();
-        exerciseDynamic = workout.get(kExercisesField);
-
-        List<String>? exerciseStrings = [];
-        var exercisesIterator = exerciseDynamic.iterator;
-        while (exercisesIterator.moveNext()) {
-          var current = exercisesIterator.current;
-          if (current.runtimeType == String) {
-            String value = current;
-            value = current.replaceAll(kExercisesCollection + "/", "");
-            exerciseStrings.add(value);
-          } else {
-            DocumentReference currentRef = current;
-            exerciseStrings.add(currentRef.id);
-          }
-        }
-
-        var workoutRef = workout;
-        DocumentReference referenceToWorkout = workoutRef.reference;
-
-        var workoutObject = Workout(
-          workoutReference: referenceToWorkout,
-          name: workoutName,
-          exercises: exerciseStrings,
-          numExercises: exerciseStrings.length,
-          viewers: course.viewers,
-        );
-        ownedWorkouts.add(workoutObject);
-      }
-    });
-
-    await _firestore
-        .collection(kWorkoutsCollection)
-        .where(kParentCourseField, isEqualTo: selectedCourse!.courseReference)
-        .where(kViewersField, arrayContains: _firebase.currentUser!.uid)
-        .get()
-        .then((snapshotViewedWorkouts) {
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-          snapshotViewedWorkouts.docs;
-      for (var workout in docs) {
-        var workoutName = workout.get(kNameField);
-
-        List exerciseDynamic = List.empty();
-        exerciseDynamic = workout.get(kExercisesField);
-
-        List<String>? exerciseStrings = [];
-        var exercisesIterator = exerciseDynamic.iterator;
-        while (exercisesIterator.moveNext()) {
-          var current = exercisesIterator.current;
-          if (current.runtimeType == String) {
-            String value = current;
-            value = current.replaceAll(kExercisesCollection + "/", "");
-            exerciseStrings.add(value);
-          } else {
-            DocumentReference currentRef = current;
-            exerciseStrings.add(currentRef.id);
-          }
-        }
-
-        var workoutRef = workout;
-        DocumentReference referenceToWorkout = workoutRef.reference;
-
-        var workoutObject = Workout(
-          workoutReference: referenceToWorkout,
-          name: workoutName,
-          exercises: exerciseStrings,
-          numExercises: exerciseStrings.length,
-          viewers: course.viewers,
-        );
-        viewingWorkouts.add(workoutObject);
-      }
-    });
-
-    List<Workout> courseObjects = ownedWorkouts + viewingWorkouts;
-    return courseObjects;
-  }
-
-  Future<List<Exercise>> getExercises(Workout workout) async {
-    List<Exercise> ownedExercises = [];
-    List<Exercise> viewingExercises = [];
-
-    await _firestore
-        .collection(kExercisesCollection)
-        .where(kParentWorkoutField, isEqualTo: workout.workoutReference)
-        .where(kUserIdField, isEqualTo: _firebase.currentUser!.uid)
-        .get()
-        .then((snapshot1Owned) {
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-          snapshot1Owned.docs;
-      for (var exercise in docs) {
-        // name,RPE,distanceKm,parentWorkout,percentageOfExertion,
-        // reps,sets,targetedMuscles,timeHours,timeMinutes,
-        // timeSeconds,userId,weightKg,viewers
-
-        var exerciseName = exercise.get(kNameField);
-
-        var rawRPE = exercise.get(kRpeField);
-        int rpe = rawRPE;
-
-        var rawDistanceKm = exercise.get(kDistanceKmField);
-        double distanceKm = 0;
-        if (rawDistanceKm.runtimeType == double) {
-          distanceKm = rawDistanceKm;
-        } else if (rawDistanceKm.runtimeType == int) {
-          distanceKm = double.parse(rawDistanceKm.toString());
-        }
-
-        var rawPercentageOfExertion = exercise.get(kPercentageOfExertionField);
-        double percentageOfExertion = 0;
-        if (rawPercentageOfExertion.runtimeType == double) {
-          percentageOfExertion = rawPercentageOfExertion;
-        } else if (rawPercentageOfExertion.runtimeType == int) {
-          percentageOfExertion =
-              double.parse(rawPercentageOfExertion.toString());
-        }
-
-        var rawReps = exercise.get(kRepsField);
-        int reps = rawReps;
-
-        var rawSets = exercise.get(kSetsField);
-        int sets = rawSets;
-
-        var targetedMuscleGroup = exercise.get(kTargetedMuscleGroupField);
-
-        var muscles = exercise.get(kTargetedMusclesField);
-        List<Muscle> targetedMuscles = [];
-        for (var muscle in muscles) {
-          String muscleName = muscle[kMuscleNameField];
-          MuscleGroup muscleGroup =
-              MuscleGroup.values[muscle[kMuscleGroupIndexField]];
-
-          Muscle muscleObj =
-              Muscle(muscleName: muscleName, muscleGroup: muscleGroup);
-          targetedMuscles.add(muscleObj);
-        }
-
-        var rawTimeHours = exercise.get(kTimeHoursField);
-        int timeHours = int.parse(rawTimeHours.toString());
-
-        var rawTimeMinutes = exercise.get(kTimeMinutesField);
-        int timeMinutes = int.parse(rawTimeMinutes.toString());
-
-        var rawTimeSeconds = exercise.get(kTimeSecondsField);
-        int timeSeconds = int.parse(rawTimeSeconds.toString());
-
-        var rawWeightKg = exercise.get(kWeightKgField);
-        double weightKg = 0;
-        if (rawWeightKg.runtimeType == double) {
-          weightKg = rawWeightKg;
-        } else if (rawWeightKg.runtimeType == int) {
-          weightKg = double.parse(rawWeightKg.toString());
-        }
-
-        var exerciseRef = exercise;
-        DocumentReference referenceToExercise = exerciseRef.reference;
-
-        var exerciseObject = Exercise(
-          parentWorkoutReference: workout.workoutReference,
-          exerciseReference: referenceToExercise,
-          name: exerciseName,
-          sets: sets,
-          reps: reps,
-          timeHours: timeHours,
-          timeMinutes: timeMinutes,
-          timeSeconds: timeSeconds,
-          distanceKM: distanceKm,
-          weightKG: weightKg,
-          rpe: rpe,
-          percentageOfExertion: percentageOfExertion,
-          targetedMuscleGroup: targetedMuscleGroup,
-          targetedMuscles: targetedMuscles,
-          viewers: workout.viewers,
-        );
-        ownedExercises.add(exerciseObject);
-      }
-    });
-
-    await _firestore
-        .collection(kExercisesCollection)
-        .where(kParentWorkoutField, isEqualTo: workout.workoutReference)
-        .where(kViewersField, arrayContains: _firebase.currentUser!.uid)
-        .get()
-        .then((snapshot2Viewing) {
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-          snapshot2Viewing.docs;
-      for (var exercise in docs) {
-        // name,RPE,distanceKm,parentWorkout,percentageOfExertion,
-        // reps,sets,targetedMuscles,timeHours,timeMinutes,
-        // timeSeconds,userId,weightKg,viewers
-
-        var exerciseName = exercise.get(kNameField);
-
-        var rawRPE = exercise.get(kRpeField);
-        int rpe = rawRPE;
-
-        var rawDistanceKm = exercise.get(kDistanceKmField);
-        double distanceKm = 0;
-        if (rawDistanceKm.runtimeType == double) {
-          distanceKm = rawDistanceKm;
-        } else if (rawDistanceKm.runtimeType == int) {
-          distanceKm = double.parse(rawDistanceKm.toString());
-        }
-
-        var rawPercentageOfExertion = exercise.get(kPercentageOfExertionField);
-        double percentageOfExertion = 0;
-        if (rawPercentageOfExertion.runtimeType == double) {
-          percentageOfExertion = rawPercentageOfExertion;
-        } else if (rawPercentageOfExertion.runtimeType == int) {
-          percentageOfExertion =
-              double.parse(rawPercentageOfExertion.toString());
-        }
-
-        var rawReps = exercise.get(kRepsField);
-        int reps = rawReps;
-
-        var rawSets = exercise.get(kSetsField);
-        int sets = rawSets;
-
-        var targetedMuscleGroup = exercise.get(kTargetedMuscleGroupField);
-
-        var muscles = exercise.get(kTargetedMusclesField);
-        List<Muscle> targetedMuscles = [];
-        for (var muscle in muscles) {
-          String muscleName = muscle[kMuscleNameField];
-          MuscleGroup muscleGroup =
-              MuscleGroup.values[muscle[kMuscleGroupIndexField]];
-
-          Muscle muscleObj =
-              Muscle(muscleName: muscleName, muscleGroup: muscleGroup);
-          targetedMuscles.add(muscleObj);
-        }
-
-        var rawTimeHours = exercise.get(kTimeHoursField);
-        int timeHours = int.parse(rawTimeHours.toString());
-
-        var rawTimeMinutes = exercise.get(kTimeMinutesField);
-        int timeMinutes = int.parse(rawTimeMinutes.toString());
-
-        var rawTimeSeconds = exercise.get(kTimeSecondsField);
-        int timeSeconds = int.parse(rawTimeSeconds.toString());
-
-        var rawWeightKg = exercise.get(kWeightKgField);
-        double weightKg = 0;
-        if (rawWeightKg.runtimeType == double) {
-          weightKg = rawWeightKg;
-        } else if (rawWeightKg.runtimeType == int) {
-          weightKg = double.parse(rawWeightKg.toString());
-        }
-
-        var exerciseRef = exercise;
-        DocumentReference referenceToExercise = exerciseRef.reference;
-
-        var exerciseObject = Exercise(
-          parentWorkoutReference: workout.workoutReference,
-          exerciseReference: referenceToExercise,
-          name: exerciseName,
-          sets: sets,
-          reps: reps,
-          timeHours: timeHours,
-          timeMinutes: timeMinutes,
-          timeSeconds: timeSeconds,
-          distanceKM: distanceKm,
-          weightKG: weightKg,
-          rpe: rpe,
-          percentageOfExertion: percentageOfExertion,
-          targetedMuscleGroup: targetedMuscleGroup,
-          targetedMuscles: targetedMuscles,
-          viewers: workout.viewers,
-        );
-
-        viewingExercises.add(exerciseObject);
-      }
-    });
-
-    List<Exercise> exerciseObjects = ownedExercises + viewingExercises;
-    return exerciseObjects;
   }
 }

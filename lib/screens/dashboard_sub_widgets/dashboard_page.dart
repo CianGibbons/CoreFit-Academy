@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:corefit_academy/components/day_representation.dart';
 
-import '../../components/muscle_group_representation.dart';
+import 'package:corefit_academy/components/muscle_group_representation.dart';
 
 class DashboardPage extends StatelessWidget {
   DashboardPage({Key? key, required this.user}) : super(key: key);
@@ -54,7 +54,7 @@ class DashboardPage extends StatelessWidget {
   }
 
   _getNumberOfExercisesLoggedPerMuscleGroup() async {
-    Map map = Map();
+    Map map = {};
     await _firestore
         .collection(kLogExerciseCollection)
         .where(kUserIdField, isEqualTo: _firebase.currentUser!.uid)
@@ -67,8 +67,9 @@ class DashboardPage extends StatelessWidget {
         String muscleGroup = muscleGroupDyn;
         muscleGroupsPresent.add(muscleGroup);
       }
-      muscleGroupsPresent
-          .forEach((x) => map[x] = !map.containsKey(x) ? (1) : (map[x] + 1));
+      for (var x in muscleGroupsPresent) {
+        map[x] = !map.containsKey(x) ? (1) : (map[x] + 1);
+      }
 
       for (var muscleGroup in kTargetMuscleGroupsNames) {
         if (!map.keys.contains(muscleGroup)) {

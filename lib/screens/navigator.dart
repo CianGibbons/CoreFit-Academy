@@ -1,5 +1,3 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:corefit_academy/screens/log_exercise_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:corefit_academy/widgets/create_course_widget.dart';
@@ -12,13 +10,9 @@ import 'package:corefit_academy/utilities/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
 import 'package:corefit_academy/utilities/providers/valid_workout_selected_provider.dart';
-// import 'package:corefit_academy/models/course.dart';
-// import 'package:corefit_academy/models/workout.dart';
-// import 'package:corefit_academy/models/exercise.dart';
-// import 'package:corefit_academy/models/muscle.dart';
-// import 'package:corefit_academy/utilities/providers/duration_selected_provider.dart';
 
 class NavigationController extends StatefulWidget {
+  static int selectedIndex = 0;
   const NavigationController({Key? key, required this.user}) : super(key: key);
 
   final User user;
@@ -28,11 +22,6 @@ class NavigationController extends StatefulWidget {
 }
 
 class _NavigationControllerState extends State<NavigationController> {
-  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // final FirebaseAuth _firebase = FirebaseAuth.instance;
-
-  int _selectedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     final List<Widget> _widgetOptions = <Widget>[
@@ -52,8 +41,9 @@ class _NavigationControllerState extends State<NavigationController> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(kAppName),
+        automaticallyImplyLeading: false,
       ),
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: _widgetOptions.elementAt(NavigationController.selectedIndex),
       floatingActionButton: _getFAB(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
@@ -68,7 +58,7 @@ class _NavigationControllerState extends State<NavigationController> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              FontAwesomeIcons.running,
+              FontAwesomeIcons.personRunning,
             ),
             label: kCoursePageName,
           ),
@@ -85,7 +75,7 @@ class _NavigationControllerState extends State<NavigationController> {
             label: kSettingsPageName,
           )
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: NavigationController.selectedIndex,
         onTap: _onItemTapped,
       ),
     );
@@ -93,7 +83,7 @@ class _NavigationControllerState extends State<NavigationController> {
 
   Widget _getFAB() {
     // Courses
-    if (_selectedIndex == 1) {
+    if (NavigationController.selectedIndex == 1) {
       return FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
@@ -105,6 +95,12 @@ class _NavigationControllerState extends State<NavigationController> {
                     //Using a Wrap in order to dynamically fit the modal sheet to the content
                     Wrap(children: [CreateCoursePage()])).whenComplete(() {
               context.read<ErrorMessageStringProvider>().setValue(null);
+              // Ensure that the FutureBuilder in Course List Page get recalled
+              // by resetting the state.
+              setState(() {
+                NavigationController.selectedIndex =
+                    NavigationController.selectedIndex;
+              });
             });
           });
     } else {
@@ -115,7 +111,7 @@ class _NavigationControllerState extends State<NavigationController> {
   void _onItemTapped(int index) {
     context.read<ValidWorkoutSelectedBoolProvider>().setValue(false);
     setState(() {
-      _selectedIndex = index;
+      NavigationController.selectedIndex = index;
     });
   }
 }

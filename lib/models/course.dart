@@ -8,6 +8,7 @@ class Course {
   List<String>? viewers = [];
   List<String>? workouts = [];
   int itemId = -1;
+  bool viewer;
 
   Course({
     required this.name,
@@ -16,6 +17,7 @@ class Course {
     this.viewers,
     this.numViewers = 0,
     this.numWorkouts = 0,
+    this.viewer = false,
   });
 
   String get value {

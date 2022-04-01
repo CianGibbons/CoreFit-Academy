@@ -6,7 +6,6 @@ import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/components/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
-
 import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
 
 class CreateCoursePage extends StatefulWidget {
