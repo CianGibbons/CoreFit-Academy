@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/themes.dart';
-import 'package:corefit_academy/main.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:corefit_academy/utilities/constants.dart';
+import 'package:corefit_academy/controllers/theme_controller.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key, required this.user}) : super(key: key);
