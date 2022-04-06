@@ -1,20 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:corefit_academy/models/course.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:corefit_academy/utilities/validators/validate_string.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/components/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
+import 'package:corefit_academy/controllers/workout_request_controller.dart';
 
 class CreateWorkoutPage extends StatefulWidget {
-  CreateWorkoutPage({
+  const CreateWorkoutPage({
     Key? key,
     required this.courseObject,
   }) : super(key: key);
-  final FirebaseAuth _firebase = FirebaseAuth.instance;
 
   final Course courseObject;
   @override
@@ -22,7 +20,6 @@ class CreateWorkoutPage extends StatefulWidget {
 }
 
 class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -66,24 +63,11 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                 onPressed: () {
                   if (_createWorkoutFormKey.currentState!.validate() &&
                       textEditingController.text.isNotEmpty) {
-                    // widget.user.uid
-                    // courseName
-                    _firestore.collection(kWorkoutsCollection).add({
-                      kCreatedAtField: DateTime.now(),
-                      kUserIdField: widget._firebase.currentUser!.uid,
-                      kNameField: textEditingController.text,
-                      kExercisesField: [],
-                      kViewersField: widget.courseObject.viewers,
-                      kParentCourseField: widget.courseObject.courseReference,
-                    }).then((value) {
-                      List idList = [];
-                      idList.add(kWorkoutsCollection + '/' + value.id);
-                      _firestore
-                          .collection(kCoursesCollection)
-                          .doc(widget.courseObject.courseReference!.id)
-                          .update(
-                              {kWorkoutsField: FieldValue.arrayUnion(idList)});
-                    });
+                    createWorkout(
+                      viewers: widget.courseObject.viewers!,
+                      workoutName: textEditingController.text,
+                      courseReference: widget.courseObject.courseReference,
+                    );
                     textEditingController.clear();
                     Navigator.pop(context);
                   } else {

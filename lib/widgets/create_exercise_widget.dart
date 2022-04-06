@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:corefit_academy/controllers/exercise_request_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/models/workout.dart';
 import 'package:corefit_academy/utilities/constants.dart';
@@ -16,16 +15,14 @@ import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import 'package:corefit_academy/models/muscle.dart';
 
 class CreateExercisePage extends StatefulWidget {
-  CreateExercisePage({Key? key, required this.workoutObject}) : super(key: key);
-  final FirebaseAuth _firebase = FirebaseAuth.instance;
+  const CreateExercisePage({Key? key, required this.workoutObject})
+      : super(key: key);
   final Workout workoutObject;
   @override
   _CreateExercisePageState createState() => _CreateExercisePageState();
 }
 
 class _CreateExercisePageState extends State<CreateExercisePage> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   final TextEditingController nameFieldTextEditingController =
       TextEditingController();
   final FocusNode nameFocusNode = FocusNode();
@@ -194,36 +191,24 @@ class _CreateExercisePageState extends State<CreateExercisePage> {
                           int seconds = timeForExercise.inSeconds -
                               ((hours * 60 * 60) + (minutes * 60));
 
-                          _firestore.collection(kExercisesCollection).add({
-                            kCreatedAtField: DateTime.now(),
-                            kUserIdField: widget._firebase.currentUser!.uid,
-                            kNameField: nameFieldTextEditingController.text,
-                            kViewersField: viewers,
-                            kTargetedMuscleGroupField:
-                                selectedTargetedMuscleGroup,
-                            kTargetedMusclesField: listOfMuscles,
-                            kParentWorkoutField:
-                                widget.workoutObject.workoutReference,
-                            kRpeField: currentRPEValue,
-                            kDistanceKmField: currentDistanceValue,
-                            kPercentageOfExertionField:
-                                currentPercentageOfExertionValue,
-                            kRepsField: currentRepsValue,
-                            kSetsField: currentSetsValue,
-                            kTimeHoursField: hours,
-                            kTimeMinutesField: minutes,
-                            kTimeSecondsField: seconds,
-                            kWeightKgField: currentWeightValue,
-                          }).then((value) async {
-                            List idList = [];
-                            idList.add(kExercisesCollection + '/' + value.id);
-                            await _firestore
-                                .collection(kWorkoutsCollection)
-                                .doc(widget.workoutObject.workoutReference.id)
-                                .update({
-                              kExercisesField: FieldValue.arrayUnion(idList),
-                            });
-                          });
+                          createExercise(
+                              exerciseName: nameFieldTextEditingController.text,
+                              viewers: viewers!,
+                              selectedTargetedMuscleGroup:
+                                  selectedTargetedMuscleGroup,
+                              listOfMuscles: listOfMuscles,
+                              workoutObject: widget.workoutObject,
+                              currentDistanceValue: currentDistanceValue,
+                              currentPercentageOfExertionValue:
+                                  currentPercentageOfExertionValue,
+                              currentWeightValue: currentWeightValue,
+                              currentRPEValue: currentRPEValue,
+                              currentRepsValue: currentRepsValue,
+                              currentSetsValue: currentSetsValue,
+                              hours: hours,
+                              minutes: minutes,
+                              seconds: seconds);
+
                           nameFieldTextEditingController.clear();
 
                           context
