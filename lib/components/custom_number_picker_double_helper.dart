@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:infinite_listview/infinite_listview.dart';
 
+// NOTE: THE CODE BELOW IS FROM THE NUMBER PICKER PACKAGE ON PUB.DEV
+// IT WAS ALTERED BY ME IN ORDER TO ALLOW FOR THE USE OF DOUBLE VALUES
+
 typedef TextMapper = String Function(String numberText);
 
 class CustomNumberPickerDouble extends StatefulWidget {
