@@ -16,6 +16,18 @@ import 'package:corefit_academy/utilities/constants.dart';
 import 'package:corefit_academy/controllers/exercise_request_controller.dart';
 import 'package:corefit_academy/controllers/workout_request_controller.dart';
 
+void createCourse(String courseName) async {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _firebase = FirebaseAuth.instance;
+  await _firestore.collection(kCoursesCollection).add({
+    kCreatedAtField: DateTime.now(),
+    kUserIdField: _firebase.currentUser!.uid,
+    kNameField: courseName,
+    kWorkoutsField: [],
+    kViewersField: [],
+  });
+}
+
 Course getCourseObject(dynamic courseDoc) {
   var courseName = courseDoc.get(kNameField);
 

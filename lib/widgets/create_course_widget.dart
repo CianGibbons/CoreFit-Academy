@@ -1,24 +1,20 @@
 import 'package:corefit_academy/utilities/validators/validate_string.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/utilities/constants.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:corefit_academy/components/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
 import 'package:corefit_academy/utilities/providers/error_message_string_provider.dart';
+import 'package:corefit_academy/controllers/course_request_controller.dart';
 
 class CreateCoursePage extends StatefulWidget {
-  CreateCoursePage({Key? key}) : super(key: key);
+  const CreateCoursePage({Key? key}) : super(key: key);
 
-  final FirebaseAuth _firebase = FirebaseAuth.instance;
   @override
   _CreateCoursePageState createState() => _CreateCoursePageState();
 }
 
 class _CreateCoursePageState extends State<CreateCoursePage> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -62,15 +58,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                 onPressed: () {
                   if (_createCourseFormKey.currentState!.validate() &&
                       textEditingController.text.isNotEmpty) {
-                    // widget.user.uid
-                    // courseName
-                    _firestore.collection(kCoursesCollection).add({
-                      kCreatedAtField: DateTime.now(),
-                      kUserIdField: widget._firebase.currentUser!.uid,
-                      kNameField: textEditingController.text,
-                      kWorkoutsField: [],
-                      kViewersField: [],
-                    });
+                    createCourse(textEditingController.text);
                     textEditingController.clear();
                     Navigator.pop(context);
                   } else {

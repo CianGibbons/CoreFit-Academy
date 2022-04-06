@@ -9,6 +9,54 @@ import 'package:corefit_academy/models/workout.dart';
 import 'package:flutter/material.dart';
 import 'package:corefit_academy/models/course.dart';
 
+void createExercise({
+  required String exerciseName,
+  required List<String> viewers,
+  required String selectedTargetedMuscleGroup,
+  required List<Map> listOfMuscles,
+  required Workout workoutObject,
+  required double currentDistanceValue,
+  required double currentPercentageOfExertionValue,
+  required double currentWeightValue,
+  required int currentRPEValue,
+  required int currentRepsValue,
+  required int currentSetsValue,
+  required int hours,
+  required int minutes,
+  required int seconds,
+}) async {
+  final FirebaseAuth _firebase = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  await _firestore.collection(kExercisesCollection).add({
+    kCreatedAtField: DateTime.now(),
+    kUserIdField: _firebase.currentUser!.uid,
+    kNameField: exerciseName,
+    kViewersField: viewers,
+    kTargetedMuscleGroupField: selectedTargetedMuscleGroup,
+    kTargetedMusclesField: listOfMuscles,
+    kParentWorkoutField: workoutObject.workoutReference,
+    kRpeField: currentRPEValue,
+    kDistanceKmField: currentDistanceValue,
+    kPercentageOfExertionField: currentPercentageOfExertionValue,
+    kRepsField: currentRepsValue,
+    kSetsField: currentSetsValue,
+    kTimeHoursField: hours,
+    kTimeMinutesField: minutes,
+    kTimeSecondsField: seconds,
+    kWeightKgField: currentWeightValue,
+  }).then((value) async {
+    List idList = [];
+    idList.add(kExercisesCollection + '/' + value.id);
+    await _firestore
+        .collection(kWorkoutsCollection)
+        .doc(workoutObject.workoutReference.id)
+        .update({
+      kExercisesField: FieldValue.arrayUnion(idList),
+    });
+  });
+}
+
 Exercise getExerciseObject(
     dynamic exerciseDoc, DocumentReference workoutRef, List<String> viewers) {
   // name,RPE,distanceKm,parentWorkout,percentageOfExertion,

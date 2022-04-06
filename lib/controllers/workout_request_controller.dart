@@ -9,6 +9,33 @@ import 'package:corefit_academy/screens/course_page.dart';
 import 'package:corefit_academy/controllers/course_request_controller.dart';
 import 'package:corefit_academy/controllers/exercise_request_controller.dart';
 
+void createWorkout({
+  required String workoutName,
+  required List<String> viewers,
+  required DocumentReference? courseReference,
+}) async {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _firebase = FirebaseAuth.instance;
+
+  viewers = viewers.isEmpty ? [] : viewers;
+
+  await _firestore.collection(kWorkoutsCollection).add({
+    kCreatedAtField: DateTime.now(),
+    kUserIdField: _firebase.currentUser!.uid,
+    kNameField: workoutName,
+    kExercisesField: [],
+    kViewersField: viewers,
+    kParentCourseField: courseReference,
+  }).then((value) {
+    List idList = [];
+    idList.add(kWorkoutsCollection + '/' + value.id);
+    _firestore
+        .collection(kCoursesCollection)
+        .doc(courseReference!.id)
+        .update({kWorkoutsField: FieldValue.arrayUnion(idList)});
+  });
+}
+
 Workout getWorkoutObject(dynamic workoutDoc, List<String> viewers) {
   var workoutName = workoutDoc.get(kNameField);
 
