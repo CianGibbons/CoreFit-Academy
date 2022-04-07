@@ -41,7 +41,7 @@ const String kSetTimeAction = 'Set Time';
 const String kCreateCourseActionButton = 'Create Course';
 const String kCreateExerciseActionButton = 'Create Exercise';
 const String kCreateWorkoutActionButton = 'Create Workout';
-const String kLogExerciseActionButton = 'Log Exercise';
+const String kLogWorkoutActionButton = 'Log Workout';
 
 const String kCourseNameFieldLabel = 'Course Name';
 const String kWorkoutNameFieldLabel = 'Workout Name';

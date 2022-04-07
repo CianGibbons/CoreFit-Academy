@@ -274,7 +274,7 @@ class _LogBookState extends State<LogBook> {
                         mainAxisSize: MainAxisSize.min,
                         children: const [
                           Text(
-                            kLogExerciseActionButton,
+                            kLogWorkoutActionButton,
                             style: TextStyle(fontSize: 20.0),
                           ),
                           Padding(
