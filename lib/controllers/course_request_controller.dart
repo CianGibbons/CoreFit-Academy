@@ -136,6 +136,7 @@ void deleteOwnedCourse(
           .get()
           .then((value) async {
         for (var exercise in value.docs) {
+          //deleting each exercise within the current workout
           deleteExercise(exercise.reference.id);
         }
       });
