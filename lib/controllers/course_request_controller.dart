@@ -470,6 +470,7 @@ Future<void> displayAddViewerToCourseDialog(
     TextEditingController addViewerTextEditingController,
     GlobalKey<FormState> addViewerFormKey) async {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _firebase = FirebaseAuth.instance;
 
   // Ensuring that should an Alert get dismissed by tapping outside it previously,
   // the Alert will not show the old error message.
@@ -504,7 +505,16 @@ Future<void> displayAddViewerToCourseDialog(
                     var userSnaps = reference.snapshots();
                     var user = await userSnaps.first;
 
-                    if (user.exists) {
+                    var course = await _firestore
+                        .collection(kCoursesCollection)
+                        .doc(courseObject.courseReference!.id)
+                        .get();
+                    var courseOwnerId = course.get(kUserIdField);
+                    if (user.get(kUserIdField) == courseOwnerId) {
+                      context
+                          .read<ErrorMessageStringProvider>()
+                          .setValue(kErrorOwnerCannotBeAViewer);
+                    } else if (user.exists) {
                       // if there is a user found then we continue
 
                       var userId = user.get(kUserIdField);
