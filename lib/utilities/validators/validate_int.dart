@@ -6,7 +6,7 @@ String? validateInt(String? value) {
   if (value == null || value.isEmpty || !regex.hasMatch(value)) {
     return kErrorEnterValidIntString;
   } else {
-    // Email Syntax Valid
+    // Int Valid
     return null;
   }
 }
