@@ -19,6 +19,7 @@ class LogoWithText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Logo build using Flutter code
     return Hero(
       tag: tag,
       child: Column(

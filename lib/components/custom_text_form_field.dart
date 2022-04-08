@@ -43,6 +43,7 @@ class CustomTextFormField extends StatefulWidget {
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
+    //Widget with the options all passed in as needed
     return Container(
       margin: EdgeInsets.all(widget.paddingAll),
       child: TextFormField(

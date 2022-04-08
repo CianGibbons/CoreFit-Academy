@@ -38,6 +38,7 @@ class WorkoutLogDisplay extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    //Show the workout log info
                     Text(
                       workoutLog.courseName,
                       style: const TextStyle(

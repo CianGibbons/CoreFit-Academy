@@ -8,8 +8,11 @@ class CustomElevatedButton extends StatefulWidget {
       required this.backgroundColor})
       : super(key: key);
 
+  // pass in the method to be called on the press of the button
   final VoidCallback onPressed;
+  //The child will likely be the Text Widget to have inside the button
   final Widget child;
+  // The background color of the button
   final Color backgroundColor;
 
   @override

@@ -61,6 +61,7 @@ const String kPercentageOfExertionNameFieldLabel = "Percentage of Exertion (%)";
 const String kErrorEnterValidEmailString = 'Enter a valid email address!';
 const String kErrorEnterValidIntString = 'Enter a valid number!';
 const String kErrorUserNotFound = 'User not found!';
+const String kErrorOwnerCannotBeAViewer = 'You already own the course!';
 const String kErrorEnterValidNameString = 'Enter a valid name!';
 const String kErrorNoWorkoutsFoundString = "No Workouts Found for this Course!";
 const String kErrorNoLoggedExercisesFoundString =
@@ -178,38 +179,51 @@ List<Muscle> kBackMuscles = [
 ];
 
 List<Muscle> kArmsMuscles = [
-  Muscle(muscleName: "ARM MUSCLE 1", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "ARM MUSCLE 2", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "ARM MUSCLE 3", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "ARM MUSCLE 4", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Biceps brachii", muscleGroup: MuscleGroup.arms),
+  Muscle(muscleName: "Coracobrachialis", muscleGroup: MuscleGroup.arms),
+  Muscle(muscleName: "Brachialis", muscleGroup: MuscleGroup.arms),
+  Muscle(muscleName: "Triceps brachii", muscleGroup: MuscleGroup.arms),
 ];
 
 List<Muscle> kShouldersMuscles = [
-  Muscle(muscleName: "SHOULDER MUSCLE 1", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "SHOULDER MUSCLE 2", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "SHOULDER MUSCLE 3", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "SHOULDER MUSCLE 4", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Pectoralis major", muscleGroup: MuscleGroup.shoulders),
+  Muscle(muscleName: "Pectoralis minor", muscleGroup: MuscleGroup.shoulders),
+  Muscle(
+      muscleName: "Posterior shoulder muscles",
+      muscleGroup: MuscleGroup.shoulders),
+  Muscle(muscleName: "Deltoids", muscleGroup: MuscleGroup.shoulders),
+  Muscle(
+      muscleName: "Rotator cuff muscles", muscleGroup: MuscleGroup.shoulders),
 ];
 
 List<Muscle> kLegsMuscles = [
-  Muscle(muscleName: "LEG MUSCLE 1", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "LEG MUSCLE 2", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "LEG MUSCLE 3", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "LEG MUSCLE 4", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Rectus Femoris", muscleGroup: MuscleGroup.legs),
+  Muscle(muscleName: "Vastus Lateralis", muscleGroup: MuscleGroup.legs),
+  Muscle(muscleName: "Vastus Intermedius", muscleGroup: MuscleGroup.legs),
+  Muscle(muscleName: "Vastus Medialis", muscleGroup: MuscleGroup.legs),
+  Muscle(muscleName: "Biceps Femoris", muscleGroup: MuscleGroup.legs),
+  Muscle(muscleName: "Semimembranosus", muscleGroup: MuscleGroup.legs),
+  Muscle(muscleName: "Semitendinosus", muscleGroup: MuscleGroup.legs),
+  Muscle(muscleName: "Gluteus Minimus", muscleGroup: MuscleGroup.legs),
+  Muscle(muscleName: "Gluteus Medius", muscleGroup: MuscleGroup.legs),
+  Muscle(muscleName: "Gluteus Maximus", muscleGroup: MuscleGroup.legs),
 ];
 
 List<Muscle> kCalvesMuscles = [
-  Muscle(muscleName: "Pectoralis major", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "Pectoralis minor", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "Serratus anterior", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "Subclavius", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Gastrocnemius", muscleGroup: MuscleGroup.calves),
+  Muscle(muscleName: "Soleus", muscleGroup: MuscleGroup.calves),
 ];
 
 List<Muscle> kCoreMuscles = [
-  Muscle(muscleName: "Pectoralis major", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "Pectoralis minor", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "Serratus anterior", muscleGroup: MuscleGroup.chest),
-  Muscle(muscleName: "Subclavius", muscleGroup: MuscleGroup.chest),
+  Muscle(muscleName: "Abs", muscleGroup: MuscleGroup.core),
+  Muscle(muscleName: "Transverse Abdominis", muscleGroup: MuscleGroup.core),
+  Muscle(muscleName: "Multifidus", muscleGroup: MuscleGroup.core),
+  Muscle(muscleName: "External Obliques", muscleGroup: MuscleGroup.core),
+  Muscle(muscleName: "Internal Obliques", muscleGroup: MuscleGroup.core),
+  Muscle(muscleName: "Erector Spinae", muscleGroup: MuscleGroup.core),
+  Muscle(muscleName: "Diaphragm", muscleGroup: MuscleGroup.core),
+  Muscle(muscleName: "Pelvic Floor Muscles", muscleGroup: MuscleGroup.core),
+  Muscle(muscleName: "Rectus Abdominis", muscleGroup: MuscleGroup.core),
 ];
 
 List<List<Muscle>> kMusclesList = [

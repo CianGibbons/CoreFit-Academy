@@ -13,9 +13,15 @@ class DayRepresentation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // if isToday is true need to highlight this day in green
+
     bool isToday = false;
+    //getting the datatime now
     var d = DateTime.now();
+    //getting the weekday value for today
     var weekDay = d.weekday;
+    // if today's day value is the same as the day value we are representing then
+    // this is representing today so isToday is true
     if (weekDay == dayValue) {
       isToday = true;
     }
@@ -27,14 +33,24 @@ class DayRepresentation extends StatelessWidget {
           children: [
             Text(getDayShort()),
             isToday
+                //If is today is true show this
                 ? Container(
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
+                      //Green highlight to show that this is today
                       color: Colors.green.withOpacity(0.25), // border color
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
+                      // if we have reached this day in the week we need to show
+                      // either a done icon or a clear icon as the user has
+                      // either logged or not logged a workout on this day
+
+                      // if we have not reached this day show the more time icon
+
+                      // more time icon is blueGrey, done icon is green,
+                      // clear icon is red
                       dayReached
                           ? (workoutPresent ? Icons.done : Icons.clear)
                           : Icons.more_time,
@@ -43,7 +59,9 @@ class DayRepresentation extends StatelessWidget {
                           : Colors.blueGrey,
                     ),
                   )
+                //If is today is false show this
                 : Icon(
+                    //Same logic as above
                     dayReached
                         ? (workoutPresent ? Icons.done : Icons.clear)
                         : Icons.more_time,
@@ -58,6 +76,14 @@ class DayRepresentation extends StatelessWidget {
   }
 
   String getDayShort() {
+    // get the day short string to say what day it is
+    // 1 - MON
+    // 2 - TUE
+    // 3 - WED
+    // 4 - THU
+    // 5 - FRI
+    // 6 - SAT
+    // 7 - SUN
     String dayShort = "MON";
     switch (dayValue) {
       case 2:

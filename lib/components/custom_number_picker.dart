@@ -36,6 +36,7 @@ class _CustomNumberPickerHorizontalState
 
   @override
   void initState() {
+    //set the initial value of the number picker
     super.initState();
     value = widget.initialValue;
   }
@@ -53,6 +54,7 @@ class _CustomNumberPickerHorizontalState
       ),
       child: Column(
         children: [
+          //Show the field name
           Text(
             widget.fieldName,
             style: TextStyle(
@@ -63,6 +65,11 @@ class _CustomNumberPickerHorizontalState
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Show the subtract button
+              // decrement by the value of step on press,
+              // clamp the value to the minimum and maximum value to
+              // ensure it stays within the range
+              // use the send current value to send the value back to the screen
               IconButton(
                 icon: Icon(
                   Icons.remove_circle_outline,
@@ -75,6 +82,8 @@ class _CustomNumberPickerHorizontalState
                 }),
               ),
               NumberPicker(
+                // Show the number picker with the current value
+                // on change update the value and setState to show it
                 minValue: widget.minValue,
                 maxValue: widget.maxValue,
                 value: value,
@@ -100,6 +109,11 @@ class _CustomNumberPickerHorizontalState
                 },
               ),
               IconButton(
+                // Show the add button
+                // increment by the value of step on press,
+                // clamp the value to the minimum and maximum value to
+                // ensure it stays within the range
+                // use the send current value to send the value back to the screen
                 icon: const Icon(Icons.add_circle_outline),
                 color: Theme.of(context).colorScheme.primary,
                 onPressed: () => setState(() {
