@@ -25,6 +25,7 @@ Future<DocumentReference<Map<String, dynamic>>> addExerciseLog({
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebase = FirebaseAuth.instance;
 
+  //creating the exercise log in the database
   return await _firestore.collection(kLogExerciseCollection).add({
     kCreatedAtField: DateTime.now(),
     kExerciseReferenceField: targetExercises[currentIndex].exerciseReference,
@@ -56,6 +57,7 @@ Future<DocumentReference<Map<String, dynamic>>> addExerciseLog({
 }
 
 ExerciseLog getExerciseLogObject(dynamic exerciseLog, WorkoutLog workoutLog) {
+  //getting the exercise log object
   var exerciseLogRef = exerciseLog.reference;
   var exerciseRef = exerciseLog.get(kExerciseReferenceField);
   var exerciseName = exerciseLog.get(kNameField);
