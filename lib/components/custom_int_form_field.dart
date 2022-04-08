@@ -38,6 +38,10 @@ class _CustomIntFormFieldState extends State<CustomIntFormField> {
     return Container(
       margin: EdgeInsets.all(widget.paddingAll),
       child: TextFormField(
+        // Add in the controller, validator, the auto focus option,
+        // the error text, the obscure text option, the onSaved function,
+        // the active color, the icon data and the input label
+        // into the Text Field.
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         validator: widget.validator,

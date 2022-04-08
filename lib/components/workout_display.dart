@@ -25,7 +25,6 @@ class _WorkoutDisplayState extends State<WorkoutDisplay> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // print("Workout: " + widget.workoutObject.toString());
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -52,6 +51,8 @@ class _WorkoutDisplayState extends State<WorkoutDisplay> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    //display the workout name and the
+                    // number of exercises within it
                     Text(
                       widget.workoutObject.name,
                       style: const TextStyle(

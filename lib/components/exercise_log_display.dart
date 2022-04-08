@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:corefit_academy/components/custom_elevated_button.dart';
 import 'package:corefit_academy/screens/logged_workouts_page.dart';
-
 import 'package:corefit_academy/controllers/exercise_log_request_controller.dart';
 import 'package:corefit_academy/controllers/workout_log_request_controller.dart';
 
@@ -22,7 +21,8 @@ class _ExerciseLogDisplayState extends State<ExerciseLogDisplay> {
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      // Specify a key if the Slidable is dismissible.
+      //Allow exercise log to be deleted
+      // Specify a key if the Slidable is dismissible. - 1 NOT DISMISSIBLE
       key: const ValueKey(1),
       // The end action pane is the one at the right or the bottom side.
       endActionPane: ActionPane(

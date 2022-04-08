@@ -20,7 +20,8 @@ class _CourseDisplayState extends State<CourseDisplay> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // print("Course: " + widget.courseObject.toString());
+        // when the user taps on a course display item, bring them to
+        // that courses page
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -46,6 +47,9 @@ class _CourseDisplayState extends State<CourseDisplay> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // Show the course name, number of workouts in the
+                    // course and the number of viewers on the
+                    // course display widget
                     Text(
                       widget.courseObject.name,
                       style: const TextStyle(
@@ -61,6 +65,8 @@ class _CourseDisplayState extends State<CourseDisplay> {
                 ),
               ),
               Container(
+                // if the user is a viewer of this course show the eye icon
+                // if the user owns the course show the pencil icon
                 child: widget.viewer
                     ? const Icon(Icons.remove_red_eye_outlined)
                     : const Icon(FontAwesomeIcons.pencil),

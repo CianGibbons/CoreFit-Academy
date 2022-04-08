@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../utilities/constants.dart';
+import 'package:corefit_academy/utilities/constants.dart';
 
 class MuscleGroupRepresentation extends StatelessWidget {
   const MuscleGroupRepresentation(
@@ -27,6 +26,8 @@ class MuscleGroupRepresentation extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            //show the name of the number group and the
+            // number of exercises for this muscle group
             Text(
               muscleGroupName,
               style: const TextStyle(

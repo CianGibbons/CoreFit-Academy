@@ -32,7 +32,11 @@ class _CustomInputTextFieldState extends State<CustomInputTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // set the margin for the container widget surrounding the text field
       margin: EdgeInsets.all(widget.paddingAll),
+      // Add in the controller, the auto focus option, the text input type,
+      // the obscure text option, the on Changed function, the active color,
+      // the icon data and the input label into the Text Field.
       child: TextField(
         controller: widget.controller,
         autofocus: widget.autoFocus,

@@ -30,8 +30,9 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
   @override
   Widget build(BuildContext context) {
     if (!widget.viewer) {
+      // If user owns the exercise
       return Slidable(
-        // Specify a key if the Slidable is dismissible.
+        // Specify a key if the Slidable is dismissible. 1 - NOT DISMISSIBLE
         key: const ValueKey(1),
         // The end action pane is the one at the right or the bottom side.
         endActionPane: ActionPane(
@@ -40,6 +41,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
           // All actions are defined in the children parameter.
           children: [
             // A SlidableAction can have an icon and/or a label.
+            //Slideable Action with delete icon in white on a red background
             SlidableAction(
               onPressed: showDeleteOwnedExerciseDialog,
               backgroundColor: const Color(0xFFFE4A49),
@@ -52,6 +54,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
+            // circular corners on the container with a padding all around
             padding: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.onBackground,
@@ -60,10 +63,13 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
             ),
             child: Row(
               children: [
+                //Take up as much space as is available
                 Expanded(
                   child: Column(
+                    // items in the column stretched among the column
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      //display all of the info about the exercise
                       Text(
                         widget.exerciseObject.name,
                         style: const TextStyle(
@@ -137,17 +143,14 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
                     ],
                   ),
                 ),
-                Container(
-                  child: widget.viewer
-                      ? const Icon(Icons.remove_red_eye_outlined)
-                      : const Icon(FontAwesomeIcons.pencil),
-                )
+                const Icon(FontAwesomeIcons.pencil)
               ],
             ),
           ),
         ),
       );
     }
+    // if user doesn't own the exercise
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -234,11 +237,7 @@ class _ExerciseDisplayState extends State<ExerciseDisplay> {
                 ],
               ),
             ),
-            Container(
-              child: widget.viewer
-                  ? const Icon(Icons.remove_red_eye_outlined)
-                  : const Icon(FontAwesomeIcons.pencil),
-            )
+            const Icon(Icons.remove_red_eye_outlined)
           ],
         ),
       ),

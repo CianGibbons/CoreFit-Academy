@@ -470,10 +470,9 @@ Future<void> displayAddViewerToCourseDialog(
     TextEditingController addViewerTextEditingController,
     GlobalKey<FormState> addViewerFormKey) async {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _firebase = FirebaseAuth.instance;
 
-  // Ensuring that should an Alert get dismissed by tapping outside it previously,
-  // the Alert will not show the old error message.
+  // Ensuring that should an Dialog get dismissed by tapping outside it previously,
+  // the Dialog will not show the old error message.
   context.read<ErrorMessageStringProvider>().setValue(null);
   return showDialog(
       context: context,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:corefit_academy/components/custom_number_picker_double_helper.dart';
 
 class CustomNumberPickerDoubleHorizontal extends StatefulWidget {
+  // This file is similar to the custom_number_picker.dart,
+  // just adapter for doubles rather than ints
   const CustomNumberPickerDoubleHorizontal({
     Key? key,
     required this.fieldName,
